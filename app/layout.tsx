@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 
 import { Noto_Sans_SC } from "next/font/google";
 const font = Noto_Sans_SC({
@@ -18,8 +19,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="zh-CN">
-            <body className={font.className}>{children}</body>
+        <html lang="zh-CN" className="dark">
+            <body className={font.className}>
+                <Providers>{children}</Providers>
+            </body>
         </html>
     );
 }
