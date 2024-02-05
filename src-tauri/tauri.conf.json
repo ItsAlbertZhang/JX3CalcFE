@@ -7,12 +7,15 @@
         "distDir": "../out"
     },
     "package": {
-        "productName": "jx3calc",
+        "productName": "jx3calculator",
         "version": "0.1.0"
     },
     "tauri": {
         "allowlist": {
-            "all": false
+            "all": false,
+            "dialog": {
+                "open": true
+            }
         },
         "bundle": {
             "active": true,
@@ -29,7 +32,7 @@
                 "icons/icon.icns",
                 "icons/icon.ico"
             ],
-            "identifier": "com.tauri.dev",
+            "identifier": "com.jx3calc",
             "longDescription": "",
             "macOS": {
                 "entitlements": null,
@@ -40,26 +43,32 @@
             },
             "resources": [],
             "shortDescription": "",
-            "targets": "all",
+            "targets": ["msi", "updater"],
             "windows": {
                 "certificateThumbprint": null,
                 "digestAlgorithm": "sha256",
-                "timestampUrl": ""
+                "timestampUrl": "",
+                "wix": {
+                    "language": "zh-CN"
+                }
             }
         },
         "security": {
             "csp": null
         },
         "updater": {
-            "active": false
+            "active": true,
+            "endpoints": ["https://gitee.com/ItsAlbertZhang/JX3CalcFE/raw/master/update.json"],
+            "dialog": true,
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZCQUNBMjlEMzFFNEVCN0QKUldSOTYrUXhuYUtzYThpSWRwb0hkalMzRVdFKzJ4ckt2aGVZc0NMdGQrUXU4K1hFRG5sQ25pa00K"
         },
         "windows": [
             {
                 "fullscreen": false,
-                "height": 600,
+                "height": 900,
                 "resizable": true,
-                "title": "jx3calc",
-                "width": 800
+                "title": "剑网3计算器",
+                "width": 450
             }
         ]
     }
