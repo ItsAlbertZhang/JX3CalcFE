@@ -76,13 +76,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut command = Command::new(exe_path);
     #[cfg(windows)]
     command.creation_flags(CREATE_NO_WINDOW);
-    command.spawn()?;
+    let mut child = command.spawn()?;
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![config])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
-        .run(|_app_handle, event| match event {
+        .run(move |_app_handle, event| match event {
             // tauri::RunEvent::Ready { .. } => {
             //     println!("app is ready");
             // }
@@ -92,6 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let client = reqwest::Client::new();
                     let _ = client.get("http://127.0.0.1:12898/stop").send().await;
                 });
+                let _ = child.wait();
             }
             _ => {}
         });
