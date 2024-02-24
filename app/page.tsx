@@ -55,7 +55,7 @@ async function validateVersion() {
     try {
         const response = await fetch(`http://${window.location.hostname}:12897/version`);
         const data = await response.text();
-        return data === "24022101";
+        return data === "24022501";
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return validateVersion();
