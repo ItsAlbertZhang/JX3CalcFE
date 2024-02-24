@@ -4,7 +4,7 @@
 import { Input, Select, SelectItem, CheckboxGroup, Checkbox } from "@nextui-org/react";
 import { useState } from "react";
 
-function validateNumber(value: string) {
+function validateInteger(value: string) {
     if (value == "") {
         return true;
     }
@@ -14,21 +14,23 @@ function validateNumber(value: string) {
     return true;
 }
 
-export function UserInput({ state, setState }: { state: object; setState: (value: any) => void }) {
-    const player = ["焚影圣诀"];
-    const [delayNetwork, setDelayNetwork] = useState("");
-    const [delayKeyboard, setdelayKeyboard] = useState("");
-    const [fightTime, setFightTime] = useState("");
-    const [fightCount, setFightCount] = useState("");
-    const attribute = ["从JX3BOX导入"];
-    const [attributeIdx, setAttributeIdx] = useState(-1);
-    const [attributeObj, setAttributeObj] = useState({});
-    const effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效"];
+export interface iUserInput {
+    player: string;
+    delayNetwork: number;
+    delayKeyboard: number;
+    fightTime: number;
+    fightCount: number;
+    attribute: object;
+    effects: string[];
+}
 
-    const jsxPlayer = (
+const UIPlayer = ({ state, setState }: { state: iUserInput; setState: (value: iUserInput) => void }) => {
+    const player = ["焚影圣诀"];
+    return (
         <Select
             size="sm"
             label="心法"
+            defaultSelectedKeys={[state.player]}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setState({ ...state, player: e.target.value });
             }}
@@ -40,62 +42,41 @@ export function UserInput({ state, setState }: { state: object; setState: (value
             ))}
         </Select>
     );
-    const jsxDelay = (
-        <div className={"flex justify-center items-center h-full w-full gap-4"}>
-            <Input
-                size="sm"
-                label="网络延迟"
-                value={delayNetwork}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const newValue = event.target.value;
-                    if (validateNumber(newValue)) {
-                        setDelayNetwork(newValue);
-                        setState({ ...state, delayNetwork: Number(newValue) });
-                    }
-                }}
-            />
-            <Input
-                size="sm"
-                label="按键延迟"
-                value={delayKeyboard}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const newValue = event.target.value;
-                    if (validateNumber(newValue)) {
-                        setdelayKeyboard(newValue);
-                        setState({ ...state, delayKeyboard: Number(newValue) });
-                    }
-                }}
-            />
-        </div>
+};
+
+const UIInteger = ({
+    state,
+    setState,
+    keyname,
+    label,
+}: {
+    state: iUserInput;
+    setState: (value: iUserInput) => void;
+    keyname: keyof iUserInput;
+    label: string;
+}) => {
+    const [value, setValue] = useState(state[keyname].toString());
+    return (
+        <Input
+            size="sm"
+            label={label}
+            value={value}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const newValue = event.target.value;
+                if (validateInteger(newValue)) {
+                    setValue(newValue);
+                    setState({ ...state, [keyname]: Number(newValue) });
+                }
+            }}
+        />
     );
-    const jsxFight = (
-        <div className={"flex justify-center items-center h-full w-full gap-4"}>
-            <Input
-                size="sm"
-                label="战斗时间"
-                value={fightTime}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const newValue = event.target.value;
-                    if (validateNumber(newValue)) {
-                        setFightTime(newValue);
-                        setState({ ...state, fightTime: Number(newValue) });
-                    }
-                }}
-            />
-            <Input
-                size="sm"
-                label="战斗次数"
-                value={fightCount}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const newValue = event.target.value;
-                    if (validateNumber(newValue)) {
-                        setFightCount(newValue);
-                        setState({ ...state, fightCount: Number(newValue) });
-                    }
-                }}
-            />
-        </div>
-    );
+};
+
+// 暂时如此处理. 之后会重写属性输入方案.
+const UIAttribute = ({ state, setState }: { state: iUserInput; setState: (value: iUserInput) => void }) => {
+    const attribute = ["从JX3BOX导入"];
+    const [attributeIdx, setAttributeIdx] = useState(-1);
+    const [attributeObj, setAttributeObj] = useState({});
     const jsxAttributeType = (
         <Select
             size="sm"
@@ -129,10 +110,21 @@ export function UserInput({ state, setState }: { state: object; setState: (value
                 />
             );
     }
-    const jsxEffects = (
+    return (
+        <>
+            {jsxAttributeType}
+            {jsxAttributeData}
+        </>
+    );
+};
+
+const UIEffects = ({ state, setState }: { state: iUserInput; setState: (value: iUserInput) => void }) => {
+    const effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效"];
+    return (
         <CheckboxGroup
             className="items-center"
             label="增益选择"
+            value={state.effects}
             onValueChange={(values: string[]) => {
                 setState({ ...state, effects: values });
             }}
@@ -146,15 +138,23 @@ export function UserInput({ state, setState }: { state: object; setState: (value
             })}
         </CheckboxGroup>
     );
+};
 
+export const UserInput = ({ state, setState }: { state: iUserInput; setState: (value: iUserInput) => void }) => {
+    const cn = "flex justify-center items-center h-full w-full gap-4";
     return (
         <>
-            {jsxPlayer}
-            {jsxDelay}
-            {jsxFight}
-            {jsxAttributeType}
-            {jsxAttributeData}
-            {jsxEffects}
+            <UIPlayer state={state} setState={setState} />
+            <div className={cn}>
+                <UIInteger state={state} setState={setState} keyname="delayNetwork" label="网络延迟" />
+                <UIInteger state={state} setState={setState} keyname="delayKeyboard" label="按键延迟" />
+            </div>
+            <div className={cn}>
+                <UIInteger state={state} setState={setState} keyname="fightTime" label="战斗时间" />
+                <UIInteger state={state} setState={setState} keyname="fightCount" label="战斗次数" />
+            </div>
+            <UIAttribute state={state} setState={setState} />
+            <UIEffects state={state} setState={setState} />
         </>
     );
-}
+};
