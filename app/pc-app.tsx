@@ -59,7 +59,7 @@ const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (va
         }
     }
     return (
-        <Button isDisabled={clickDisabled} onClick={handleClick}>
+        <Button isDisabled={clickDisabled} onClick={handleClick} color="primary">
             计算
         </Button>
     );
@@ -73,7 +73,7 @@ export const App = () => {
         fightTime: 300,
         fightCount: 100,
         attribute: {},
-        effects: ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效"],
+        effects: ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"],
     });
     const [result, setResult] = useState<iResultDps | object>({});
 

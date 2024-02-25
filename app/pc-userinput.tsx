@@ -363,7 +363,7 @@ const UIAttribute = ({ state, setState }: { state: iUserInput; setState: (value:
 };
 
 const UIEffects = ({ state, setState }: { state: iUserInput; setState: (value: iUserInput) => void }) => {
-    const effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效"];
+    const effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "武器·水特效", "家园酒·加速"];
     return (
         <CheckboxGroup
             className="items-center"
