@@ -15,6 +15,9 @@
             "all": false,
             "dialog": {
                 "open": true
+            },
+            "clipboard": {
+                "readText": true
             }
         },
         "bundle": {
@@ -65,10 +68,10 @@
         "windows": [
             {
                 "fullscreen": false,
-                "height": 900,
+                "height": 1000,
                 "resizable": true,
                 "title": "剑网3计算器",
-                "width": 450
+                "width": 500
             }
         ]
     }
