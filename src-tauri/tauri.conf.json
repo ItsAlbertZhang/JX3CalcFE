@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "jx3calculator",
-        "version": "0.1.1"
+        "version": "0.1.2"
     },
     "tauri": {
         "allowlist": {
@@ -18,6 +18,10 @@
             },
             "clipboard": {
                 "readText": true
+            },
+            "http": {
+                "request": true,
+                "scope": ["http://cms.jx3box.com/*"]
             }
         },
         "bundle": {

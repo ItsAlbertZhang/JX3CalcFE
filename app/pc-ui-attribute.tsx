@@ -15,6 +15,7 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 import { readText } from "@tauri-apps/api/clipboard";
+import { getClient, ResponseType } from "@tauri-apps/api/http";
 
 const UIAttrInput = ({
     data,
@@ -162,7 +163,6 @@ const PasteIcon = ({
 };
 
 async function importFromJX3BOX(input: string) {
-    console.log(input + "#");
     input = input.trimEnd(); // 去除末尾空格, 换行符等
     let url: string;
     // 验证输入
@@ -184,11 +184,17 @@ async function importFromJX3BOX(input: string) {
     }
     // 请求数据
     try {
-        const response = await fetch(url);
-        const json = await response.json();
-        if (json.code === 0) {
+        let body: any;
+        if (process.env.NODE_ENV === "development") {
+            const response = await fetch(url);
+            body = await response.json();
+        } else {
+            const response = await getClient();
+            body = (await response.get(url, { responseType: ResponseType.JSON })).data;
+        }
+        if (body.code === 0) {
             // 额外处理武器伤害
-            const data = json.data.data as ClsUserInputAttrData;
+            const data = body.data.data as ClsUserInputAttrData;
             data.MeleeWeaponDamageMax = data.MeleeWeaponDamage + data.MeleeWeaponDamageRand;
             return data;
         }
