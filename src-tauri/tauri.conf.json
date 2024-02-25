@@ -18,6 +18,10 @@
             },
             "clipboard": {
                 "readText": true
+            },
+            "http": {
+                "request": true,
+                "scope": ["http://cms.jx3box.com/*"]
             }
         },
         "bundle": {
