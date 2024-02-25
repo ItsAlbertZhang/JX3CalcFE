@@ -68,10 +68,10 @@
         "windows": [
             {
                 "fullscreen": false,
-                "height": 1000,
+                "height": 955,
                 "resizable": true,
                 "title": "剑网3计算器",
-                "width": 500
+                "width": 450
             }
         ]
     }

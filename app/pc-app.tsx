@@ -1,18 +1,11 @@
 // Page Component: App
 "use client";
 
-import { UserInput, iUserInput } from "./pc-userinput";
-import { Result, iResultDps } from "./pc-result";
-import { Button } from "@nextui-org/react";
+import { iResponseBase, iResponseString, iResponseQueryDps, ClsUserInput } from "./definitions";
+import { UserInput } from "./pc-userinput";
+import { Result } from "./pc-result";
+import { Button, Spacer } from "@nextui-org/react";
 import { useState } from "react";
-
-interface iResponseBase {
-    status: number;
-    data: any;
-}
-interface iResponseString extends iResponseBase {
-    data: string;
-}
 
 async function create(input: object) {
     const response = await fetch(`http://${window.location.hostname}:12897/create`, {
@@ -32,7 +25,7 @@ async function queryDps(id: string) {
     return data as iResponseBase;
 }
 
-const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (value: iResultDps) => void }) => {
+const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (value: iResponseQueryDps) => void }) => {
     const [clickDisabled, setClickDisabled] = useState(false);
     async function handleClick() {
         try {
@@ -44,7 +37,7 @@ const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (va
                 while (!complete) {
                     const response = await queryDps(id);
                     if (response.status === 0) {
-                        const data = response.data as iResultDps["data"];
+                        const data = response.data as iResponseQueryDps["data"];
                         complete = data.complete;
                         setResult(response);
                     }
@@ -66,20 +59,13 @@ const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (va
 };
 
 export const App = () => {
-    const [userinput, setUserinput] = useState<iUserInput>({
-        player: "焚影圣诀",
-        delayNetwork: 45,
-        delayKeyboard: 20,
-        fightTime: 300,
-        fightCount: 100,
-        attribute: {},
-        effects: ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"],
-    });
-    const [result, setResult] = useState<iResultDps | object>({});
+    const [userinput, setUserinput] = useState<ClsUserInput>(new ClsUserInput());
+    const [result, setResult] = useState<iResponseQueryDps | object>({});
 
     return (
         <>
             <UserInput state={userinput} setState={setUserinput} />
+            <Spacer y={4} />
             <Calculate userinput={userinput} setResult={setResult} />
             <Result Dps={result} />
         </>
