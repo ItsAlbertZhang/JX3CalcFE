@@ -8,13 +8,16 @@
     },
     "package": {
         "productName": "jx3calculator",
-        "version": "0.1.0"
+        "version": "0.1.1"
     },
     "tauri": {
         "allowlist": {
             "all": false,
             "dialog": {
                 "open": true
+            },
+            "clipboard": {
+                "readText": true
             }
         },
         "bundle": {
@@ -65,7 +68,7 @@
         "windows": [
             {
                 "fullscreen": false,
-                "height": 900,
+                "height": 955,
                 "resizable": true,
                 "title": "剑网3计算器",
                 "width": 450
