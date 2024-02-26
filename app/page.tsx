@@ -25,7 +25,7 @@ async function config(path: string) {
     const obj = {
         JX3Dir: path,
     };
-    const response = await invoke<boolean>("config", { body: JSON.stringify(obj) });
+    await invoke<boolean>("config", { body: JSON.stringify(obj) });
     return;
 }
 

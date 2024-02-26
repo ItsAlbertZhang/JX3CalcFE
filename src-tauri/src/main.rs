@@ -1,12 +1,14 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+use std::fs;
 use std::io::Cursor;
 #[cfg(windows)]
 use std::os::windows::process::CommandExt;
+use std::path::PathBuf;
 use std::process::Command;
-use std::{env, fs};
+use std::time::Duration;
 use tokio::fs::File;
-use tokio::io::{self};
+use tokio::io;
 #[cfg(windows)]
 use winapi::um::winbase::CREATE_NO_WINDOW;
 
@@ -19,64 +21,73 @@ async fn config(body: String) -> bool {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url_api = "https://api.gitee.com/ItsAlbertZhang/JX3CalcBE/releases/latest";
-    let url_download = "https://gitee.com/ItsAlbertZhang/JX3CalcBE/releases/download";
+async fn stop() -> () {
+    let client = reqwest::ClientBuilder::new()
+        .timeout(Duration::from_secs(1))
+        .build()
+        .unwrap();
+    let _ = client.get("http://127.0.0.1:12898/stop").send().await;
+}
 
-    let bin_dir = dirs::data_dir().expect("Could not find data directory").join("jx3calc");
-    std::fs::create_dir_all(&bin_dir).expect("Could not create directory");
-    let exe_name = "jx3calc_windows.exe";
-    let exe_path = bin_dir.join(&exe_name);
-    let dll_name = "gdi.dll";
-    let dll_path = bin_dir.join(&dll_name);
-    let ver_name = "version.txt";
-    let ver_path = bin_dir.join(&ver_name);
-
-    let response_result = reqwest::get(url_api).await;
-    match response_result {
-        Ok(response) => {
-            let json_result = response.json::<serde_json::Value>().await;
-            match json_result {
-                Ok(json) => {
-                    if let Some(body) = json.as_object() {
-                        if let Some(release) = body.get("release") {
-                            if let Some(tag) = release.get("tag") {
-                                if let Some(name) = tag.get("name") {
-                                    let tag_name = name.as_str().unwrap();
-                                    let exe_url = format!("{}/{}/{}", url_download, tag_name, exe_name);
-                                    let dll_url = format!("{}/{}/{}", url_download, tag_name, dll_name);
-                                    let version = fs::read_to_string(&ver_path).unwrap_or_else(|_| String::new());
-                                    if version != tag_name {
-                                        let exe_response = reqwest::get(&exe_url).await?;
-                                        let mut exe_out = File::create(&exe_path).await?;
-                                        let mut exe_content = Cursor::new(exe_response.bytes().await?);
-                                        io::copy(&mut exe_content, &mut exe_out).await?;
-                                        let dll_response = reqwest::get(&dll_url).await?;
-                                        let mut dll_out = File::create(&dll_path).await?;
-                                        let mut dll_content = Cursor::new(dll_response.bytes().await?);
-                                        io::copy(&mut dll_content, &mut dll_out).await?;
-                                        fs::write(&ver_path, tag_name)?;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                Err(e) => {
-                    eprintln!("Failed to parse JSON: {}", e);
-                }
+async fn download() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    async fn fetch_remote_version() -> Option<String> {
+        println!("Fetching remote version...");
+        let api = "https://api.gitee.com/ItsAlbertZhang/JX3CalcBE/releases/latest";
+        let response = reqwest::get(api).await.ok()?;
+        let json = response.json::<serde_json::Value>().await.ok()?;
+        json.get("release")?
+            .get("tag")?
+            .get("name")?
+            .as_str()
+            .map(|s| s.to_string())
+    }
+    let pd_data = dirs::data_dir().ok_or_else(|| "无法获取AppData目录")?.join("jx3calc");
+    std::fs::create_dir_all(&pd_data)?;
+    let fn_version = "version.txt";
+    let fn_exe = "jx3calc_windows.exe";
+    let fn_dll = "gdi.dll";
+    let pf_version = pd_data.join(fn_version);
+    let pf_exe = pd_data.join(fn_exe);
+    let pf_dll = pd_data.join(fn_dll);
+    let version = fs::read_to_string(&pf_version).unwrap_or_else(|_| String::new());
+    match fetch_remote_version().await {
+        Some(tag) => {
+            if tag != version {
+                println!("Downloading version {}...", tag);
+                let url = format!("https://gitee.com/ItsAlbertZhang/JX3CalcBE/releases/download/{}/", tag);
+                let url_exe = format!("{}{}", url, fn_exe);
+                let url_dll = format!("{}{}", url, fn_dll);
+                let exe_response = reqwest::get(&url_exe).await?;
+                let mut exe_out = File::create(&pf_exe).await?;
+                let mut exe_content = Cursor::new(exe_response.bytes().await?);
+                io::copy(&mut exe_content, &mut exe_out).await?;
+                let dll_response = reqwest::get(&url_dll).await?;
+                let mut dll_out = File::create(&pf_dll).await?;
+                let mut dll_content = Cursor::new(dll_response.bytes().await?);
+                io::copy(&mut dll_content, &mut dll_out).await?;
+                fs::write(&pf_version, tag)?;
             }
         }
-        Err(e) => {
-            eprintln!("Failed to send request: {}", e);
+        None => {
+            // 网络请求失败, 检查 pf_exe 和 pf_dll 是否存在
+            if !pf_exe.exists() || !pf_dll.exists() {
+                return Err("初次运行, 需要连接至网络以下载资源文件".into());
+            }
         }
     }
+    Ok(pf_exe)
+}
 
-    let mut command = Command::new(exe_path);
+fn main() {
+    let rt = tokio::runtime::Runtime::new().expect("Failed to create tokio runtime");
+    let pf_exe = rt.block_on(async {
+        let _ = stop().await;
+        download().await.unwrap()
+    });
+    let mut command = Command::new(pf_exe);
     #[cfg(windows)]
     command.creation_flags(CREATE_NO_WINDOW);
-    let mut child = command.spawn()?;
+    let mut child = command.spawn().expect("Failed to start child process");
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![config])
@@ -87,15 +98,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             //     println!("app is ready");
             // }
             tauri::RunEvent::ExitRequested { .. } => {
-                println!("app is closing...");
-                let _ = tokio::spawn(async {
-                    let client = reqwest::Client::new();
-                    let _ = client.get("http://127.0.0.1:12898/stop").send().await;
-                });
+                println!("App is closing...");
+                rt.block_on(stop());
                 let _ = child.wait();
             }
             _ => {}
         });
-
-    Ok(())
 }
