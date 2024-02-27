@@ -1,7 +1,7 @@
-// Page Component: Result
 "use client";
 
-import { iResponseQueryDps } from "./definitions";
+import { iResponseQueryDps } from "@/components/definitions";
+
 import { Progress } from "@nextui-org/react";
 
 export const Result = ({ Dps }: { Dps: iResponseQueryDps | object }) => {

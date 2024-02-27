@@ -1,4 +1,3 @@
-// Page Component: UserInput Base
 "use client";
 
 import { Input } from "@nextui-org/react";
@@ -13,7 +12,7 @@ export function validateInteger(value: string) {
     return true;
 }
 
-export const UIInteger = ({
+export const IntegerInput = ({
     state,
     setState,
     keys,

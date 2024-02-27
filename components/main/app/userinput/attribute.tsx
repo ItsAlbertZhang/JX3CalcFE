@@ -1,9 +1,11 @@
 // Page Component: UserInput: Attribute
 "use client";
 
-import { ClsUserInputAttrData, ClsUserInput } from "./definitions";
-import { fetchJson, readClipboard } from "./actions";
-import { validateInteger, UIInteger } from "./pc-userinput-base";
+import { validateInteger, IntegerInput } from "./base";
+
+import { ClsUserInputAttrData, ClsUserInput } from "@/components/definitions";
+import { fetchJson, readClipboard } from "@/components/actions";
+
 import {
     Button,
     Input,
@@ -16,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 
-const UIAttrInput = ({
+const AttrInputArea = ({
     data,
     setDataAndState,
 }: {
@@ -27,13 +29,13 @@ const UIAttrInput = ({
     return (
         <>
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={["Vitality", "Strength", "Agility", "Spirit", "Spunk"]}
                     label="基础属性"
                 />
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={[
@@ -47,7 +49,7 @@ const UIAttrInput = ({
                 />
             </div>
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={[
@@ -59,7 +61,7 @@ const UIAttrInput = ({
                     ]}
                     label="会心等级"
                 />
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={[
@@ -73,7 +75,7 @@ const UIAttrInput = ({
                 />
             </div>
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={[
@@ -85,20 +87,20 @@ const UIAttrInput = ({
                     ]}
                     label="基础破防等级"
                 />
-                <UIInteger state={data} setState={setDataAndState} keys={["Haste"]} label="急速等级" />
+                <IntegerInput state={data} setState={setDataAndState} keys={["Haste"]} label="急速等级" />
             </div>
             <div className={cn}>
-                <UIInteger state={data} setState={setDataAndState} keys={["Strain"]} label="无双等级" />
-                <UIInteger state={data} setState={setDataAndState} keys={["SurplusValue"]} label="破招" />
+                <IntegerInput state={data} setState={setDataAndState} keys={["Strain"]} label="无双等级" />
+                <IntegerInput state={data} setState={setDataAndState} keys={["SurplusValue"]} label="破招" />
             </div>
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={["MeleeWeaponDamage"]}
                     label="武器伤害(最低)"
                 />
-                <UIInteger
+                <IntegerInput
                     state={data}
                     setState={setDataAndState}
                     keys={["MeleeWeaponDamageMax"]}
@@ -109,7 +111,7 @@ const UIAttrInput = ({
     );
 };
 
-const PasteIcon = () => {
+const IconPaste = () => {
     return (
         <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -168,7 +170,7 @@ async function importFromJX3BOX(input: string) {
     }
 }
 
-const UIAttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUserInputAttrData) => void }) => {
+const AttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUserInputAttrData) => void }) => {
     const [url, setUrl] = useState("");
     return (
         <ModalContent>
@@ -199,7 +201,7 @@ const UIAttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsU
                                 }}
                                 endContent={
                                     <Button size="sm" isIconOnly variant="light" onClick={paste}>
-                                        <PasteIcon />
+                                        <IconPaste />
                                     </Button>
                                 }
                             />
@@ -219,7 +221,7 @@ const UIAttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsU
     );
 };
 
-export const UIAttribute = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
+export const Attribute = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
     const [data, setData] = useState<ClsUserInputAttrData>(new ClsUserInputAttrData());
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -249,12 +251,12 @@ export const UIAttribute = ({ state, setState }: { state: ClsUserInput; setState
     }
     return (
         <>
-            <UIAttrInput data={data} setDataAndState={setDataAndState} />
+            <AttrInputArea data={data} setDataAndState={setDataAndState} />
             <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect}>
                 从 JX3BOX 导入数据
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm" placement="center" backdrop="blur">
-                <UIAttrModalContent setDataAndState={setDataAndState} />
+                <AttrModalContent setDataAndState={setDataAndState} />
             </Modal>
         </>
     );

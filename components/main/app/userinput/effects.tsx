@@ -1,10 +1,10 @@
-// Page Component: UserInput: Effects
 "use client";
 
-import { ClsUserInput } from "./definitions";
+import { ClsUserInput } from "@/components/definitions";
+
 import { CheckboxGroup, Checkbox } from "@nextui-org/react";
 
-export const UIEffects = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
+export const Effects = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
     const cn = "flex justify-center items-center h-full w-full gap-10";
     const effects = [
         ["大附魔·腰", "大附魔·腕", "大附魔·鞋"],

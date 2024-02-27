@@ -1,11 +1,12 @@
-// Page Component: UserInput: Global
 "use client";
 
-import { iResponseStatus, ClsUserInput } from "./definitions";
-import { UIInteger } from "./pc-userinput-base";
+import { IntegerInput } from "./base";
+
+import { iResponseStatus, ClsUserInput } from "@/components/definitions";
+
 import { Select, SelectItem } from "@nextui-org/react";
 
-const UIPlayer = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
+const Player = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
     const player = ["焚影圣诀"];
     return (
         <Select
@@ -25,7 +26,7 @@ const UIPlayer = ({ state, setState }: { state: ClsUserInput; setState: (value: 
     );
 };
 
-export const UIGlobal = ({
+export const Global = ({
     status,
     state,
     setState,
@@ -37,16 +38,16 @@ export const UIGlobal = ({
     const cn = "flex justify-center items-center h-full w-full gap-4";
     return (
         <>
-            <UIPlayer state={state} setState={setState} />
+            <Player state={state} setState={setState} />
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={state}
                     setState={setState}
                     keys={["delayNetwork"]}
                     label="网络延迟"
                     max={status.maxDelayNetwork}
                 />
-                <UIInteger
+                <IntegerInput
                     state={state}
                     setState={setState}
                     keys={["delayKeyboard"]}
@@ -55,14 +56,14 @@ export const UIGlobal = ({
                 />
             </div>
             <div className={cn}>
-                <UIInteger
+                <IntegerInput
                     state={state}
                     setState={setState}
                     keys={["fightTime"]}
                     label="战斗时间"
                     max={status.maxFightTime}
                 />
-                <UIInteger
+                <IntegerInput
                     state={state}
                     setState={setState}
                     keys={["fightCount"]}
