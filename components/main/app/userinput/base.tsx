@@ -19,11 +19,11 @@ export const IntegerInput = ({
     label,
     max = undefined,
 }: {
-    max?: number | undefined;
     state: any;
     setState: (value: any) => void;
     keys: string[];
     label: string;
+    max?: number | undefined;
 }) => {
     return (
         <Input

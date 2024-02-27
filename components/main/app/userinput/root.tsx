@@ -18,12 +18,10 @@ export const UserInput = ({
     setState: (value: ClsUserInput) => void;
 }) => {
     return (
-        <>
+        <div className="flex flex-col w-full justify-center items-center gap-8">
             <Global status={status} state={state} setState={setState} />
-            <Spacer y={0} />
             <Attribute state={state} setState={setState} />
-            <Spacer y={0} />
             <Effects state={state} setState={setState} />
-        </>
+        </div>
     );
 };

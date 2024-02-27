@@ -35,11 +35,11 @@ export const Global = ({
     state: ClsUserInput;
     setState: (value: ClsUserInput) => void;
 }) => {
-    const cn = "flex justify-center items-center h-full w-full gap-4";
+    const cn = "flex justify-center items-center w-full gap-4";
     return (
-        <>
+        <div className="flex flex-col w-full justify-center items-center gap-4">
             <Player state={state} setState={setState} />
-            <div className={cn}>
+            <div className="grid grid-cols-2 gap-4 w-full items-center">
                 <IntegerInput
                     state={state}
                     setState={setState}
@@ -54,8 +54,6 @@ export const Global = ({
                     label="按键延迟"
                     max={status.maxDelayKeyboard}
                 />
-            </div>
-            <div className={cn}>
                 <IntegerInput
                     state={state}
                     setState={setState}
@@ -71,6 +69,6 @@ export const Global = ({
                     max={status.maxFightCount}
                 />
             </div>
-        </>
+        </div>
     );
 };

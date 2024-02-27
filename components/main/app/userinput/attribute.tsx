@@ -21,14 +21,29 @@ import { useState } from "react";
 const AttrInputArea = ({
     data,
     setDataAndState,
+    onOpen,
 }: {
     data: ClsUserInputAttrData;
     setDataAndState: (value: ClsUserInputAttrData) => void;
+    onOpen: () => void;
 }) => {
-    const cn = "flex justify-center items-center h-full w-full gap-4";
+    function importFromJX3BOXDirect(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        async function f() {
+            const str = await readClipboard();
+            const data = await importFromJX3BOX(str);
+            if (data !== undefined) {
+                setDataAndState(data);
+            }
+        }
+        f();
+    }
     return (
         <>
-            <div className={cn}>
+            <div className="grid grid-cols-2 gap-4 w-full items-center sm:grid-cols-3">
+                <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect} className="col-span-2">
+                    从 JX3BOX 导入数据
+                </Button>
                 <IntegerInput
                     state={data}
                     setState={setDataAndState}
@@ -47,8 +62,6 @@ const AttrInputArea = ({
                     ]}
                     label="基础攻击"
                 />
-            </div>
-            <div className={cn}>
                 <IntegerInput
                     state={data}
                     setState={setDataAndState}
@@ -73,8 +86,6 @@ const AttrInputArea = ({
                     ]}
                     label="会心效果等级"
                 />
-            </div>
-            <div className={cn}>
                 <IntegerInput
                     state={data}
                     setState={setDataAndState}
@@ -88,12 +99,8 @@ const AttrInputArea = ({
                     label="基础破防等级"
                 />
                 <IntegerInput state={data} setState={setDataAndState} keys={["Haste"]} label="急速等级" />
-            </div>
-            <div className={cn}>
                 <IntegerInput state={data} setState={setDataAndState} keys={["Strain"]} label="无双等级" />
                 <IntegerInput state={data} setState={setDataAndState} keys={["SurplusValue"]} label="破招" />
-            </div>
-            <div className={cn}>
                 <IntegerInput
                     state={data}
                     setState={setDataAndState}
@@ -188,7 +195,7 @@ const AttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUse
                 }
                 return (
                     <>
-                        <ModalHeader className="flex flex-col gap-1">从 JX3BOX 导入数据</ModalHeader>
+                        <ModalHeader>从 JX3BOX 导入数据</ModalHeader>
                         <ModalBody>
                             <p>Tips:</p>
                             <p>复制配装 ID 或 URL 后, 在主界面右键点击按钮即可无需打开此对话框直接导入.</p>
@@ -238,26 +245,12 @@ export const Attribute = ({ state, setState }: { state: ClsUserInput; setState: 
         });
     }
 
-    function importFromJX3BOXDirect(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault();
-        async function f() {
-            const str = await readClipboard();
-            const data = await importFromJX3BOX(str);
-            if (data !== undefined) {
-                setDataAndState(data);
-            }
-        }
-        f();
-    }
     return (
-        <>
-            <AttrInputArea data={data} setDataAndState={setDataAndState} />
-            <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect}>
-                从 JX3BOX 导入数据
-            </Button>
+        <div className="flex flex-col w-full justify-center items-center gap-4">
+            <AttrInputArea data={data} setDataAndState={setDataAndState} onOpen={onOpen} />
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm" placement="center" backdrop="blur">
                 <AttrModalContent setDataAndState={setDataAndState} />
             </Modal>
-        </>
+        </div>
     );
 };

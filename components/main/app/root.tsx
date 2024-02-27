@@ -16,12 +16,11 @@ export const App = ({ status }: { status: iResponseStatus["data"] }) => {
     const [result, setResult] = useState<iResponseQueryDps | object>({});
 
     return (
-        <>
+        <div className="flex flex-col w-full justify-center items-center m-6 gap-8 md:w-4/5 lg:w-2/3 xl:w-1/2 ">
             <WebDownload />
             <UserInput status={status.userinput} state={userinput} setState={setUserinput} />
-            <Spacer y={4} />
             <Calculate userinput={userinput} setResult={setResult} />
             <Result Dps={result} />
-        </>
+        </div>
     );
 };

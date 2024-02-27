@@ -35,14 +35,16 @@ export const WebDownload = () => {
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">下载 App</ModalHeader>
-                            <ModalBody className="gap-0 -indent-2 mx-2">
+                            <ModalBody className="gap-0 mx-2">
                                 <p>下载桌面版 App, 即可解锁全部功能:</p>
                                 <Spacer y={2} />
-                                <p>- 无上限的计算次数.</p>
-                                <p>- (开发中) 基于无上限的计算次数, 准确计算属性收益.</p>
-                                <p>- (开发中) 基于自定义宏的模拟战斗.</p>
+                                <div className="-indent-2 mx-2">
+                                    <p>- 无上限的计算次数.</p>
+                                    <p>- (开发中) 基于无上限的计算次数带来的数据准确性, 可计算确定属性收益.</p>
+                                    <p>- (开发中) 基于自定义宏的模拟战斗.</p>
+                                </div>
                                 <Spacer y={4} />
-                                <p> 本软件基于 GPL v3.0 协议开源于 Github, 且完全免费.</p>
+                                <p> 本软件已基于 GPL v3.0 协议开源于 Github, 且完全免费.</p>
                                 <Spacer y={2} />
                             </ModalBody>
                             <Button

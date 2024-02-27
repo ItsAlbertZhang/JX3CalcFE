@@ -44,5 +44,5 @@ export const Setting = ({ setStatus }: { setStatus: (value: iResponseStatus) => 
         ret = <p>无法在网页端配置</p>;
     }
 
-    return ret;
+    return <div className="flex flex-col w-full justify-center items-center gap-4">{ret}</div>;
 };

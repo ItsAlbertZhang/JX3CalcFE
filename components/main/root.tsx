@@ -35,9 +35,5 @@ export const Main = () => {
     } else {
         ret = <App status={status.data} />;
     }
-    return (
-        <div className="flex flex-col justify-center min-h-screen gap-4 items-center m-auto py-6 w-3/4 sm:w-1/2 lg:w-1/3">
-            {ret}
-        </div>
-    );
+    return <div className="flex justify-center min-h-screen w-full">{ret}</div>;
 };
