@@ -18,7 +18,9 @@ export const UIInteger = ({
     setState,
     keys,
     label,
+    max = undefined,
 }: {
+    max?: number | undefined;
     state: any;
     setState: (value: any) => void;
     keys: string[];
@@ -36,7 +38,11 @@ export const UIInteger = ({
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 const newValue = event.target.value;
                 if (validateInteger(newValue)) {
-                    const newState = keys.reduce((obj, key) => ({ ...obj, [key]: Number(newValue) }), {});
+                    let value = Number(newValue);
+                    if (max && value > max) {
+                        value = max;
+                    }
+                    const newState = keys.reduce((obj, key) => ({ ...obj, [key]: value }), {});
                     setState({ ...state, ...newState });
                 }
             }}

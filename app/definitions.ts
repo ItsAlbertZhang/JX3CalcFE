@@ -2,6 +2,19 @@ export interface iResponseBase {
     status: number;
     data: any;
 }
+
+export interface iResponseStatus extends iResponseBase {
+    data: {
+        version: string;
+        userinput: {
+            maxDelayNetwork: number;
+            maxDelayKeyboard: number;
+            maxFightTime: number;
+            maxFightCount: number;
+        };
+    };
+}
+
 export interface iResponseString extends iResponseBase {
     data: string;
 }

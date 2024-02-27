@@ -1,7 +1,7 @@
 // Page Component: App
 "use client";
 
-import { iResponseBase, iResponseString, iResponseQueryDps, ClsUserInput } from "./definitions";
+import { iResponseBase, iResponseStatus, iResponseString, iResponseQueryDps, ClsUserInput } from "./definitions";
 import { UserInput } from "./pc-userinput";
 import { Result } from "./pc-result";
 import { Button, Spacer } from "@nextui-org/react";
@@ -58,13 +58,13 @@ const Calculate = ({ userinput, setResult }: { userinput: object; setResult: (va
     );
 };
 
-export const App = () => {
+export const App = ({ status }: { status: iResponseStatus["data"] }) => {
     const [userinput, setUserinput] = useState<ClsUserInput>(new ClsUserInput());
     const [result, setResult] = useState<iResponseQueryDps | object>({});
 
     return (
         <>
-            <UserInput state={userinput} setState={setUserinput} />
+            <UserInput status={status.userinput} state={userinput} setState={setUserinput} />
             <Spacer y={4} />
             <Calculate userinput={userinput} setResult={setResult} />
             <Result Dps={result} />

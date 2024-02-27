@@ -1,9 +1,12 @@
 "use client";
 
+import { iResponseStatus } from "./definitions";
 import { config } from "./actions";
 import { App } from "./pc-app";
 import { Button, Card, CardBody, Spacer, Spinner } from "@nextui-org/react";
 import { useState, useEffect } from "react";
+
+const version = "24022701";
 
 const PageLoading = () => {
     return <Spinner label="加载中..." />;
@@ -22,9 +25,11 @@ const PageVersionInvalid = () => {
     );
 };
 
-const PageConfig = ({ setStatus }: { setStatus: (value: boolean) => void }) => {
+const PageConfig = ({ setStatus }: { setStatus: (value: iResponseStatus) => void }) => {
     async function handleOpen() {
-        setStatus(await config());
+        if (await config()) {
+            setStatus(await fetchServerStatus());
+        }
     }
     return (
         <>
@@ -34,38 +39,23 @@ const PageConfig = ({ setStatus }: { setStatus: (value: boolean) => void }) => {
     );
 };
 
-async function validateVersion() {
-    console.log("validating version...");
+async function fetchServerStatus() {
+    console.log("fetching server status...");
     try {
-        const response = await fetch(`http://${window.location.hostname}:12897/version`);
-        const data = await response.text();
-        return data === "24022501";
+        const response = await fetch(`http://${window.location.hostname}:12897/status`);
+        return (await response.json()) as iResponseStatus;
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return validateVersion();
+        return fetchServerStatus();
     }
 }
 
-async function validateAvailable() {
-    const response = await fetch(`http://${window.location.hostname}:12897/available`);
-    const data = await response.json();
-    return data.status === 0;
-}
-
 export default function Page() {
-    const [serverReady, setServerReady] = useState(false); // 服务器是否已启动
-    const [serverVersionValid, setServerVersionValid] = useState(false); // 服务器版本是否匹配
-    const [serverAvailable, setServerAvailable] = useState(false); // 服务器是否可用
+    const [status, setStatus] = useState<iResponseStatus | undefined>();
     useEffect(() => {
         async function f() {
             try {
-                const version = await validateVersion();
-                setServerVersionValid(version);
-                if (version) {
-                    const available = await validateAvailable();
-                    setServerAvailable(available);
-                }
-                setServerReady(true);
+                setStatus(await fetchServerStatus());
             } catch (error) {
                 console.error(error);
             }
@@ -74,14 +64,14 @@ export default function Page() {
     }, []);
 
     let ret: JSX.Element;
-    if (!serverReady) {
+    if (!status) {
         ret = <PageLoading />;
-    } else if (!serverVersionValid) {
+    } else if (status.status !== 0) {
         ret = <PageVersionInvalid />;
-    } else if (!serverAvailable) {
-        ret = <PageConfig setStatus={setServerAvailable} />;
+    } else if (status.data.version != version) {
+        ret = <PageConfig setStatus={setStatus} />;
     } else {
-        ret = <App />;
+        ret = <App status={status.data} />;
     }
     return (
         <div className="flex flex-col justify-center min-h-screen gap-4 items-center m-auto py-6 w-3/4 sm:w-1/2 lg:w-1/3">
