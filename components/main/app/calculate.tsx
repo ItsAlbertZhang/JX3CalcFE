@@ -25,10 +25,10 @@ async function queryDps(id: string) {
 
 export const Calculate = ({
     userinput,
-    setResult,
+    setDPS,
 }: {
     userinput: object;
-    setResult: (value: iResponseQueryDps) => void;
+    setDPS: (value: iResponseQueryDps["data"]) => void;
 }) => {
     const [clickDisabled, setClickDisabled] = useState(false);
     async function handleClick() {
@@ -43,7 +43,7 @@ export const Calculate = ({
                     if (response.status === 0) {
                         const data = response.data as iResponseQueryDps["data"];
                         complete = data.complete;
-                        setResult(response);
+                        setDPS(data);
                     }
                     if (!complete) {
                         await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -10,7 +10,7 @@ export const Effects = ({ state, setState }: { state: ClsUserInput; setState: (v
         ["套装·技能", "套装·特效", "武器·水特效", "家园酒·加速"],
     ];
     return (
-        <div className="flex justify-center items-center w-full gap-8">
+        <div className="flex justify-center items-center h-full gap-8">
             {effects.map((col, idx) => {
                 return (
                     <CheckboxGroup key={"effects" + idx} className="items-center" value={state.effects}>

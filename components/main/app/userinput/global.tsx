@@ -35,7 +35,7 @@ export const Global = ({
     state: ClsUserInput;
     setState: (value: ClsUserInput) => void;
 }) => {
-    const cn = "flex justify-center items-center w-full gap-4";
+    const cn = "flex justify-center items-center h-full gap-4";
     return (
         <div className="flex flex-col w-full justify-center items-center gap-4">
             <Player state={state} setState={setState} />
