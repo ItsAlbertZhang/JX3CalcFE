@@ -1,6 +1,7 @@
 // Page Component: UserInput: Attribute
 "use client";
 
+import { fetchJson, readClipboard } from "./actions";
 import { ClsUserInputAttrData, ClsUserInput } from "./definitions";
 import { validateInteger, UIInteger } from "./pc-userinput-base";
 import {
@@ -14,8 +15,6 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { useState } from "react";
-import { readText } from "@tauri-apps/api/clipboard";
-import { getClient, ResponseType } from "@tauri-apps/api/http";
 
 const UIAttrInput = ({
     data,
@@ -183,35 +182,13 @@ async function importFromJX3BOX(input: string) {
         return;
     }
     // 请求数据
-    try {
-        let body: any;
-        if (process.env.NODE_ENV === "development") {
-            const response = await fetch(url);
-            body = await response.json();
-        } else {
-            const response = await getClient();
-            body = (await response.get(url, { responseType: ResponseType.JSON })).data;
-        }
-        if (body.code === 0) {
-            // 额外处理武器伤害
-            const data = body.data.data as ClsUserInputAttrData;
-            data.MeleeWeaponDamageMax = data.MeleeWeaponDamage + data.MeleeWeaponDamageRand;
-            return data;
-        }
-    } catch (error) {
-        console.error(error);
+    let body = await fetchJson(url);
+    if (body !== undefined && body.code === 0) {
+        // 额外处理武器伤害
+        const data = body.data.data as ClsUserInputAttrData;
+        data.MeleeWeaponDamageMax = data.MeleeWeaponDamage + data.MeleeWeaponDamageRand;
+        return data;
     }
-}
-async function readClipboard() {
-    try {
-        const text = await readText();
-        if (text !== null) {
-            return text;
-        }
-    } catch (error) {
-        console.error(error);
-    }
-    return "";
 }
 
 const UIAttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUserInputAttrData) => void }) => {

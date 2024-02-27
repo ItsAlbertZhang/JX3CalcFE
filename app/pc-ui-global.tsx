@@ -36,7 +36,7 @@ export const UIGlobal = ({ state, setState }: { state: ClsUserInput; setState: (
             </div>
             <div className={cn}>
                 <UIInteger state={state} setState={setState} keys={["fightTime"]} label="战斗时间" />
-                <UIInteger state={state} setState={setState} keys={["fightCount"]} label="战斗次数" />
+                <UIInteger state={state} setState={setState} keys={["fightCount"]} label="计算次数" />
             </div>
         </>
     );

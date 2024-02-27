@@ -1,10 +1,9 @@
 "use client";
 
+import { config } from "./actions";
 import { App } from "./pc-app";
-import { Button, Spinner, Card, CardBody } from "@nextui-org/react";
+import { Button, Card, CardBody, Spacer, Spinner } from "@nextui-org/react";
 import { useState, useEffect } from "react";
-import { open } from "@tauri-apps/api/dialog";
-import { invoke } from "@tauri-apps/api/tauri";
 
 const PageLoading = () => {
     return <Spinner label="加载中..." />;
@@ -14,33 +13,18 @@ const PageVersionInvalid = () => {
     return (
         <Card>
             <CardBody className="items-center">
-                <p>版本不匹配</p>
-                <p>请在网络畅通的情况下重启应用以自动更新</p>
+                <Spinner />
+                <Spacer y={4} />
+                <p>发现新版本</p>
+                <p>正在尝试自动更新, 请保持网络畅通</p>
             </CardBody>
         </Card>
     );
 };
 
-async function config(path: string) {
-    const obj = {
-        JX3Dir: path,
-    };
-    await invoke<boolean>("config", { body: JSON.stringify(obj) });
-    return;
-}
-
 const PageConfig = ({ setStatus }: { setStatus: (value: boolean) => void }) => {
     async function handleOpen() {
-        try {
-            const result = await open({ directory: true, multiple: false });
-            const path = result as string;
-            if (path.endsWith("JX3")) {
-                config(path);
-                setStatus(true);
-            }
-        } catch (error) {
-            console.error(error);
-        }
+        setStatus(await config());
     }
     return (
         <>
