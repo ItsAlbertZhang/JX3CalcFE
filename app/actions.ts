@@ -5,6 +5,15 @@ import { open } from "@tauri-apps/api/dialog";
 import { getClient, ResponseType } from "@tauri-apps/api/http";
 import { invoke } from "@tauri-apps/api/tauri";
 
+export async function isApp() {
+    try {
+        await readText();
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export async function config() {
     try {
         const result = await open({ directory: true, multiple: false });

@@ -1,9 +1,9 @@
 "use client";
 
 import { iResponseStatus } from "./definitions";
-import { config } from "./actions";
+import { isApp, config } from "./actions";
 import { App } from "./pc-app";
-import { Button, Card, CardBody, Spacer, Spinner } from "@nextui-org/react";
+import { Button, Spacer, Spinner } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 
 const version = "24022701";
@@ -14,29 +14,43 @@ const PageLoading = () => {
 
 const PageVersionInvalid = () => {
     return (
-        <Card>
-            <CardBody className="items-center">
-                <Spinner />
-                <Spacer y={4} />
-                <p>发现新版本</p>
-                <p>正在尝试自动更新, 请保持网络畅通</p>
-            </CardBody>
-        </Card>
+        <>
+            <Spinner />
+            <Spacer y={4} />
+            <p>发现新版本</p>
+            <p>正在尝试自动更新, 请保持网络畅通</p>
+        </>
     );
 };
 
 const PageConfig = ({ setStatus }: { setStatus: (value: iResponseStatus) => void }) => {
+    const [app, setApp] = useState(false);
     async function handleOpen() {
         if (await config()) {
             setStatus(await fetchServerStatus());
         }
     }
-    return (
-        <>
-            <Button onClick={handleOpen}>选择游戏路径</Button>
-            <p>请选择名称为 JX3 的文件夹</p>
-        </>
-    );
+
+    useEffect(() => {
+        async function f() {
+            setApp(await isApp());
+        }
+        f();
+    });
+
+    let ret: JSX.Element;
+    if (app) {
+        ret = (
+            <>
+                <Button onClick={handleOpen}>选择游戏路径</Button>
+                <p>请选择名称为 JX3 的文件夹</p>
+            </>
+        );
+    } else {
+        ret = <p>无法在网页端配置</p>;
+    }
+
+    return ret;
 };
 
 async function fetchServerStatus() {
@@ -67,9 +81,9 @@ export default function Page() {
     if (!status) {
         ret = <PageLoading />;
     } else if (status.status !== 0) {
-        ret = <PageVersionInvalid />;
-    } else if (status.data.version != version) {
         ret = <PageConfig setStatus={setStatus} />;
+    } else if (status.data.version != version) {
+        ret = <PageVersionInvalid />;
     } else {
         ret = <App status={status.data} />;
     }
