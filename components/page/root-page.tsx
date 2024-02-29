@@ -4,7 +4,7 @@ import { Loading } from "./loading";
 import { fetchServerStatus, Setting } from "./setting";
 import { Updating } from "./updating";
 
-import { App } from "./app/root";
+import { App } from "./app/root-app";
 
 import { iResponseStatus } from "@/components/definitions";
 
@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 
 const version = "24022801";
 
-export const Main = () => {
+export const Page = () => {
     const [status, setStatus] = useState<iResponseStatus | undefined>();
     useEffect(() => {
         async function f() {

@@ -3,8 +3,8 @@
 import { Calculate } from "./calculate";
 import { WebDownload } from "./web-download";
 
-import { Result } from "./result/root";
-import { UserInput } from "./userinput/root";
+import { Result } from "./result/root-result";
+import { UserInput } from "./userinput/root-userinput";
 
 import { iResponseStatus, iResponseQueryDps, ClsUserInput } from "@/components/definitions";
 
