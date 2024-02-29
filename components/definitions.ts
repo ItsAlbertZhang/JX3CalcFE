@@ -26,7 +26,10 @@ export interface iResponseQueryDps extends iResponseBase {
         total: number;
         speed: number;
         avg: number;
+        min: number;
+        max: number;
         sd: number;
+        md: number;
         list: number[];
     };
 }

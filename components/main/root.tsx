@@ -10,7 +10,7 @@ import { iResponseStatus } from "@/components/definitions";
 
 import { useEffect, useState } from "react";
 
-const version = "24022701";
+const version = "24022801";
 
 export const Main = () => {
     const [status, setStatus] = useState<iResponseStatus | undefined>();
