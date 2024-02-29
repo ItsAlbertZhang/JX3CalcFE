@@ -17,13 +17,13 @@ export const IntegerInput = ({
     setState,
     keys,
     label,
-    max = undefined,
+    max,
 }: {
     state: any;
     setState: (value: any) => void;
     keys: string[];
     label: string;
-    max?: number | undefined;
+    max?: number;
 }) => {
     return (
         <Input

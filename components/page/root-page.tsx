@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 const version = "24022801";
 
 export const Page = () => {
-    const [status, setStatus] = useState<ibrStatus | undefined>();
+    const [status, setStatus] = useState<ibrStatus>();
     useEffect(() => {
         async function f() {
             try {

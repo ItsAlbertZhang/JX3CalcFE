@@ -6,7 +6,6 @@ use std::io::Cursor;
 use std::os::windows::process::CommandExt;
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::Duration;
 use tokio::fs::File;
 use tokio::io;
 #[cfg(windows)]
@@ -22,11 +21,11 @@ async fn config(body: String) -> bool {
 }
 
 async fn stop() -> () {
-    let client = reqwest::ClientBuilder::new()
-        .timeout(Duration::from_secs(1))
-        .build()
-        .unwrap();
-    let _ = client.get("http://127.0.0.1:12898/stop").send().await;
+    let client = reqwest::Client::new();
+    match client.get("http://127.0.0.1:12898/stop").send().await {
+        Ok(_) => println!("Server stopped."),
+        Err(_) => println!("Server not running."),
+    }
 }
 
 async fn download() -> Result<PathBuf, Box<dyn std::error::Error>> {
