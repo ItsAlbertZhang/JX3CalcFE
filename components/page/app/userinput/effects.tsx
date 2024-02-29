@@ -1,10 +1,12 @@
 "use client";
-
-import { ClsUserInput } from "@/components/definitions";
-
+// my libraries
+import { ContextUserinput } from "@/components/context";
+// third party libraries
 import { CheckboxGroup, Checkbox } from "@nextui-org/react";
+import { useContext } from "react";
 
-export const Effects = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
+export const Effects = () => {
+    const { value, setValue } = useContext(ContextUserinput);
     const effects = [
         ["大附魔·腰", "大附魔·腕", "大附魔·鞋"],
         ["套装·技能", "套装·特效", "武器·水特效", "家园酒·加速"],
@@ -13,18 +15,18 @@ export const Effects = ({ state, setState }: { state: ClsUserInput; setState: (v
         <div className="flex justify-center items-center h-full gap-8">
             {effects.map((col, idx) => {
                 return (
-                    <CheckboxGroup key={"effects" + idx} className="items-center" value={state.effects}>
+                    <CheckboxGroup key={"effects" + idx} className="items-center" value={value.effects}>
                         {col.map((str) => {
                             return (
                                 <Checkbox
                                     key={str}
                                     value={str}
                                     onValueChange={(isSelected: boolean) => {
-                                        setState({
-                                            ...state,
+                                        setValue({
+                                            ...value,
                                             effects: isSelected
-                                                ? [...state.effects, str]
-                                                : state.effects.filter((item) => item !== str),
+                                                ? [...value.effects, str]
+                                                : value.effects.filter((item) => item !== str),
                                         });
                                     }}
                                 >

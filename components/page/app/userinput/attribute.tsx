@@ -1,10 +1,11 @@
-// Page Component: UserInput: Attribute
+// Page Component: Userinput: Attribute
 "use client";
-
+// child components simple
 import { validateInteger, IntegerInput } from "./base";
-
-import { ClsUserInputAttrData, ClsUserInput } from "@/components/definitions";
+// my libraries
 import { fetchJson, readClipboard } from "@/components/actions";
+import { ContextUserinput } from "@/components/context";
+import { ClsUserinputAttrData } from "@/components/definitions";
 
 import {
     Button,
@@ -16,15 +17,15 @@ import {
     ModalFooter,
     useDisclosure,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const AttrInputArea = ({
     data,
-    setDataAndState,
+    setDataAndContext,
     onOpen,
 }: {
-    data: ClsUserInputAttrData;
-    setDataAndState: (value: ClsUserInputAttrData) => void;
+    data: ClsUserinputAttrData;
+    setDataAndContext: (value: ClsUserinputAttrData) => void;
     onOpen: () => void;
 }) => {
     function importFromJX3BOXDirect(event: React.MouseEvent<HTMLButtonElement>) {
@@ -33,7 +34,7 @@ const AttrInputArea = ({
             const str = await readClipboard();
             const data = await importFromJX3BOX(str);
             if (data !== undefined) {
-                setDataAndState(data);
+                setDataAndContext(data);
             }
         }
         f();
@@ -46,13 +47,13 @@ const AttrInputArea = ({
                 </Button>
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={["Vitality", "Strength", "Agility", "Spirit", "Spunk"]}
                     label="基础属性"
                 />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={[
                         "PhysicsAttackPowerBase",
                         "SolarAttackPowerBase",
@@ -64,7 +65,7 @@ const AttrInputArea = ({
                 />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={[
                         "PhysicsCriticalStrike",
                         "SolarCriticalStrike",
@@ -76,7 +77,7 @@ const AttrInputArea = ({
                 />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={[
                         "PhysicsCriticalDamagePower",
                         "SolarCriticalDamagePower",
@@ -88,7 +89,7 @@ const AttrInputArea = ({
                 />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={[
                         "PhysicsOvercomeBase",
                         "SolarOvercomeBase",
@@ -98,18 +99,18 @@ const AttrInputArea = ({
                     ]}
                     label="基础破防等级"
                 />
-                <IntegerInput state={data} setState={setDataAndState} keys={["Haste"]} label="急速等级" />
-                <IntegerInput state={data} setState={setDataAndState} keys={["Strain"]} label="无双等级" />
-                <IntegerInput state={data} setState={setDataAndState} keys={["SurplusValue"]} label="破招" />
+                <IntegerInput state={data} setState={setDataAndContext} keys={["Haste"]} label="急速等级" />
+                <IntegerInput state={data} setState={setDataAndContext} keys={["Strain"]} label="无双等级" />
+                <IntegerInput state={data} setState={setDataAndContext} keys={["SurplusValue"]} label="破招" />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={["MeleeWeaponDamage"]}
                     label="武器伤害(最低)"
                 />
                 <IntegerInput
                     state={data}
-                    setState={setDataAndState}
+                    setState={setDataAndContext}
                     keys={["MeleeWeaponDamageMax"]}
                     label="武器伤害(最高)"
                 />
@@ -171,13 +172,13 @@ async function importFromJX3BOX(input: string) {
     let body = await fetchJson(url);
     if (body !== undefined && body.code === 0) {
         // 额外处理武器伤害
-        const data = body.data.data as ClsUserInputAttrData;
+        const data = body.data.data as ClsUserinputAttrData;
         data.MeleeWeaponDamageMax = data.MeleeWeaponDamage + data.MeleeWeaponDamageRand;
         return data;
     }
 }
 
-const AttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUserInputAttrData) => void }) => {
+const AttrModalContent = ({ setDataAndContext }: { setDataAndContext: (value: ClsUserinputAttrData) => void }) => {
     const [url, setUrl] = useState("");
     return (
         <ModalContent>
@@ -189,7 +190,7 @@ const AttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUse
                 async function importFromJX3BOXAction() {
                     const res = await importFromJX3BOX(url);
                     if (res !== undefined) {
-                        setDataAndState(res);
+                        setDataAndContext(res);
                     }
                     onClose();
                 }
@@ -228,28 +229,29 @@ const AttrModalContent = ({ setDataAndState }: { setDataAndState: (value: ClsUse
     );
 };
 
-export const Attribute = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
-    const [data, setData] = useState<ClsUserInputAttrData>(new ClsUserInputAttrData());
+export const Attribute = () => {
+    const [data, setData] = useState<ClsUserinputAttrData>(new ClsUserinputAttrData());
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { value, setValue } = useContext(ContextUserinput);
 
-    function setDataAndState(value: ClsUserInputAttrData) {
+    function setDataAndContext(data: ClsUserinputAttrData) {
         // 额外处理武器伤害
-        value.MeleeWeaponDamageRand = value.MeleeWeaponDamageMax - value.MeleeWeaponDamage;
-        setData(value);
-        setState({
-            ...state,
+        data.MeleeWeaponDamageRand = data.MeleeWeaponDamageMax - data.MeleeWeaponDamage;
+        setData(data);
+        setValue({
+            ...value,
             attribute: {
                 method: "从数据导入",
-                data: value,
+                data: data,
             },
         });
     }
 
     return (
         <div className="flex flex-col w-full justify-center items-center gap-4">
-            <AttrInputArea data={data} setDataAndState={setDataAndState} onOpen={onOpen} />
+            <AttrInputArea data={data} setDataAndContext={setDataAndContext} onOpen={onOpen} />
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm" placement="center" backdrop="blur">
-                <AttrModalContent setDataAndState={setDataAndState} />
+                <AttrModalContent setDataAndContext={setDataAndContext} />
             </Modal>
         </div>
     );

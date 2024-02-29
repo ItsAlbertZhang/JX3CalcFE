@@ -1,8 +1,8 @@
 "use client";
-
+// my libraries
 import { isApp } from "@/components/actions";
-
-import { Button, Link, Modal, ModalContent, ModalHeader, ModalBody, Spacer, useDisclosure } from "@nextui-org/react";
+// third party libraries
+import { Button, Link, Modal, ModalContent, ModalBody, ModalHeader, Spacer, useDisclosure } from "@nextui-org/react";
 import { useEffect } from "react";
 
 const GithubIcon = () => {

@@ -1,19 +1,20 @@
 "use client";
-
+// child components simple
 import { Loading } from "./loading";
-import { fetchServerStatus, Setting } from "./setting";
+import { Setting, fetchServerStatus } from "./setting";
 import { Updating } from "./updating";
-
+// child components complex
 import { App } from "./app/root-app";
-
-import { iResponseStatus } from "@/components/definitions";
-
+// my libraries
+import { ContextBRStatus } from "@/components/context";
+import { ibrStatus } from "@/components/definitions";
+// third party libraries
 import { useEffect, useState } from "react";
 
 const version = "24022801";
 
 export const Page = () => {
-    const [status, setStatus] = useState<iResponseStatus | undefined>();
+    const [status, setStatus] = useState<ibrStatus | undefined>();
     useEffect(() => {
         async function f() {
             try {
@@ -33,7 +34,11 @@ export const Page = () => {
     } else if (status.data.version != version) {
         ret = <Updating />;
     } else {
-        ret = <App status={status.data} />;
+        ret = (
+            <ContextBRStatus.Provider value={status.data}>
+                <App />
+            </ContextBRStatus.Provider>
+        );
     }
     return <div className="flex justify-center min-h-screen w-full">{ret}</div>;
 };

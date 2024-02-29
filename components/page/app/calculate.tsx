@@ -1,7 +1,7 @@
 "use client";
-
-import { iResponseBase, iResponseString, iResponseQueryDps } from "@/components/definitions";
-
+// my libraries
+import { ibrBase, ibrString, ibrQueryDps } from "@/components/definitions";
+// third party libraries
 import { Button } from "@nextui-org/react";
 import { useState } from "react";
 
@@ -14,13 +14,13 @@ async function create(input: object) {
     console.log(JSON.stringify(input));
     const data = await response.json();
     console.log(data);
-    return data as iResponseString;
+    return data as ibrString;
 }
 
 async function queryDps(id: string) {
     const response = await fetch(`http://${window.location.hostname}:12897/query/${id}/dps`);
     const data = await response.json();
-    return data as iResponseBase;
+    return data as ibrBase;
 }
 
 export const Calculate = ({
@@ -28,7 +28,7 @@ export const Calculate = ({
     setDPS,
 }: {
     userinput: object;
-    setDPS: (value: iResponseQueryDps["data"]) => void;
+    setDPS: (value: ibrQueryDps["data"]) => void;
 }) => {
     const [clickDisabled, setClickDisabled] = useState(false);
     async function handleClick() {
@@ -41,7 +41,7 @@ export const Calculate = ({
                 while (!complete) {
                     const response = await queryDps(id);
                     if (response.status === 0) {
-                        const data = response.data as iResponseQueryDps["data"];
+                        const data = response.data as ibrQueryDps["data"];
                         complete = data.complete;
                         setDPS(data);
                     }

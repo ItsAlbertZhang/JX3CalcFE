@@ -1,5 +1,5 @@
 "use client";
-
+// third party libraries
 import { Spacer, Spinner } from "@nextui-org/react";
 
 export const Updating = () => {

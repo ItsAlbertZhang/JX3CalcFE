@@ -1,9 +1,15 @@
-export interface iResponseBase {
+/**
+ * @file To define the interfaces and classes.
+ */
+
+// ibr: interface backend response (后端返回数据接口)
+
+export interface ibrBase {
     status: number;
     data: any;
 }
 
-export interface iResponseStatus extends iResponseBase {
+export interface ibrStatus extends ibrBase {
     data: {
         version: string;
         userinput: {
@@ -15,11 +21,11 @@ export interface iResponseStatus extends iResponseBase {
     };
 }
 
-export interface iResponseString extends iResponseBase {
+export interface ibrString extends ibrBase {
     data: string;
 }
 
-export interface iResponseQueryDps extends iResponseBase {
+export interface ibrQueryDps extends ibrBase {
     data: {
         complete: boolean;
         current: number;
@@ -34,7 +40,9 @@ export interface iResponseQueryDps extends iResponseBase {
     };
 }
 
-export class ClsUserInputAttrData {
+// Cls: class
+
+export class ClsUserinputAttrData {
     Vitality = 0;
     Strength = 0;
     Agility = 0;
@@ -69,7 +77,7 @@ export class ClsUserInputAttrData {
     // MeleeWeaponDamageMax 需要额外的处理计算 ( = MeleeWeaponDamage + MeleeWeaponDamageRand)
 }
 
-export class ClsUserInput {
+export class ClsUserinput {
     player = "焚影圣诀";
     delayNetwork = 45;
     delayKeyboard = 20;
@@ -77,7 +85,7 @@ export class ClsUserInput {
     fightCount = 100;
     attribute = {
         method: "从数据导入",
-        data: new ClsUserInputAttrData(),
+        data: new ClsUserinputAttrData(),
     };
     effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"];
 }

@@ -1,8 +1,8 @@
 "use client";
-
+// my libraries
 import { config, isApp } from "@/components/actions";
-import { iResponseStatus } from "@/components/definitions";
-
+import { ibrStatus } from "@/components/definitions";
+// third party libraries
 import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
@@ -10,14 +10,14 @@ export async function fetchServerStatus() {
     console.log("fetching server status...");
     try {
         const response = await fetch(`http://${window.location.hostname}:12897/status`);
-        return (await response.json()) as iResponseStatus;
+        return (await response.json()) as ibrStatus;
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return fetchServerStatus();
     }
 }
 
-export const Setting = ({ setStatus }: { setStatus: (value: iResponseStatus) => void }) => {
+export const Setting = ({ setStatus }: { setStatus: (value: ibrStatus) => void }) => {
     const [app, setApp] = useState(false);
     async function handleOpen() {
         if (await config()) {

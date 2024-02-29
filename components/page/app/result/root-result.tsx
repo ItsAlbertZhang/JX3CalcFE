@@ -1,9 +1,8 @@
 "use client";
-
-import { iResponseQueryDps } from "@/components/definitions";
-
+// my libraries
+import { ibrQueryDps } from "@/components/definitions";
+// third party libraries
 import { Progress } from "@nextui-org/react";
-
 import {
     ComposedChart,
     Line,
@@ -24,7 +23,7 @@ console.error = (...args: any) => {
     error(...args);
 };
 
-function Chart({ dps }: { dps: iResponseQueryDps["data"] | undefined }) {
+function Chart({ dps }: { dps: ibrQueryDps["data"] | undefined }) {
     if (!dps) {
         return <></>;
     }
@@ -81,7 +80,7 @@ function Chart({ dps }: { dps: iResponseQueryDps["data"] | undefined }) {
     );
 }
 
-export const Result = ({ dps }: { dps: iResponseQueryDps["data"] | undefined }) => {
+export const Result = ({ dps }: { dps: ibrQueryDps["data"] | undefined }) => {
     const p = dps ? (
         <Progress aria-label="计算中..." value={dps ? (dps.current * 100) / dps.total : 50} className="max-w-md" />
     ) : (

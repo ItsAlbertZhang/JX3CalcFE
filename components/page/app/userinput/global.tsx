@@ -1,20 +1,23 @@
 "use client";
-
+// child components simple
 import { IntegerInput } from "./base";
-
-import { iResponseStatus, ClsUserInput } from "@/components/definitions";
-
+// my libraries
+import { ContextBRStatus, ContextUserinput } from "@/components/context";
+import { ibrStatus } from "@/components/definitions";
+// third party libraries
 import { Select, SelectItem } from "@nextui-org/react";
+import { useContext } from "react";
 
-const Player = ({ state, setState }: { state: ClsUserInput; setState: (value: ClsUserInput) => void }) => {
+const Player = () => {
+    const { value, setValue } = useContext(ContextUserinput);
     const player = ["焚影圣诀"];
     return (
         <Select
             size="sm"
             label="心法"
-            defaultSelectedKeys={[state.player]}
+            defaultSelectedKeys={[value.player]}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                setState({ ...state, player: e.target.value });
+                setValue({ ...value, player: e.target.value });
             }}
         >
             {player.map((item) => (
@@ -26,44 +29,37 @@ const Player = ({ state, setState }: { state: ClsUserInput; setState: (value: Cl
     );
 };
 
-export const Global = ({
-    status,
-    state,
-    setState,
-}: {
-    status: iResponseStatus["data"]["userinput"];
-    state: ClsUserInput;
-    setState: (value: ClsUserInput) => void;
-}) => {
-    const cn = "flex justify-center items-center h-full gap-4";
+export const Global = () => {
+    const { value, setValue } = useContext(ContextUserinput);
+    const status = (useContext(ContextBRStatus) as ibrStatus["data"]).userinput;
     return (
         <div className="flex flex-col w-full justify-center items-center gap-4">
-            <Player state={state} setState={setState} />
+            <Player />
             <div className="grid grid-cols-2 gap-4 w-full items-center">
                 <IntegerInput
-                    state={state}
-                    setState={setState}
+                    state={value}
+                    setState={setValue}
                     keys={["delayNetwork"]}
                     label="网络延迟"
                     max={status.maxDelayNetwork}
                 />
                 <IntegerInput
-                    state={state}
-                    setState={setState}
+                    state={value}
+                    setState={setValue}
                     keys={["delayKeyboard"]}
                     label="按键延迟"
                     max={status.maxDelayKeyboard}
                 />
                 <IntegerInput
-                    state={state}
-                    setState={setState}
+                    state={value}
+                    setState={setValue}
                     keys={["fightTime"]}
                     label="战斗时间"
                     max={status.maxFightTime}
                 />
                 <IntegerInput
-                    state={state}
-                    setState={setState}
+                    state={value}
+                    setState={setValue}
                     keys={["fightCount"]}
                     label="计算次数"
                     max={status.maxFightCount}
