@@ -1,9 +1,10 @@
-name: "beta"
+name: "publish"
 
 on:
     push:
         branches:
             - beta # beta 分支 push 时触发
+            - main # main 分支 push 时触发
 
 jobs:
     publish-tauri:

@@ -11,7 +11,7 @@ import { ibrStatus } from "@/components/definitions";
 // third party libraries
 import { useEffect, useState } from "react";
 
-const version = "24022801";
+const version = "v1.0.0";
 
 export const Page = () => {
     const [status, setStatus] = useState<ibrStatus>();
