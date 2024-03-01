@@ -40,6 +40,32 @@ export interface ibrQueryDps extends ibrBase {
     };
 }
 
+export interface ibrQueryDamageAnalysis extends ibrBase {
+    data: {
+        damageMax: number;
+        damageMin: number;
+        id: number;
+        level: number;
+        name: string;
+        proportion: number;
+    }[];
+}
+
+export interface ibrQueryDamageList extends ibrBase {
+    data: {
+        criticalRate: number;
+        damageBase: number;
+        damageCritical: number;
+        damageExcept: number;
+        isCritical: boolean;
+        id: number;
+        level: number;
+        name: string;
+        time: number;
+        type: number;
+    }[][];
+}
+
 // Cls: class
 
 export class ClsUserinputAttrData {
