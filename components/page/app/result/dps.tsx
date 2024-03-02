@@ -1,5 +1,6 @@
 "use client";
 // my libraries
+import { fetchGetJson } from "@/components/actions";
 import { ibrBase, ibrQueryDps } from "@/components/definitions";
 // third party libraries
 import { Card, CardBody, Progress } from "@nextui-org/react";
@@ -43,9 +44,7 @@ const DPSChart = ({ dps }: { dps: ibrQueryDps["data"] }) => {
 };
 
 async function queryDps(id: string) {
-    const response = await fetch(`http://${window.location.hostname}:12897/query/${id}/dps`);
-    const data = await response.json();
-    return data as ibrBase;
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/dps` })) as ibrBase;
 }
 
 export const DPS = ({ status, setStatus }: { status: string; setStatus: (value: string) => void }) => {

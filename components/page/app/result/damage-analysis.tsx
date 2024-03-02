@@ -1,5 +1,6 @@
 "use client";
 // my libraries
+import { fetchGetJson } from "@/components/actions";
 import { ibrBase, ibrQueryDamageAnalysis } from "@/components/definitions";
 // third party libraries
 import { Chip, ScrollShadow, Switch } from "@nextui-org/react";
@@ -44,9 +45,7 @@ const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["d
 };
 
 async function queryDA(id: string) {
-    const response = await fetch(`http://${window.location.hostname}:12897/query/${id}/damage-analysis`);
-    const data = await response.json();
-    return data as ibrBase;
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-analysis` })) as ibrBase;
 }
 
 function sortDA(a: ibrQueryDamageAnalysis["data"][0], b: ibrQueryDamageAnalysis["data"][0]) {

@@ -1,5 +1,6 @@
 "use client";
 // my libraries
+import { fetchPostJson } from "@/components/actions";
 import { ContextUserinput } from "@/components/context";
 import { ibrString } from "@/components/definitions";
 // third party libraries
@@ -7,12 +8,8 @@ import { Button } from "@nextui-org/react";
 import { useContext } from "react";
 
 async function create(input: object) {
-    const response = await fetch(`http://${window.location.hostname}:12897/create`, {
-        method: "POST",
-        body: JSON.stringify(input),
-    });
     console.log(JSON.stringify(input));
-    const data = await response.json();
+    const data = await fetchPostJson({ port: 12897, path: "/create", body: input });
     console.log(data);
     return data as ibrString;
 }

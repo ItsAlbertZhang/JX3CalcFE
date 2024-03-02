@@ -1,5 +1,6 @@
 "use client";
 // my libraries
+import { fetchGetJson } from "@/components/actions";
 import { ibrBase, ibrQueryDamageList } from "@/components/definitions";
 // third party libraries
 import { Chip } from "@nextui-org/react";
@@ -51,9 +52,7 @@ const DLChart = ({ points }: { points: Point[] }) => {
 };
 
 async function queryDL(id: string) {
-    const response = await fetch(`http://${window.location.hostname}:12897/query/${id}/damage-list`);
-    const data = await response.json();
-    return data as ibrBase;
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-list` })) as ibrBase;
 }
 
 function addValue(point: Point, valueIndex: number, value: number) {

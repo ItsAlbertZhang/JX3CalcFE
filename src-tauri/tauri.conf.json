@@ -21,7 +21,7 @@
             },
             "http": {
                 "request": true,
-                "scope": ["http://cms.jx3box.com/*"]
+                "scope": ["https://cms.jx3box.com/*"]
             }
         },
         "bundle": {

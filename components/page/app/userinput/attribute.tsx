@@ -3,7 +3,7 @@
 // child components simple
 import { validateInteger, IntegerInput } from "./base";
 // my libraries
-import { fetchJson, readClipboard } from "@/components/actions";
+import { fetchGetJson, readClipboard } from "@/components/actions";
 import { ContextUserinput } from "@/components/context";
 import { ClsUserinputAttrData } from "@/components/definitions";
 
@@ -150,18 +150,18 @@ const IconPaste = () => {
 
 async function importFromJX3BOX(input: string) {
     input = input.trimEnd(); // 去除末尾空格, 换行符等
-    let url: string;
+    let path: string;
     // 验证输入
     if (input === "") {
         return;
     } else if (validateInteger(input)) {
         // 输入是配装 ID
-        url = `http://cms.jx3box.com/api/cms/app/pz/${input}`;
+        path = `/api/cms/app/pz/${input}`;
     } else if (input.includes("/")) {
         // 输入可能是配装 URL
         const pzid = input.substring(input.lastIndexOf("/") + 1);
         if (validateInteger(pzid)) {
-            url = `http://cms.jx3box.com/api/cms/app/pz/${pzid}`;
+            path = `/api/cms/app/pz/${pzid}`;
         } else {
             return;
         }
@@ -169,7 +169,7 @@ async function importFromJX3BOX(input: string) {
         return;
     }
     // 请求数据
-    let body = await fetchJson(url);
+    let body = await fetchGetJson({ host: "cms.jx3box.com", path });
     if (body !== undefined && body.code === 0) {
         // 额外处理武器伤害
         const data = body.data.data as ClsUserinputAttrData;
