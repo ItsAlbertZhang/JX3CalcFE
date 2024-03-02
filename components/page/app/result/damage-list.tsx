@@ -95,11 +95,16 @@ export const DamageList = ({ status }: { status: string }) => {
                 }, 1500);
             }
         }
-        const idTimeout = setTimeout(() => {
-            fetchData();
-        }, 500);
+        let idTimeout: NodeJS.Timeout | undefined;
+        if (status !== "waiting") {
+            idTimeout = setTimeout(() => {
+                fetchData();
+            }, 500);
+        }
         return () => {
-            clearTimeout(idTimeout);
+            if (idTimeout) {
+                clearTimeout(idTimeout);
+            }
         };
     }, [status]);
 
