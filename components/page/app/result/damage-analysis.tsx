@@ -8,15 +8,38 @@ import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
 
 const BAR_SIZE = 30;
-const COLOR_DARK = "#8F6363";
-const COLOR_LIGHT = "#DDDDDD";
+const COLOR_BAR = "#964824";
+const COLOR_TEXT = "#DDDDDD";
+
+function getRoundedRectPath(x: number, y: number, width: number, height: number, radius: number) {
+    return `
+        M ${x + radius}, ${y}
+        h ${width - 2 * radius}
+        a ${radius},${radius} 0 0 1 ${radius},${radius}
+        v ${height - 2 * radius}
+        a ${radius},${radius} 0 0 1 ${-radius},${radius}
+        h ${-width + 2 * radius}
+        a ${radius},${radius} 0 0 1 ${-radius},${-radius}
+        v ${-height + 2 * radius}
+        a ${radius},${radius} 0 0 1 ${radius},${-radius}
+        z
+    `;
+}
+
+const CustomBar = (props: any) => {
+    const { fill, x, y, width, height } = props;
+    const maxRadius = Math.min(width, height) / 2;
+    const radius = Math.min(height / 3, maxRadius);
+
+    return <path d={getRoundedRectPath(x, y, width, height, radius)} stroke="none" fill={fill} />;
+};
 
 const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["data"] }) => {
     return (
         <ScrollShadow hideScrollBar className="w-full h-full">
             <ResponsiveContainer width="100%" height={damageAnalysis.length * BAR_SIZE}>
                 <BarChart layout="vertical" data={damageAnalysis}>
-                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_DARK} />
+                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_BAR} shape={<CustomBar />} />
                     <XAxis type="number" hide domain={[0, damageAnalysis[0].proportion * 1.2]} />
                     <YAxis
                         yAxisId="left"
@@ -25,7 +48,7 @@ const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["d
                         axisLine={false}
                         tickLine={false}
                         dataKey="name"
-                        tick={{ fontSize: BAR_SIZE / 2, fill: COLOR_LIGHT }}
+                        tick={{ fontSize: BAR_SIZE / 2, fill: COLOR_TEXT }}
                     />
                     <YAxis
                         yAxisId="right"
@@ -35,7 +58,7 @@ const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["d
                         tickLine={false}
                         orientation="right"
                         dataKey="proportion"
-                        tick={{ fontSize: BAR_SIZE / 2, fill: COLOR_LIGHT }}
+                        tick={{ fontSize: BAR_SIZE / 2, fill: COLOR_TEXT }}
                         tickFormatter={(value: number) => (value * 100).toFixed(2) + "%"}
                     />
                 </BarChart>
@@ -89,7 +112,7 @@ export const DamageAnalysis = ({ status }: { status: string }) => {
         if (status !== "waiting") {
             idTimeout = setTimeout(() => {
                 fetchData();
-            }, 500);
+            }, 500); // 定时函数. 500ms 后执行一次 fetchData. 如果失败, fetchData 函数内部会每隔 500ms 再次重试.
         }
         return () => {
             if (idTimeout) {
