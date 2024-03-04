@@ -55,7 +55,7 @@ export const WebDownload = () => {
                             >
                                 下载
                             </Button>
-                            <div className="flex px-4 pt-0 pb-4 justify-between items-center w-full">
+                            <div className="w-full flex px-4 pt-0 pb-4 justify-between items-center">
                                 <Button
                                     variant="light"
                                     isIconOnly

@@ -1,6 +1,6 @@
 "use client";
 // my libraries
-import { config, isApp } from "@/components/actions";
+import { config, fetchGetJson, isApp } from "@/components/actions";
 import { ibrStatus } from "@/components/definitions";
 // third party libraries
 import { Button } from "@nextui-org/react";
@@ -9,8 +9,7 @@ import { useEffect, useState } from "react";
 export async function fetchServerStatus() {
     console.log("fetching server status...");
     try {
-        const response = await fetch(`http://${window.location.hostname}:12897/status`);
-        return (await response.json()) as ibrStatus;
+        return (await fetchGetJson({ port: 12897, path: "/status" })) as ibrStatus;
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return fetchServerStatus();
@@ -44,5 +43,5 @@ export const Setting = ({ setStatus }: { setStatus: (value: ibrStatus) => void }
         ret = <p>无法在网页端配置</p>;
     }
 
-    return <div className="flex flex-col w-full justify-center items-center gap-4">{ret}</div>;
+    return <div className="flex flex-col justify-center items-center gap-4">{ret}</div>;
 };

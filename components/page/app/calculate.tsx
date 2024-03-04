@@ -1,36 +1,39 @@
 "use client";
 // my libraries
-import { ContextUserinput } from "@/components/context";
+import { createTask } from "@/components/actions";
+import { ContextUserinput, ContextUserinputLatest } from "@/components/context";
 import { ibrString } from "@/components/definitions";
 // third party libraries
 import { Button } from "@nextui-org/react";
 import { useContext } from "react";
 
-async function create(input: object) {
-    const response = await fetch(`http://${window.location.hostname}:12897/create`, {
-        method: "POST",
-        body: JSON.stringify(input),
-    });
-    console.log(JSON.stringify(input));
-    const data = await response.json();
-    console.log(data);
-    return data as ibrString;
-}
-
-export const Calculate = ({ status, setStatus }: { status: string; setStatus: (value: string) => void }) => {
+export const Calculate = ({
+    id,
+    setID,
+    calculating,
+    setCalculating,
+}: {
+    id: string | undefined;
+    setID: (value: string) => void;
+    calculating: boolean;
+    setCalculating: (value: boolean) => void;
+}) => {
     const userinput = useContext(ContextUserinput).value;
+    const setLatest = useContext(ContextUserinputLatest).setValue;
     async function handleClick() {
         try {
-            const response = await create(userinput);
+            const response = (await createTask(userinput)) as ibrString;
             if (response.status === 0) {
-                setStatus(response.data);
+                setID(response.data);
+                setCalculating(true);
+                setLatest(userinput);
             }
         } catch (error) {
             console.error(error);
         }
     }
     return (
-        <Button isDisabled={!["init", "waiting"].includes(status)} onClick={handleClick} color="primary">
+        <Button isDisabled={calculating} onClick={handleClick} color="primary">
             计算
         </Button>
     );

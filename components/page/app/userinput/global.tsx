@@ -33,9 +33,9 @@ export const Global = () => {
     const { value, setValue } = useContext(ContextUserinput);
     const status = (useContext(ContextBRStatus) as ibrStatus["data"]).userinput;
     return (
-        <div className="flex flex-col w-full justify-center items-center gap-4">
+        <div className="w-full flex flex-col justify-center items-center gap-4">
             <Player />
-            <div className="grid grid-cols-2 gap-4 w-full items-center">
+            <div className="w-full grid grid-cols-2 gap-4 items-center">
                 <IntegerInput
                     state={value}
                     setState={setValue}
