@@ -10,4 +10,8 @@ export const ContextUserinput = createContext<{ value: ClsUserinput; setValue: (
     value: new ClsUserinput(),
     setValue: () => {},
 });
+export const ContextUserinputLatest = createContext<{ value: ClsUserinput; setValue: (value: ClsUserinput) => void }>({
+    value: new ClsUserinput(),
+    setValue: () => {},
+});
 export const ContextBRStatus = createContext<ibrStatus["data"] | undefined>(undefined);

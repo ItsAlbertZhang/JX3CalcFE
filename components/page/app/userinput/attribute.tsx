@@ -41,7 +41,7 @@ const AttrInputArea = ({
     }
     return (
         <>
-            <div className="grid grid-cols-2 gap-4 w-full items-center sm:grid-cols-3">
+            <div className="w-full grid grid-cols-2 gap-4 items-center sm:grid-cols-3">
                 <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect} className="col-span-2">
                     从 JX3BOX 导入数据
                 </Button>
@@ -248,7 +248,7 @@ export const Attribute = () => {
     }
 
     return (
-        <div className="flex flex-col w-full justify-center items-center gap-4">
+        <div className="w-full flex flex-col justify-center items-center gap-4">
             <AttrInputArea data={data} setDataAndContext={setDataAndContext} onOpen={onOpen} />
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm" placement="center" backdrop="blur">
                 <AttrModalContent setDataAndContext={setDataAndContext} />

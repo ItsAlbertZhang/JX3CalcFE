@@ -12,7 +12,7 @@ export const Effects = () => {
         ["套装·技能", "套装·特效", "武器·水特效", "家园酒·加速"],
     ];
     return (
-        <div className="flex justify-center items-center h-full gap-8">
+        <div className="flex justify-center items-center gap-8">
             {effects.map((col, idx) => {
                 return (
                     <CheckboxGroup key={"effects" + idx} className="items-center" value={value.effects}>

@@ -40,5 +40,11 @@ export const Page = () => {
             </ContextBRStatus.Provider>
         );
     }
-    return <div className="flex justify-center min-h-screen w-full 2xl:max-h-screen 2xl:max-w-[100vw]">{ret}</div>;
+
+    const cn =
+        "flex justify-center items-center p-6 m-auto " +
+        "w-full md:w-4/5 lg:w-2/3 xl:w-1/2 2xl:w-full " +
+        "min-h-screen 2xl:max-h-screen";
+
+    return <div className={cn}>{ret}</div>;
 };

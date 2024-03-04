@@ -14,6 +14,23 @@ export async function isApp() {
     }
 }
 
+export async function readClipboard() {
+    let ret = "";
+    try {
+        const text = await readText();
+        if (text !== null) {
+            ret = text;
+        }
+    } catch {
+        try {
+            ret = await navigator.clipboard.readText();
+        } catch {
+            console.error("getClipboard failed");
+        }
+    }
+    return ret;
+}
+
 export async function config() {
     try {
         const result = await open({ directory: true, multiple: false });
@@ -84,19 +101,13 @@ export async function fetchPostJson({
     return ret;
 }
 
-export async function readClipboard() {
-    let ret = "";
-    try {
-        const text = await readText();
-        if (text !== null) {
-            ret = text;
-        }
-    } catch {
-        try {
-            ret = await navigator.clipboard.readText();
-        } catch {
-            console.error("getClipboard failed");
-        }
-    }
-    return ret;
+export async function createTask(input: object) {
+    console.log(JSON.stringify(input));
+    const data = await fetchPostJson({ port: 12897, path: "/create", body: input });
+    console.log(data);
+    return data;
+}
+
+export async function queryDps(id: string) {
+    return await fetchGetJson({ port: 12897, path: `/query/${id}/dps` });
 }

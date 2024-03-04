@@ -4,6 +4,7 @@ import { fetchGetJson } from "@/components/actions";
 import { ibrBase, ibrQueryDamageList } from "@/components/definitions";
 // third party libraries
 import { Chip, Slider, SliderValue } from "@nextui-org/react";
+import { motion } from "framer-motion";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
 
@@ -93,7 +94,7 @@ function pointsFilter(points: Point[], range: number[]) {
     return result;
 }
 
-export const DamageList = ({ status }: { status: string }) => {
+export const DamageList = ({ id }: { id: string }) => {
     // status 为 "init" 的逻辑处理位于 App 组件中, 若 status 为 "init", 则 DPS 组件不会被渲染
     const [dl, setDL] = useState<ibrQueryDamageList["data"]>();
     const [points, setPoints] = useState<Point[]>([]);
@@ -113,8 +114,8 @@ export const DamageList = ({ status }: { status: string }) => {
             return max;
         }
         async function fetchData() {
-            // status 为 "waiting" 的逻辑处理位于上层 useEffect 中, 若 status 为 "waiting", 则此函数不会被执行
-            const response = await queryDL(status);
+            // id 为 undefined 的逻辑处理位于 App 组件中, 若 id 为 undefined, 则 DPS 组件不会被渲染
+            const response = await queryDL(id);
             if (response.status === 0) {
                 const data = response.data as ibrQueryDamageList["data"];
                 const max = getMaxValue(data);
@@ -129,7 +130,7 @@ export const DamageList = ({ status }: { status: string }) => {
             }
         }
         let idTimeout: NodeJS.Timeout | undefined;
-        if (status !== "waiting") {
+        if (id.length > 0) {
             idTimeout = setTimeout(() => {
                 fetchData();
             }, 500); // 定时函数. 500ms 后执行一次 fetchData. 如果失败, fetchData 函数内部会每隔 500ms 再次重试.
@@ -139,15 +140,20 @@ export const DamageList = ({ status }: { status: string }) => {
                 clearTimeout(idTimeout);
             }
         };
-    }, [status]);
+    }, [id]);
 
     if (!dl) {
-        return <></>;
+        return <div className="basis-full"></div>;
     }
 
     return (
-        <div className="flex flex-col justify-center items-center w-full h-full gap-2">
-            <div className="flex flex-col justify-center items-center w-full h-min gap-4">
+        <motion.div
+            className="basis-full flex flex-col gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+        >
+            <div className="w-full h-min flex flex-col justify-center items-center gap-4">
                 <Chip size="lg" radius="sm">
                     DPS - 时间曲线
                 </Chip>
@@ -166,9 +172,9 @@ export const DamageList = ({ status }: { status: string }) => {
                     }}
                 />
             </div>
-            <div className="w-full h-full min-h-[30vh]">
+            <div className="basis-full min-h-[30vh]">
                 <DLChart points={pointsFilter(points, sliderValue as number[])} />
             </div>
-        </div>
+        </motion.div>
     );
 };

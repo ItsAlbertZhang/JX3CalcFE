@@ -1,14 +1,16 @@
 "use client";
 // my libraries
-import { fetchGetJson } from "@/components/actions";
+import { queryDps } from "@/components/actions";
+import { Z_99, calcOneSideConfidenceInterval, solveSampleSize } from "@/components/common";
 import { ibrBase, ibrQueryDps } from "@/components/definitions";
+import { AttributeBenefit, AttributeBenefitNotAvailable } from "./attribute-benefit";
 // third party libraries
+import { motion } from "framer-motion";
 import { Card, CardBody, Progress, Tooltip } from "@nextui-org/react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { ComposedChart, Line, Area, XAxis, YAxis, Legend, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react";
 
-const Z_99 = 2.576;
 const INTERVAL_COUNT_PER_SIDE = 32;
 const RANGE_PER_SIDE = 0.01;
 const COLOR_BAR = "#60C0D8";
@@ -55,18 +57,6 @@ const DPSChart = ({ dps }: { dps: ibrQueryDps["data"] }) => {
     );
 };
 
-async function queryDps(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/dps` })) as ibrBase;
-}
-
-function calcOneSideConfidenceInterval(sd: number, n: number, z: number) {
-    return (sd * z) / Math.sqrt(n);
-}
-
-function solveSampleSize(oneSideConfidenceInterval: number, sd: number, z: number) {
-    return Math.ceil(Math.pow((z * sd) / oneSideConfidenceInterval, 2));
-}
-
 const DPSResult = ({ avg, sd, n }: { avg: number; sd: number; n: number }) => {
     const ci = calcOneSideConfidenceInterval(sd, n, Z_99);
     const ciAbsolute = ci.toFixed(ci > 100 ? 0 : ci > 10 ? 1 : 2);
@@ -94,7 +84,7 @@ const DPSResult = ({ avg, sd, n }: { avg: number; sd: number; n: number }) => {
         </div>
     );
     return (
-        <div className="flex flex-col justify-center items-center w-full h-full gap-4 sm:flex-row">
+        <div className="basis-full flex flex-col justify-center items-center gap-4 sm:flex-row">
             <Card>
                 <CardBody>
                     <p className="text-2xl">DPS: {avg}</p>
@@ -115,24 +105,40 @@ const DPSResult = ({ avg, sd, n }: { avg: number; sd: number; n: number }) => {
     );
 };
 
-export const DPS = ({ status, setStatus }: { status: string; setStatus: (value: string) => void }) => {
+export const DPS = ({
+    id,
+    setID,
+    setCalculating,
+}: {
+    id: string;
+    setID: (value: string) => void;
+    setCalculating: (value: boolean) => void;
+}) => {
     // status 为 "init" 的逻辑处理位于 App 组件中, 若 status 为 "init", 则 DPS 组件不会被渲染
     const [dps, setDPS] = useState<ibrQueryDps["data"]>();
+    const [n, setN] = useState(0);
     useEffect(() => {
         async function fetchData() {
-            // status 为 "waiting" 的逻辑处理位于上层 useEffect 中, 若 status 为 "waiting", 则此函数不会被执行
-            const response = await queryDps(status);
+            // id 为空的逻辑处理位于上层 useEffect 中, 若 id 为空, 则此函数不会被执行
+            const response = (await queryDps(id)) as ibrBase;
             if (response.status === 0) {
                 setDPS(response.data);
                 if (response.data.complete) {
-                    setStatus("waiting");
+                    setID("");
+                    setCalculating(false);
+                    const ci = calcOneSideConfidenceInterval(response.data.sd, response.data.current, Z_99);
+                    if (ci / response.data.avg < 0.0005) {
+                        setN(0);
+                    } else {
+                        setN(Math.ceil(solveSampleSize(response.data.avg * 0.0005, response.data.sd, Z_99)));
+                    }
                     // setStatus 会更新 status 并因此触发 useEffect 的清理函数, 因此, 无需手动清理 idInterval
                 }
             }
         }
         let idTimeout: NodeJS.Timeout | undefined;
         let idInterval: NodeJS.Timeout | undefined;
-        if (status !== "waiting") {
+        if (id.length > 0) {
             idTimeout = setTimeout(async () => {
                 await fetchData();
                 idInterval = setInterval(fetchData, 1000);
@@ -146,19 +152,30 @@ export const DPS = ({ status, setStatus }: { status: string; setStatus: (value: 
                 clearTimeout(idTimeout);
             }
         };
-    }, [status, setStatus]);
+    }, [id, setID, setCalculating]);
 
     if (!dps) {
         return <></>;
     }
 
     return (
-        <div className="flex flex-col justify-center items-center w-full h-full gap-4">
-            <div className="w-full h-full min-h-[30vh]">
-                <DPSChart dps={dps} />
+        <div className="basis-full flex flex-col justify-center items-center gap-4">
+            <div className="w-full basis-full flex flex-col justify-center gap-8 2xl:flex-row">
+                <motion.div layout className="basis-1/2 min-h-[30vh]">
+                    <DPSChart dps={dps} />
+                </motion.div>
+                {id.length === 0 && (
+                    <div className="basis-1/2 flex flex-col">
+                        {n === 0 ? (
+                            <AttributeBenefit dps={dps.avg} setCalculating={setCalculating} />
+                        ) : (
+                            <AttributeBenefitNotAvailable n={n} />
+                        )}
+                    </div>
+                )}
             </div>
-            <div className="flex flex-col justify-center items-center w-full h-min gap-4">
-                <Progress aria-label="计算中..." value={(dps.current * 100) / dps.total} className="max-w-md" />
+            <div className="w-full h-min flex flex-col justify-center items-center gap-4">
+                <Progress aria-label="CalcDPS" value={(dps.current * 100) / dps.total} className="max-w-md" />
                 <DPSResult avg={dps.avg} sd={dps.sd} n={dps.current} />
             </div>
         </div>
