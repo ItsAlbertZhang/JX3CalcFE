@@ -43,8 +43,14 @@ async fn download() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let pd_data = dirs::data_dir().ok_or_else(|| "无法获取AppData目录")?.join("jx3calc");
     std::fs::create_dir_all(&pd_data)?;
     let fn_version = "version.txt";
+    #[cfg(windows)]
     let fn_exe = "jx3calc_windows.exe";
+    #[cfg(windows)]
     let fn_dll = "gdi.dll";
+    #[cfg(target_os = "macos")]
+    let fn_exe = "jx3calc_macos";
+    #[cfg(target_os = "macos")]
+    let fn_dll = "libgdi.dylib";
     let pf_version = pd_data.join(fn_version);
     let pf_exe = pd_data.join(fn_exe);
     let pf_dll = pd_data.join(fn_dll);
@@ -60,6 +66,13 @@ async fn download() -> Result<PathBuf, Box<dyn std::error::Error>> {
                 let mut exe_out = File::create(&pf_exe).await?;
                 let mut exe_content = Cursor::new(exe_response.bytes().await?);
                 io::copy(&mut exe_content, &mut exe_out).await?;
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::PermissionsExt;
+                    let mut perms = fs::metadata(&pf_exe)?.permissions();
+                    perms.set_mode(0o755); // rwxr-xr-x
+                    fs::set_permissions(&pf_exe, perms)?;
+                }
                 let dll_response = reqwest::get(&url_dll).await?;
                 let mut dll_out = File::create(&pf_dll).await?;
                 let mut dll_content = Cursor::new(dll_response.bytes().await?);

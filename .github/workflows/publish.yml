@@ -3,7 +3,6 @@ name: "publish"
 on:
     push:
         branches:
-            - beta # beta 分支 push 时触发
             - main # main 分支 push 时触发
 
 jobs:
@@ -13,7 +12,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [windows-latest]
+                platform: [macos-latest, windows-latest]
 
         runs-on: ${{ matrix.platform }}
         steps:

@@ -63,16 +63,14 @@ export async function fetchGetJson({
      *  tauri build 环境下的 protocal//hostname 为 https://tauri.localhost.
      */
     let ret = undefined;
-    const protocal = host.endsWith("localhost") ? "http:" : window.location.protocol;
+    const protocal = (await isApp()) ? "http:" : window.location.protocol;
     const url = protocal + "//" + host + (port ? ":" + port : "") + path;
     try {
         const response = await fetch(url);
         ret = await response.json();
     } catch {
-        try {
-            const client = await getClient();
-            ret = (await client.get(url, { responseType: ResponseType.JSON })).data;
-        } catch {}
+        const client = await getClient();
+        ret = (await client.get(url, { responseType: ResponseType.JSON })).data;
     }
     return ret;
 }
