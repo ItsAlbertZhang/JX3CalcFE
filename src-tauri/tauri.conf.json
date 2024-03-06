@@ -22,6 +22,9 @@
             "http": {
                 "request": true,
                 "scope": ["http://cms.jx3box.com/*"]
+            },
+            "fs": {
+                "readFile": true
             }
         },
         "bundle": {

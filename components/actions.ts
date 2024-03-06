@@ -2,6 +2,7 @@
 
 import { readText } from "@tauri-apps/api/clipboard";
 import { open } from "@tauri-apps/api/dialog";
+import { readTextFile } from "@tauri-apps/api/fs";
 import { getClient, ResponseType } from "@tauri-apps/api/http";
 import { invoke } from "@tauri-apps/api/tauri";
 
@@ -45,6 +46,28 @@ export async function config() {
         console.error(error);
     }
     return false;
+}
+
+export async function readLua() {
+    try {
+        const result = await open({
+            multiple: false,
+            filters: [
+                {
+                    name: "Lua",
+                    extensions: ["lua"],
+                },
+            ],
+        });
+        if (result === null) {
+            return "";
+        }
+        const path = result as string;
+        return await readTextFile(path);
+    } catch (error) {
+        console.error(error);
+    }
+    return "";
 }
 
 export async function fetchGetJson({
