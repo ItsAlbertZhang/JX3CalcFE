@@ -33,7 +33,7 @@ export const Calculate = ({
         }
     }
     return (
-        <Button isDisabled={calculating} onClick={handleClick} color="primary">
+        <Button isDisabled={calculating} onPress={handleClick} color="primary">
             计算
         </Button>
     );

@@ -1,6 +1,6 @@
 "use client";
 // my libraries
-import { readLua } from "@/components/actions";
+import { openUrl, readLua } from "@/components/actions";
 import { ContextBRStatus, ContextUserinput } from "@/components/context";
 import { ibrStatus } from "@/components/definitions";
 // third party libraries
@@ -34,6 +34,9 @@ const WarningContent = ({
                     onClose();
                     selectLuaFile();
                 }
+                function handleHelp() {
+                    openUrl("http://jx3calc.com/help/custommacro");
+                }
                 function handleRefuse() {
                     setMethod("使用内置循环");
                     onClose();
@@ -52,6 +55,9 @@ const WarningContent = ({
                             <p>请确保你对使用的代码有足够的了解.</p>
                             <Button color="danger" onPress={handleAgree}>
                                 我已知晓使用自定义技能循环的风险, 继续使用
+                            </Button>
+                            <Button color="primary" onPress={handleHelp}>
+                                查看使用帮助
                             </Button>
                             <Button onPress={handleRefuse}>退出</Button>
                         </ModalBody>
@@ -102,7 +108,7 @@ export const Custom = () => {
     switch (method) {
         case methods[1]:
             input = (
-                <Button onClick={selectLuaFile}>
+                <Button onPress={selectLuaFile}>
                     <Spacer x={2} />
                     选择lua文件
                     <Spacer x={2} />
@@ -125,6 +131,8 @@ export const Custom = () => {
             case methods[1]:
                 if (!warned) {
                     warning.onOpen();
+                } else {
+                    selectLuaFile();
                 }
                 break;
         }
@@ -140,7 +148,14 @@ export const Custom = () => {
                 ))}
             </Select>
             {input}
-            <Modal isOpen={warning.isOpen} onOpenChange={warning.onOpenChange} placement="center" backdrop="blur">
+            <Modal
+                isOpen={warning.isOpen}
+                onOpenChange={warning.onOpenChange}
+                placement="center"
+                backdrop="blur"
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
+            >
                 <WarningContent setWarned={setWarned} setMethod={setMethod} selectLuaFile={selectLuaFile} />
             </Modal>
         </div>

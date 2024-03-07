@@ -284,7 +284,7 @@ export const AttributeBenefit = ({
     if (stat === "waiting") {
         subtitle = (
             <Button
-                onClick={(value) => {
+                onPress={(value) => {
                     setStat("calculating");
                     setCalculating(true);
                     calc();

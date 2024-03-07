@@ -35,7 +35,7 @@ export const Setting = ({ setStatus }: { setStatus: (value: ibrStatus) => void }
     if (app) {
         ret = (
             <>
-                <Button onClick={handleOpen}>选择游戏路径</Button>
+                <Button onPress={handleOpen}>选择游戏路径</Button>
                 <p>请选择名称为 JX3 的文件夹</p>
             </>
         );

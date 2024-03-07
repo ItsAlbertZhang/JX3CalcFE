@@ -201,6 +201,7 @@ const AttrModalContent = ({ setDataAndContext }: { setDataAndContext: (value: Cl
                             <p>Tips:</p>
                             <p>复制配装 ID 或 URL 后, 在主界面右键点击按钮即可无需打开此对话框直接导入.</p>
                             <Input
+                                autoFocus
                                 size="sm"
                                 label="输入配装 ID 或 URL"
                                 value={url}
@@ -208,7 +209,7 @@ const AttrModalContent = ({ setDataAndContext }: { setDataAndContext: (value: Cl
                                     setUrl(event.target.value);
                                 }}
                                 endContent={
-                                    <Button size="sm" isIconOnly variant="light" onClick={paste}>
+                                    <Button size="sm" isIconOnly variant="light" onPress={paste}>
                                         <IconPaste />
                                     </Button>
                                 }
