@@ -36,6 +36,7 @@ export interface ibrQueryDps extends ibrBase {
         min: number;
         max: number;
         sd: number;
+        ci99: number;
         md: number;
         list: number[];
     };

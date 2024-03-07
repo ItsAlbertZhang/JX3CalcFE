@@ -1,7 +1,7 @@
 "use client";
 // my libraries
 import { createTask, queryDps } from "@/components/actions";
-import { CustomBar, Z_99, calcOneSideConfidenceInterval } from "@/components/common";
+import { CustomBar } from "@/components/common";
 import { ContextUserinputLatest } from "@/components/context";
 import { ClsUserinput, ibrQueryDps, ibrString } from "@/components/definitions";
 // third party libraries
@@ -243,7 +243,7 @@ export const AttributeBenefit = ({
                                 name: attr,
                                 dps: data.avg,
                                 addpercent: (data.avg - dps) / dps,
-                                onesideCIpercent: calcOneSideConfidenceInterval(data.sd, data.current, Z_99) / dps,
+                                onesideCIpercent: data.ci99 / dps,
                             };
                             setRes((prevRes) => prevRes.map((item, index) => (index === i ? newValue : item)));
                         }
