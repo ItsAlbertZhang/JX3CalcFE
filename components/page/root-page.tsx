@@ -11,7 +11,7 @@ import { ibrStatus } from "@/components/definitions";
 // third party libraries
 import { useEffect, useState } from "react";
 
-const version = "v1.0.0";
+const version = "v1.0";
 
 export const Page = () => {
     const [status, setStatus] = useState<ibrStatus>();
@@ -31,7 +31,7 @@ export const Page = () => {
         ret = <Loading />;
     } else if (status.status !== 0) {
         ret = <Setting setStatus={setStatus} />;
-    } else if (status.data.version != version) {
+    } else if (!status.data.version.startsWith(version)) {
         ret = <Updating />;
     } else {
         ret = (

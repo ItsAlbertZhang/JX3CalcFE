@@ -8,8 +8,8 @@ import { useContext } from "react";
 export const Effects = () => {
     const { value, setValue } = useContext(ContextUserinput);
     const effects = [
-        ["大附魔·腰", "大附魔·腕", "大附魔·鞋"],
-        ["套装·技能", "套装·特效", "武器·水特效", "家园酒·加速"],
+        ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "家园酒·加速"],
+        ["套装·技能", "套装·特效", "武器·橙武", "武器·水特效"],
     ];
     return (
         <div className="flex justify-center items-center gap-8">

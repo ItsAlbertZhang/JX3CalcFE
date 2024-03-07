@@ -1,9 +1,5 @@
 export const Z_99 = 2.576;
 
-export function calcOneSideConfidenceInterval(sd: number, n: number, z: number) {
-    return (sd * z) / Math.sqrt(n);
-}
-
 export function solveSampleSize(oneSideConfidenceInterval: number, sd: number, z: number) {
     return Math.ceil(Math.pow((z * sd) / oneSideConfidenceInterval, 2));
 }

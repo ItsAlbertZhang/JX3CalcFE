@@ -8,20 +8,29 @@
     },
     "package": {
         "productName": "jx3calc",
-        "version": "1.0.1"
+        "version": "1.0.2"
     },
     "tauri": {
         "allowlist": {
             "all": false,
-            "dialog": {
-                "open": true
+            "app": {
+                "all": true
             },
             "clipboard": {
                 "readText": true
             },
+            "dialog": {
+                "open": true
+            },
+            "fs": {
+                "readFile": true
+            },
             "http": {
                 "request": true,
                 "scope": ["http://cms.jx3box.com/*"]
+            },
+            "shell": {
+                "open": true
             }
         },
         "bundle": {

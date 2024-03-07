@@ -1,7 +1,7 @@
 "use client";
 // my libraries
 import { queryDps } from "@/components/actions";
-import { Z_99, calcOneSideConfidenceInterval, solveSampleSize } from "@/components/common";
+import { Z_99, solveSampleSize } from "@/components/common";
 import { ibrBase, ibrQueryDps } from "@/components/definitions";
 import { AttributeBenefit, AttributeBenefitNotAvailable } from "./attribute-benefit";
 // third party libraries
@@ -57,8 +57,7 @@ const DPSChart = ({ dps }: { dps: ibrQueryDps["data"] }) => {
     );
 };
 
-const DPSResult = ({ avg, sd, n }: { avg: number; sd: number; n: number }) => {
-    const ci = calcOneSideConfidenceInterval(sd, n, Z_99);
+const DPSResult = ({ avg, sd, ci, n }: { avg: number; sd: number; ci: number; n: number }) => {
     const ciAbsolute = ci.toFixed(ci > 100 ? 0 : ci > 10 ? 1 : 2);
     const ciPercent = ((ci / avg) * 100).toFixed(3) + "%";
     const tooltip = (
@@ -126,7 +125,7 @@ export const DPS = ({
                 if (response.data.complete) {
                     setID("");
                     setCalculating(false);
-                    const ci = calcOneSideConfidenceInterval(response.data.sd, response.data.current, Z_99);
+                    const ci = response.data.ci99;
                     if (ci / response.data.avg < 0.0005) {
                         setN(0);
                     } else {
@@ -176,7 +175,7 @@ export const DPS = ({
             </div>
             <div className="w-full h-min flex flex-col justify-center items-center gap-4">
                 <Progress aria-label="CalcDPS" value={(dps.current * 100) / dps.total} className="max-w-md" />
-                <DPSResult avg={dps.avg} sd={dps.sd} n={dps.current} />
+                <DPSResult avg={dps.avg} sd={dps.sd} ci={dps.ci99} n={dps.current} />
             </div>
         </div>
     );

@@ -1,51 +1,50 @@
 "use client";
 
-import { readText } from "@tauri-apps/api/clipboard";
-import { open } from "@tauri-apps/api/dialog";
-import { getClient, ResponseType } from "@tauri-apps/api/http";
-import { invoke } from "@tauri-apps/api/tauri";
+import { getVersion as tauri_app_getVersion } from "@tauri-apps/api/app";
+import { getClient as tauri_http_getClient, ResponseType as tauri_http_ResponseType } from "@tauri-apps/api/http";
+import { open as tauri_dialog_open } from "@tauri-apps/api/dialog";
+import { open as tauri_shell_open } from "@tauri-apps/api/shell";
+import { readText as tauri_clipboard_readText } from "@tauri-apps/api/clipboard";
+import { readTextFile as tauri_fs_readTextFile } from "@tauri-apps/api/fs";
+import { invoke as tauri_invoke } from "@tauri-apps/api/tauri";
+
+const tauri = {
+    app: {
+        getVersion: tauri_app_getVersion,
+    },
+    clipboard: {
+        readText: tauri_clipboard_readText,
+    },
+    dialog: {
+        open: tauri_dialog_open,
+    },
+    fs: {
+        readTextFile: tauri_fs_readTextFile,
+    },
+    http: {
+        getClient: tauri_http_getClient,
+        ResponseType: tauri_http_ResponseType,
+    },
+    shell: {
+        open: tauri_shell_open,
+    },
+    tauri: {
+        invoke: tauri_invoke,
+    },
+};
+
+// 环境判断函数
 
 export async function isApp() {
     try {
-        await readText();
+        await tauri.app.getVersion();
         return true;
     } catch {
         return false;
     }
 }
 
-export async function readClipboard() {
-    let ret = "";
-    try {
-        const text = await readText();
-        if (text !== null) {
-            ret = text;
-        }
-    } catch {
-        try {
-            ret = await navigator.clipboard.readText();
-        } catch {
-            console.error("getClipboard failed");
-        }
-    }
-    return ret;
-}
-
-export async function config() {
-    try {
-        const result = await open({ directory: true, multiple: false });
-        const path = result as string;
-        if (path.endsWith("JX3")) {
-            const obj = {
-                JX3Dir: path,
-            };
-            return await invoke<boolean>("config", { body: JSON.stringify(obj) });
-        }
-    } catch (error) {
-        console.error(error);
-    }
-    return false;
-}
+// 跨环境函数
 
 export async function fetchGetJson({
     host = window.location.hostname,
@@ -69,8 +68,8 @@ export async function fetchGetJson({
         const response = await fetch(url);
         ret = await response.json();
     } catch {
-        const client = await getClient();
-        ret = (await client.get(url, { responseType: ResponseType.JSON })).data;
+        const client = await tauri.http.getClient();
+        ret = (await client.get(url, { responseType: tauri.http.ResponseType.JSON })).data;
     }
     return ret;
 }
@@ -95,9 +94,78 @@ export async function fetchPostJson({
             body: JSON.stringify(body),
         });
         ret = await response.json();
-    } catch {}
+    } catch {
+        // 暂时不做使用 tauri api 的处理, 因为 fetch 可以发 localhost 的 post
+    }
     return ret;
 }
+
+export async function openUrl(url: string) {
+    try {
+        await tauri.shell.open(url);
+    } catch {
+        window.open(url, "_blank");
+    }
+}
+
+export async function readClipboard() {
+    let ret = "";
+    try {
+        const text = await tauri.clipboard.readText();
+        if (text !== null) {
+            ret = text;
+        }
+    } catch {
+        try {
+            ret = await navigator.clipboard.readText();
+        } catch {
+            console.error("getClipboard failed");
+        }
+    }
+    return ret;
+}
+
+export async function readLua() {
+    try {
+        const result = await tauri.dialog.open({
+            multiple: false,
+            filters: [
+                {
+                    name: "Lua",
+                    extensions: ["lua"],
+                },
+            ],
+        });
+        if (result === null) {
+            return "";
+        }
+        const path = result as string;
+        return await tauri.fs.readTextFile(path);
+    } catch (error) {
+        console.error(error);
+    }
+    return "";
+}
+
+// tauri only
+
+export async function config() {
+    try {
+        const result = await tauri.dialog.open({ directory: true, multiple: false });
+        const path = result as string;
+        if (path.endsWith("JX3") || path.endsWith("JX3_EXP")) {
+            const obj = {
+                JX3Dir: path,
+            };
+            return await tauri.tauri.invoke<boolean>("config", { body: JSON.stringify(obj) });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+    return false;
+}
+
+// 其他函数
 
 export async function createTask(input: object) {
     console.log(JSON.stringify(input));

@@ -17,6 +17,7 @@ export interface ibrStatus extends ibrBase {
             maxDelayKeyboard: number;
             maxFightTime: number;
             maxFightCount: number;
+            allowCustom: boolean;
         };
     };
 }
@@ -35,6 +36,7 @@ export interface ibrQueryDps extends ibrBase {
         min: number;
         max: number;
         sd: number;
+        ci99: number;
         md: number;
         list: number[];
     };
@@ -114,4 +116,8 @@ export class ClsUserinput {
         data: new ClsUserinputAttrData(),
     };
     effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"];
+    custom?: {
+        method: string;
+        data: string;
+    };
 }
