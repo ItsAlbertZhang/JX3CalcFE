@@ -118,6 +118,6 @@ export class ClsUserinput {
     effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"];
     custom?: {
         method: string;
-        data: string;
+        data: string | string[];
     };
 }
