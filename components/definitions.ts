@@ -115,7 +115,7 @@ export class ClsUserinput {
         method: "从数据导入",
         data: new ClsUserinputAttrData(),
     };
-    effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "套装·技能", "套装·特效", "家园酒·加速"];
+    effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "家园酒·加速", "套装·技能", "套装·特效"];
     custom?: {
         method: string;
         data: string | string[];
