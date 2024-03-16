@@ -21,7 +21,7 @@ import { IoAddCircle } from "react-icons/io5";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 
-const methods = ["使用内置循环", "使用lua脚本", "使用游戏内宏"];
+const methods = ["使用内置循环", "使用lua编程语言", "使用游戏内宏"];
 const help = "http://jx3calc.com/help/custom";
 
 const ModalContentWarning = ({
@@ -50,7 +50,7 @@ const ModalContentWarning = ({
                 }
                 const body = (
                     <ModalBody className="mb-4">
-                        <p>你正在尝试使用lua脚本自定义技能循环.</p>
+                        <p>你正在尝试使用lua编程语言自定义技能循环.</p>
                         <p>程序会执行你提供的代码. 如果这段代码存在问题, 程序可能崩溃.</p>
                         <p className="text-[#FF0000]">如果这是一段恶意代码, 程序可能产生不可预知的后果!</p>
                         <p>请确保你对使用的代码有足够的了解.</p>
@@ -174,7 +174,7 @@ export const Custom = () => {
             const newValue = {
                 ...value,
                 custom: {
-                    method: "使用lua脚本",
+                    method: "使用lua编程语言",
                     data: file,
                 },
             };
