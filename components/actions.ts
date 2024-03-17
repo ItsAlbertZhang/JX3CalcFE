@@ -153,7 +153,7 @@ export async function config() {
     try {
         const result = await tauri.dialog.open({ directory: true, multiple: false });
         const path = result as string;
-        if (path.endsWith("JX3") || path.endsWith("JX3_EXP")) {
+        if (path.endsWith("bin64")) {
             const obj = {
                 JX3Dir: path,
             };

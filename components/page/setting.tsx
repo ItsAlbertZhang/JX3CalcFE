@@ -36,7 +36,11 @@ export const Setting = ({ setStatus }: { setStatus: (value: ibrStatus) => void }
         ret = (
             <>
                 <Button onPress={handleOpen}>选择游戏路径</Button>
-                <p>请选择名称为 JX3 的文件夹</p>
+                <p>请选择名称为 bin64 的文件夹</p>
+                <div className="flex flex-col justify-center items-center gap-1 text-base">
+                    <p className="">其通常位于 .../SeasunGame/Game/JX3/bin/zhcn_hd/ 目录下</p>
+                    <p>(测试服或国际服目录可能略有不同)</p>
+                </div>
             </>
         );
     } else {
