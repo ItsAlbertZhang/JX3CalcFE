@@ -154,15 +154,15 @@ export const Custom = () => {
     const [warned, setWarned] = useState(false); // 是否已经警告过
     const [valid, setValid] = useState(false); // 是否已经选择了lua文件或输入了宏
 
-    const status = (useContext(ContextBRStatus) as ibrStatus["data"]).userinput;
+    const status = useContext(ContextBRStatus) as ibrStatus["data"];
     const { value, setValue } = useContext(ContextUserinput);
     const modal = useDisclosure();
 
     useEffect(() => {
-        if (status.allowCustom) {
+        if (status.custom) {
             setHide(false);
         }
-    }, [status.allowCustom]);
+    }, [status.custom]);
 
     if (hide) {
         return <></>;
@@ -174,8 +174,11 @@ export const Custom = () => {
             const newValue = {
                 ...value,
                 custom: {
-                    method: "使用lua编程语言",
-                    data: file,
+                    ...value.custom,
+                    fight: {
+                        method: "使用lua编程语言",
+                        data: file,
+                    },
                 },
             };
             setValue(newValue);
@@ -188,8 +191,11 @@ export const Custom = () => {
             const newValue = {
                 ...value,
                 custom: {
-                    method: "使用游戏内宏",
-                    data: data,
+                    ...value.custom,
+                    fight: {
+                        method: "使用游戏内宏",
+                        data: data,
+                    },
                 },
             };
             setValue(newValue);

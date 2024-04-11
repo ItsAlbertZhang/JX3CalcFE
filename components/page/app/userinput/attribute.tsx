@@ -48,8 +48,8 @@ const AttrInputArea = ({
                 <IntegerInput
                     state={data}
                     setState={setDataAndContext}
-                    keys={["Vitality", "Strength", "Agility", "Spirit", "Spunk"]}
-                    label="基础属性"
+                    keys={["Strength", "Agility", "Spirit", "Spunk"]}
+                    label="心法属性"
                 />
                 <IntegerInput
                     state={data}
