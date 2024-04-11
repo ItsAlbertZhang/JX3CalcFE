@@ -3,5 +3,5 @@
 import { Spinner } from "@nextui-org/react";
 
 export const Loading = () => {
-    return <Spinner label="加载中..." />;
+    return <Spinner label="加载中..." className="xl:col-span-3" />;
 };

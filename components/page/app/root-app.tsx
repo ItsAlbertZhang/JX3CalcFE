@@ -18,31 +18,36 @@ export const App = () => {
     const [calculating, setCalculating] = useState<boolean>(false);
     const [id, setID] = useState<string>();
 
-    const content = (
-        <>
-            <motion.div
-                className="basis-full 2xl:basis-1/3 flex flex-col justify-center items-center gap-8"
-                layout // Animate layout changes
-                transition={{ type: "spring", duration: 1, bounce: 0.33 }}
-            >
-                <Userinput />
-                <Calculate id={id} setID={setID} calculating={calculating} setCalculating={setCalculating} />
-            </motion.div>
-            {typeof id !== "undefined" && (
-                <div className="basis-full 2xl:basis-2/3 flex">
-                    <Result id={id} setID={setID} setCalculating={setCalculating} userinputLatest={latest} />
-                </div>
-            )}
-        </>
+    const input = (
+        <motion.div
+            className={
+                (typeof id === "undefined" ? "col-start-2 " : "") +
+                "col-span-1 flex flex-col justify-center items-center gap-8"
+            }
+            layout // Animate layout changes
+            transition={{ type: "spring", duration: 1, bounce: 0.33 }}
+        >
+            <Userinput />
+            <Calculate id={id} setID={setID} calculating={calculating} setCalculating={setCalculating} />
+        </motion.div>
     );
+    const result =
+        typeof id === "undefined" ? (
+            <></>
+        ) : (
+            <div className="col-span-2 grid grid-rows-9 gap-4 w-full h-full">
+                <Result id={id} setID={setID} setCalculating={setCalculating} userinputLatest={latest} />
+            </div>
+        );
+
     return (
-        <div className="basis-full flex flex-col justify-center items-center gap-8 2xl:flex-row">
+        <>
             <WebDownload />
             <ContextUserinput.Provider value={{ value: userinput, setValue: setUserinput }}>
                 <ContextUserinputLatest.Provider value={{ value: latest, setValue: setLatest }}>
-                    {content}
+                    {input} {result}
                 </ContextUserinputLatest.Provider>
             </ContextUserinput.Provider>
-        </div>
+        </>
     );
 };

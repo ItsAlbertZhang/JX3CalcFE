@@ -26,25 +26,32 @@ export const Page = () => {
         f();
     }, []);
 
-    let ret: JSX.Element;
+    let content: JSX.Element;
     if (!status) {
-        ret = <Loading />;
+        content = <Loading />;
     } else if (status.status !== 0) {
-        ret = <Setting setStatus={setStatus} />;
+        content = <Setting setStatus={setStatus} />;
     } else if (!status.data.version.startsWith(version)) {
-        ret = <Updating />;
+        content = <Updating />;
     } else {
-        ret = (
+        content = (
             <ContextBRStatus.Provider value={status.data}>
                 <App />
             </ContextBRStatus.Provider>
         );
     }
 
-    const cn =
-        "flex justify-center items-center p-6 m-auto " +
-        "w-full md:w-4/5 lg:w-2/3 xl:w-1/2 2xl:w-full " +
-        "min-h-screen 2xl:max-h-screen";
-
-    return <div className={cn}>{ret}</div>;
+    return (
+        <div
+            className="
+                p-6 m-auto
+                w-full md:w-4/5 lg:w-2/3 xl:w-full
+                min-h-screen xl:max-h-screen
+                flex flex-col gap-8
+                xl:grid xl:grid-cols-3
+                justify-center justify-items-center items-center"
+        >
+            {content}
+        </div>
+    );
 };

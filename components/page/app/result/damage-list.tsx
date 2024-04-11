@@ -148,7 +148,7 @@ export const DamageList = ({ id }: { id: string }) => {
 
     return (
         <motion.div
-            className="basis-full flex flex-col gap-2"
+            className="flex flex-col gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -172,7 +172,7 @@ export const DamageList = ({ id }: { id: string }) => {
                     }}
                 />
             </div>
-            <div className="basis-full min-h-[30vh]">
+            <div className="grow">
                 <DLChart points={pointsFilter(points, sliderValue as number[])} />
             </div>
         </motion.div>

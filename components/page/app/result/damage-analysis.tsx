@@ -108,7 +108,7 @@ export const DamageAnalysis = ({ id }: { id: string }) => {
 
     return (
         <motion.div
-            className="basis-full flex flex-col gap-2"
+            className="flex flex-col gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -120,7 +120,7 @@ export const DamageAnalysis = ({ id }: { id: string }) => {
                 </Switch>
                 <Chip>占比</Chip>
             </div>
-            <div className="basis-full max-h-[40vh] min-h-[30vh]">
+            <div className="max-h-[35vh]">
                 <DAChart damageAnalysis={combine ? combineDA(da) : da} />
             </div>
         </motion.div>
