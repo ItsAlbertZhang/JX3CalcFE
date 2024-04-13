@@ -1,7 +1,7 @@
 "use client";
 // my libraries
 import { config, fetchGetJson, isApp } from "@/components/actions";
-import { ibrStatus } from "@/components/definitions";
+import { TypeStatus } from "@/components/definitions";
 // third party libraries
 import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -9,14 +9,14 @@ import { useEffect, useState } from "react";
 export async function fetchServerStatus() {
     console.log("fetching server status...");
     try {
-        return (await fetchGetJson({ port: 12897, path: "/status" })) as ibrStatus;
+        return (await fetchGetJson({ port: 12897, path: "/status" })) as TypeStatus;
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return fetchServerStatus();
     }
 }
 
-export const Setting = ({ setStatus }: { setStatus: (value: ibrStatus) => void }) => {
+export const Setting = ({ setStatus }: { setStatus: (value: TypeStatus) => void }) => {
     const [app, setApp] = useState(false);
     async function handleOpen() {
         if (await config()) {

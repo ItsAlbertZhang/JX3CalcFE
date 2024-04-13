@@ -1,15 +1,9 @@
-/**
- * @file To define the interfaces and classes.
- */
-
-// ibr: interface backend response (后端返回数据接口)
-
-export interface ibrBase {
+export interface TypeBackendRes {
     status: number;
     data: any;
 }
 
-export interface ibrStatus extends ibrBase {
+export interface TypeStatus extends TypeBackendRes {
     data: {
         version: string;
         userinput: {
@@ -22,11 +16,11 @@ export interface ibrStatus extends ibrBase {
     };
 }
 
-export interface ibrString extends ibrBase {
+export interface TypeString extends TypeBackendRes {
     data: string;
 }
 
-export interface ibrQueryDps extends ibrBase {
+export interface TypeQueryDPS extends TypeBackendRes {
     data: {
         complete: boolean;
         current: number;
@@ -42,7 +36,7 @@ export interface ibrQueryDps extends ibrBase {
     };
 }
 
-export interface ibrQueryDamageAnalysis extends ibrBase {
+export interface TypeQueryDamageAnalysis extends TypeBackendRes {
     data: {
         damageMax: number;
         damageMin: number;
@@ -53,7 +47,7 @@ export interface ibrQueryDamageAnalysis extends ibrBase {
     }[];
 }
 
-export interface ibrQueryDamageList extends ibrBase {
+export interface TypeQueryDamageList extends TypeBackendRes {
     data: {
         criticalRate: number;
         damageBase: number;
@@ -68,9 +62,7 @@ export interface ibrQueryDamageList extends ibrBase {
     }[][];
 }
 
-// Cls: class
-
-export class ClsUserinputAttrData {
+export class DataAttribute {
     Vitality = 0;
     Strength = 0;
     Agility = 0;
@@ -105,7 +97,7 @@ export class ClsUserinputAttrData {
     // MeleeWeaponDamageMax 需要额外的处理计算 ( = MeleeWeaponDamage + MeleeWeaponDamageRand)
 }
 
-export class ClsUserinput {
+export class DataInput {
     player = "焚影圣诀";
     delayNetwork = 45;
     delayKeyboard = 20;
@@ -113,7 +105,7 @@ export class ClsUserinput {
     fightCount = 100;
     attribute = {
         method: "从数据导入",
-        data: new ClsUserinputAttrData(),
+        data: new DataAttribute(),
     };
     effects = ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "家园酒·加速", "套装·技能", "套装·特效"];
     custom?: {

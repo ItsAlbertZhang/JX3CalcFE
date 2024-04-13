@@ -18,7 +18,7 @@ const GithubIcon = () => {
     );
 };
 
-export const WebDownload = () => {
+export const WebTips = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     useEffect(() => {
         async function f() {

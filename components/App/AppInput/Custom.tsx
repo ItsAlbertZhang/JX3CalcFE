@@ -1,8 +1,7 @@
 "use client";
 // my libraries
 import { openUrl, readLua } from "@/components/actions";
-import { ContextBRStatus, ContextUserinput } from "@/components/context";
-import { ibrStatus } from "@/components/definitions";
+import { DataInput, TypeStatus } from "@/components/definitions";
 // third party libraries
 import {
     Button,
@@ -13,7 +12,6 @@ import {
     ModalFooter,
     Select,
     SelectItem,
-    Spacer,
     Textarea,
     useDisclosure,
 } from "@nextui-org/react";
@@ -148,14 +146,20 @@ const ModalContentInput = ({ submitCustom }: { submitCustom: (macros: string[]) 
     );
 };
 
-export const Custom = () => {
+export const Custom = ({
+    dataInput,
+    updateInput,
+    status,
+}: {
+    dataInput: DataInput;
+    updateInput: (fn: (draft: DataInput) => void) => void;
+    status: TypeStatus["data"];
+}) => {
     const [hide, setHide] = useState(true); // 整体部件是否隐藏
     const [method, setMethod] = useState(methods[0]); // 选用的方法
     const [warned, setWarned] = useState(false); // 是否已经警告过
     const [valid, setValid] = useState(false); // 是否已经选择了lua文件或输入了宏
 
-    const status = useContext(ContextBRStatus) as ibrStatus["data"];
-    const { value, setValue } = useContext(ContextUserinput);
     const modal = useDisclosure();
 
     useEffect(() => {
@@ -171,46 +175,40 @@ export const Custom = () => {
     async function selectLuaFile() {
         const file = await readLua();
         if (file) {
-            const newValue = {
-                ...value,
-                custom: {
-                    ...value.custom,
+            updateInput((draft) => {
+                draft.custom = {
                     fight: {
                         method: "使用lua编程语言",
                         data: file,
                     },
-                },
-            };
-            setValue(newValue);
+                };
+            });
             setValid(true);
         }
     }
     async function submitCustom(macros: string[]) {
         const data = macros.filter((item) => item !== ""); // 过滤空宏
         if (data.length > 0) {
-            const newValue = {
-                ...value,
-                custom: {
-                    ...value.custom,
+            updateInput((draft) => {
+                draft.custom = {
                     fight: {
                         method: "使用游戏内宏",
                         data: data,
                     },
-                },
-            };
-            setValue(newValue);
+                };
+            });
             setValid(true);
         } else {
             // 重置 value
-            const newValue = { ...value };
-            delete newValue.custom;
-            setValue(newValue);
+            updateInput((draft) => {
+                delete draft.custom;
+            });
             // 重置 valid
             setValid(false);
         }
     }
 
-    let input = <></>;
+    let title = <></>;
     let content = (
         <ModalContent>
             <></>
@@ -220,7 +218,7 @@ export const Custom = () => {
     // 渲染
     switch (method) {
         case methods[1]:
-            input = (
+            title = (
                 <Button
                     onPress={selectLuaFile}
                     color={valid ? "success" : "danger"}
@@ -233,7 +231,7 @@ export const Custom = () => {
             content = <ModalContentWarning setWarned={setWarned} setMethod={setMethod} selectLuaFile={selectLuaFile} />;
             break;
         case methods[2]:
-            input = (
+            title = (
                 <Button
                     onPress={modal.onOpen}
                     color={valid ? "success" : "danger"}
@@ -246,7 +244,7 @@ export const Custom = () => {
             content = <ModalContentInput submitCustom={submitCustom} />;
             break;
         default:
-            input = <></>;
+            title = <></>;
             content = <></>;
             break;
     }
@@ -255,9 +253,9 @@ export const Custom = () => {
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         setMethod(e.target.value);
         // 重置 value
-        const newValue = { ...value };
-        delete newValue.custom;
-        setValue(newValue);
+        updateInput((draft) => {
+            delete draft.custom;
+        });
         // 重置 valid
         setValid(false);
         switch (e.target.value) {
@@ -283,7 +281,7 @@ export const Custom = () => {
                     </SelectItem>
                 ))}
             </Select>
-            {input}
+            {title}
             <Modal
                 isOpen={modal.isOpen}
                 onOpenChange={modal.onOpenChange}

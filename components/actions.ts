@@ -7,6 +7,7 @@ import { open as tauri_shell_open } from "@tauri-apps/api/shell";
 import { readText as tauri_clipboard_readText } from "@tauri-apps/api/clipboard";
 import { readTextFile as tauri_fs_readTextFile } from "@tauri-apps/api/fs";
 import { invoke as tauri_invoke } from "@tauri-apps/api/tauri";
+import { DataInput, TypeBackendRes } from "./definitions";
 
 const tauri = {
     app: {
@@ -167,7 +168,9 @@ export async function config() {
 
 // 其他函数
 
-export async function createTask(input: object) {
+export async function createTask(input: DataInput) {
+    input.attribute.data.MeleeWeaponDamageRand =
+        input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage;
     console.log(JSON.stringify(input));
     const data = await fetchPostJson({ port: 12897, path: "/create", body: input });
     console.log(data);
@@ -175,5 +178,13 @@ export async function createTask(input: object) {
 }
 
 export async function queryDps(id: string) {
-    return await fetchGetJson({ port: 12897, path: `/query/${id}/dps` });
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/dps` })) as TypeBackendRes;
+}
+
+export async function queryDamageList(id: string) {
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-list` })) as TypeBackendRes;
+}
+
+export async function queryDamageAnalysis(id: string) {
+    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-analysis` })) as TypeBackendRes;
 }
