@@ -29,50 +29,48 @@ export const WebTips = () => {
         f();
     }, [onOpen]);
     return (
-        <>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center" backdrop="blur">
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">下载 App</ModalHeader>
-                            <ModalBody className="gap-0 mx-2">
-                                <p>下载桌面版 App, 即可解锁全部功能:</p>
-                                <Spacer y={2} />
-                                <div className="-indent-2 mx-2">
-                                    <p>- 无上限的计算次数.</p>
-                                    <p>- 基于无上限的计算次数带来的数据准确性, 可准确计算属性收益.</p>
-                                    <p>- 自定义战斗循环.</p>
-                                </div>
-                                <Spacer y={4} />
-                                <p> 本软件已基于 GPL v3.0 协议开源于 Github, 且完全免费.</p>
-                                <Spacer y={2} />
-                            </ModalBody>
-                            <Button
-                                className="w-1/4 m-auto"
-                                color="primary"
-                                href="https://gitee.com/itsalbertzhang/JX3CalcFE/releases/latest"
-                                as={Link}
-                            >
-                                下载
-                            </Button>
-                            <div className="w-full flex px-4 pt-0 pb-4 justify-between items-center">
-                                <Button
-                                    variant="light"
-                                    isIconOnly
-                                    href="https://github.com/ItsAlbertZhang/JX3CalcFE"
-                                    as={Link}
-                                    isExternal
-                                >
-                                    <GithubIcon />
-                                </Button>
-                                <Button color="danger" variant="flat" onPress={onClose}>
-                                    关闭
-                                </Button>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center" backdrop="blur">
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">下载 App</ModalHeader>
+                        <ModalBody className="gap-0 mx-2">
+                            <p>下载桌面版 App, 即可解锁全部功能:</p>
+                            <Spacer y={2} />
+                            <div className="-indent-2 mx-2">
+                                <p>- 无上限的计算次数.</p>
+                                <p>- 基于无上限的计算次数带来的数据准确性, 可准确计算属性收益.</p>
+                                <p>- 自定义战斗循环.</p>
                             </div>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-        </>
+                            <Spacer y={4} />
+                            <p> 本软件已基于 GPL v3.0 协议开源于 Github, 且完全免费.</p>
+                            <Spacer y={2} />
+                        </ModalBody>
+                        <Button
+                            className="w-1/4 m-auto"
+                            color="primary"
+                            href="https://gitee.com/itsalbertzhang/JX3CalcFE/releases/latest"
+                            as={Link}
+                        >
+                            下载
+                        </Button>
+                        <div className="w-full flex px-4 pt-0 pb-4 justify-between items-center">
+                            <Button
+                                variant="light"
+                                isIconOnly
+                                href="https://github.com/ItsAlbertZhang/JX3CalcFE"
+                                as={Link}
+                                isExternal
+                            >
+                                <GithubIcon />
+                            </Button>
+                            <Button color="danger" variant="flat" onPress={onClose}>
+                                关闭
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
     );
 };

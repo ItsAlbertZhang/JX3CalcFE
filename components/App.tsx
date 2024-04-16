@@ -4,16 +4,10 @@ import { Loading } from "./Loading";
 import { Setting, fetchServerStatus } from "./Setting";
 import { Updating } from "./Updating";
 import { WebTips } from "./App/WebTips";
-import { Attribute } from "./App/AppInput/Attribute";
-import { Custom } from "./App/AppInput/Custom";
-import { Effects } from "./App/AppInput/Effects";
-import { Global } from "./App/AppInput/Global";
-import { DamageAnalysis } from "./App/AppResult/DamageAnalysis";
-import { DamageList } from "./App/AppResult/DamageList";
-import { DistributeChart } from "./App/AppResult/DistributionChart";
-import { Result } from "./App/AppResult/Result";
+import { AppInput } from "./App/AppInput";
+import { AppResult } from "./App/AppResult";
 // my libraries
-import { createTask, queryDamageAnalysis, queryDamageList, queryDps } from "./actions";
+import { createTask, queryDamageAnalysis, queryDamageList, queryDps } from "@/components/actions";
 import {
     DataInput,
     TypeBackendRes,
@@ -23,11 +17,10 @@ import {
     TypeStatus,
     TypeString,
 } from "@/components/definitions";
+import { defaultDataInput } from "@/components/default";
 // third party libraries
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
-import { Button, Progress } from "@nextui-org/react";
 
 const VERSION = "v1.1";
 const QUERY_INTERVAL = 500;
@@ -40,13 +33,13 @@ export const App = () => {
     useEffect(() => {
         fetchServerStatus().then(setStatus);
     }, []);
-    const [dataInputs, updateInputs] = useImmer<DataInput[]>([new DataInput()]);
+    const [dataInputs, updateInputs] = useImmer<DataInput[]>([defaultDataInput]);
     const [calculating, setCalculating] = useState<boolean>(false);
     const [dataDamageAnalysis, setDataDamageAnalysis] = useState<TypeQueryDamageAnalysis["data"]>();
     const [dataDamageLists, setDataDamageLists] = useState<TypeQueryDamageList["data"]>();
     const [dataTaskMainDPS, setDataMainTaskDPS] = useState<TypeQueryDPS["data"]>();
     const [dataCompareTasksDPS, setDataCompareTasksDPS] = useState<TypeQueryDPS["data"][]>([]);
-    const [CalcedOnce, setCalcedOnce] = useState<boolean>(false);
+    const [calcedOnce, setCalcedOnce] = useState<boolean>(false);
 
     async function calc() {
         setCalcedOnce(true);
@@ -111,13 +104,39 @@ export const App = () => {
         setCalculating(false);
     }
 
-    function updateInput(fn: (draft: DataInput) => void) {
-        updateInputs((draft) => {
-            // 需要创建一个新的数组, 因为 React 对变化的检测是基于引用进行的
-            const newDraft = [...draft];
-            fn(newDraft[0]);
-            return newDraft;
-        });
+    let content: JSX.Element;
+    if (!status) {
+        content = <Loading />;
+    } else if (status.status !== 0) {
+        content = <Setting setStatus={setStatus} />;
+    } else if (!status.data.version.startsWith(VERSION)) {
+        content = <Updating />;
+    } else {
+        content = (
+            <div
+                className="
+                        w-full h-full
+                        flex flex-col gap-8
+                        xl:grid xl:grid-cols-3
+                        justify-center justify-items-center items-center"
+            >
+                <WebTips />
+                <AppInput
+                    dataInputs={dataInputs}
+                    updateInputs={updateInputs}
+                    status={status}
+                    calculating={calculating}
+                    calc={calc}
+                    classNameAdd={calcedOnce ? "" : "xl:col-start-2"}
+                />
+                <AppResult
+                    calcedOnce={calcedOnce}
+                    dataDamageLists={dataDamageLists}
+                    dataDamageAnalysis={dataDamageAnalysis}
+                    dataTaskMainDPS={dataTaskMainDPS}
+                />
+            </div>
+        );
     }
 
     return (
@@ -125,82 +144,10 @@ export const App = () => {
             className="
                 p-6 m-auto
                 w-full md:w-4/5 lg:w-2/3 xl:w-full
-                min-h-screen xl:max-h-screen
+                min-h-screen
                 flex justify-center items-center"
         >
-            {!status ? (
-                <Loading />
-            ) : status.status !== 0 ? (
-                <Setting setStatus={setStatus} />
-            ) : !status.data.version.startsWith(VERSION) ? (
-                <Updating />
-            ) : (
-                <div
-                    className="
-                        w-full h-full
-                        flex flex-col gap-8
-                        xl:grid xl:grid-cols-3
-                        justify-center justify-items-center items-center"
-                >
-                    <WebTips />
-                    <motion.div
-                        className={
-                            (CalcedOnce ? "" : "xl:col-start-2 ") + "flex flex-col justify-center items-center gap-8"
-                        }
-                        layout // Animate layout changes
-                        transition={{ type: "spring", duration: 1, bounce: 0.33 }}
-                    >
-                        <div className="basis-full flex flex-col justify-center items-center gap-8">
-                            <Global dataInput={dataInputs[0]} updateInput={updateInput} status={status.data} />
-                            <Attribute dataInput={dataInputs[0]} updateInput={updateInput} />
-                            <Custom dataInput={dataInputs[0]} updateInput={updateInput} status={status.data} />
-                            <Effects dataInput={dataInputs[0]} updateInput={updateInput} />
-                        </div>
-                        <Button isDisabled={calculating} onPress={calc} color="primary">
-                            计算
-                        </Button>
-                    </motion.div>
-                    {CalcedOnce ? (
-                        <div className="col-span-2 grid grid-rows-9 gap-4 w-full h-full">
-                            <div className="row-span-4 grid gap-4 xl:grid-cols-2">
-                                {dataDamageLists ? <DamageList data={dataDamageLists} /> : <></>}
-                                {dataDamageAnalysis ? <DamageAnalysis data={dataDamageAnalysis} /> : <></>}
-                            </div>
-                            <div className={"row-span-4 grid gap-4" + (true ? "" : " xl:grid-cols-2")}>
-                                {dataTaskMainDPS ? <DistributeChart data={dataTaskMainDPS} /> : <></>}
-                                {/* {id.length !== 0 ? (
-                                    <></>
-                                ) : n === 0 ? (
-                                    <AttributeBenefit dps={dps.avg} setCalculating={setCalculating} />
-                                ) : (
-                                    <AttributeBenefitNotAvailable n={n} />
-                                )} */}
-                            </div>
-                            <div className="flex flex-col justify-center items-center gap-2">
-                                {dataTaskMainDPS ? (
-                                    <>
-                                        <Progress
-                                            aria-label="CalcDPS"
-                                            value={(dataTaskMainDPS.current * 100) / dataTaskMainDPS.total}
-                                            className="max-w-md"
-                                        />
-                                        <Result
-                                            avg={dataTaskMainDPS.avg}
-                                            sd={dataTaskMainDPS.sd}
-                                            ci={dataTaskMainDPS.ci99}
-                                            n={dataTaskMainDPS.current}
-                                        />
-                                    </>
-                                ) : (
-                                    <></>
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-            )}
+            {content}
         </div>
     );
 };

@@ -17,35 +17,7 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { useState } from "react";
-
-const IconPaste = () => {
-    return (
-        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M16 17.1c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9Z"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8 8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M16 12.9C16 9.4 14.6 8 11.1 8"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-        // path 来自 nextui components import code
-    );
-};
+import { FaRegPaste } from "react-icons/fa6";
 
 async function importFromJX3BOX(input: string) {
     input = input.trimEnd(); // 去除末尾空格, 换行符等
@@ -111,7 +83,7 @@ const AttrModalContent = ({ updateInput }: { updateInput: (fn: (draft: DataInput
                                 }}
                                 endContent={
                                     <Button size="sm" isIconOnly variant="light" onPress={paste}>
-                                        <IconPaste />
+                                        <FaRegPaste size={20} />
                                     </Button>
                                 }
                             />

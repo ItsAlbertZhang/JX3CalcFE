@@ -169,10 +169,19 @@ export async function config() {
 // 其他函数
 
 export async function createTask(input: DataInput) {
-    input.attribute.data.MeleeWeaponDamageRand =
-        input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage;
-    console.log(JSON.stringify(input));
-    const data = await fetchPostJson({ port: 12897, path: "/create", body: input });
+    const obj = {
+        ...input,
+        attribute: {
+            ...input.attribute,
+            data: {
+                ...input.attribute.data,
+                MeleeWeaponDamageRand:
+                    input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage,
+            },
+        },
+    };
+    console.log(JSON.stringify(obj));
+    const data = await fetchPostJson({ port: 12897, path: "/create", body: obj });
     console.log(data);
     return data;
 }
