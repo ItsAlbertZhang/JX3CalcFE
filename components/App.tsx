@@ -38,12 +38,13 @@ export const App = () => {
     const [dataDamageAnalysis, setDataDamageAnalysis] = useState<TypeQueryDamageAnalysis["data"]>();
     const [dataDamageLists, setDataDamageLists] = useState<TypeQueryDamageList["data"]>();
     const [dataTaskMainDPS, setDataMainTaskDPS] = useState<TypeQueryDPS["data"]>();
-    const [dataCompareTasksDPS, setDataCompareTasksDPS] = useState<TypeQueryDPS["data"][]>([]);
+    const [dataCompareTasksDPS, updateDataCompareTasksDPS] = useImmer<TypeQueryDPS["data"][]>([]);
     const [calcedOnce, setCalcedOnce] = useState<boolean>(false);
 
     async function calc() {
         setCalcedOnce(true);
         setCalculating(true);
+        updateDataCompareTasksDPS(() => []);
 
         const response = (await createTask(dataInputs[0])) as TypeString;
         if (response.status === 0) {
@@ -86,10 +87,20 @@ export const App = () => {
             if (response.status === 0) {
                 const id = response.data;
                 await wait();
+                let pushed = false;
                 while (true) {
                     const response = (await queryDps(id)) as TypeBackendRes;
                     if (response.status === 0) {
-                        setDataCompareTasksDPS([...dataCompareTasksDPS, response.data]);
+                        if (!pushed) {
+                            updateDataCompareTasksDPS((draft) => {
+                                draft.push(response.data);
+                            });
+                            pushed = true;
+                        } else {
+                            updateDataCompareTasksDPS((draft) => {
+                                draft[draft.length - 1] = response.data;
+                            });
+                        }
                         if (response.data.complete) {
                             break;
                         }
@@ -134,6 +145,7 @@ export const App = () => {
                     dataDamageLists={dataDamageLists}
                     dataDamageAnalysis={dataDamageAnalysis}
                     dataTaskMainDPS={dataTaskMainDPS}
+                    dataCompareTasksDPS={dataCompareTasksDPS}
                 />
             </div>
         );

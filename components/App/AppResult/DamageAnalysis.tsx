@@ -68,8 +68,8 @@ function combineDA(data: TypeQueryDamageAnalysis["data"]) {
 
 export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"] }) => {
     const [combine, setCombine] = useState(false);
-    const sorted = useMemo(() => [...data].sort(sortDA), [data]);
-    const combined = useMemo(() => combineDA(data), [data]);
+    const dataSorted = useMemo(() => [...data].sort(sortDA), [data]);
+    const dataCombined = useMemo(() => combineDA(data), [data]);
 
     return (
         <motion.div
@@ -86,7 +86,7 @@ export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"]
                 <Chip>占比</Chip>
             </div>
             <div className="max-h-[35vh]">
-                <DAChart damageAnalysis={combine ? combined : sorted} />
+                <DAChart damageAnalysis={combine ? dataCombined : dataSorted} />
             </div>
         </motion.div>
     );

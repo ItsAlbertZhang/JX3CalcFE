@@ -46,7 +46,6 @@ export const DistributeChart = ({ data }: { data: TypeQueryDPS["data"] }) => {
     });
     ymax = Math.ceil(ymax / 10) * 10;
     const yticks = Array.from({ length: 11 }, (_, i) => (ymax / 10) * i);
-    console.log(chart);
     return (
         <ResponsiveContainer>
             <ComposedChart data={chart}>
