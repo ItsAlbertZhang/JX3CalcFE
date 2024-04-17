@@ -1,9 +1,9 @@
 "use client";
-// my libraries
-import { Z_99 } from "@/components/Common";
 // third party libraries
 import { Card, CardBody, Tooltip } from "@nextui-org/react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
+
+const Z_99 = 2.576;
 
 export const Result = ({ avg, sd, ci, n }: { avg: number; sd: number; ci: number; n: number }) => {
     const ciAbsolute = ci.toFixed(ci > 100 ? 0 : ci > 10 ? 1 : 2);

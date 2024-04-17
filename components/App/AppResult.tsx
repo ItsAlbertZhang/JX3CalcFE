@@ -6,7 +6,7 @@ import { DistributeChart } from "./AppResult/DistributionChart";
 import { TaskCompare } from "./AppResult/TasksCompare";
 import { Result } from "./AppResult/Result";
 // my libraries
-import { TypeQueryDPS, TypeQueryDamageAnalysis, TypeQueryDamageList } from "@/components/definitions";
+import { DataInput, TypeQueryDPS, TypeQueryDamageAnalysis, TypeQueryDamageList } from "@/components/definitions";
 // third party libraries
 import { motion } from "framer-motion";
 import { Progress } from "@nextui-org/react";
@@ -17,12 +17,14 @@ export const AppResult = ({
     dataDamageAnalysis,
     dataTaskMainDPS,
     dataCompareTasksDPS,
+    dataInputs,
 }: {
     calcedOnce: boolean;
     dataDamageLists: TypeQueryDamageList["data"] | undefined;
     dataDamageAnalysis: TypeQueryDamageAnalysis["data"] | undefined;
     dataTaskMainDPS: TypeQueryDPS["data"] | undefined;
     dataCompareTasksDPS: TypeQueryDPS["data"][];
+    dataInputs: DataInput[];
 }) => {
     if (!calcedOnce) {
         return <></>;
@@ -46,6 +48,7 @@ export const AppResult = ({
                         <TaskCompare
                             dataTaskMainDPS={dataTaskMainDPS as TypeQueryDPS["data"]}
                             dataCompareTasksDPS={dataCompareTasksDPS}
+                            dataInputs={dataInputs}
                         />
                     </motion.div>
                 ) : (

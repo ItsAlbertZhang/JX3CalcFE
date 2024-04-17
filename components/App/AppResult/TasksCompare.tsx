@@ -1,11 +1,13 @@
 "use client";
+// child components simple
+import { HorizontalEndRoundedBar } from "./Common";
 // my libraries
-import { CustomBar } from "@/components/Common";
-import { TypeQueryDPS } from "@/components/definitions";
+import { DataInput, TypeQueryDPS } from "@/components/definitions";
 // third party libraries
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { BarChart, Bar, ErrorBar, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 const COLOR_BAR = "#337755";
+const COLOR_ERROR = "#CC0000";
 const COLOR_TEXT = "#DDDDDD";
 
 function countCharacters(str: string) {
@@ -17,14 +19,16 @@ function countCharacters(str: string) {
 export const TaskCompare = ({
     dataTaskMainDPS,
     dataCompareTasksDPS,
+    dataInputs,
 }: {
     dataTaskMainDPS: TypeQueryDPS["data"];
     dataCompareTasksDPS: TypeQueryDPS["data"][];
+    dataInputs: DataInput[];
 }) => {
     const data = dataCompareTasksDPS.map((data, i) => ({
         add: (data.avg - dataTaskMainDPS.avg) / dataTaskMainDPS.avg,
         ci: data.ci99 / data.avg,
-        name: `P${i}`,
+        name: i + 1 >= dataInputs.length ? "未知" : dataInputs[i + 1].name,
         // name: `第 ${i} 页`,
     }));
     let xmin = 0;
@@ -43,9 +47,11 @@ export const TaskCompare = ({
         //         <p key={i}>{data.avg}</p>
         //     ))}
         // </div>
-        <ResponsiveContainer width="100%" height={((100 / 8) * data.length).toFixed(1) + "%"}>
+        <ResponsiveContainer width="100%" height={Math.min(100, (100 / 8) * data.length).toFixed(1) + "%"}>
             <BarChart layout="vertical" data={data}>
-                <Bar yAxisId="left" dataKey="add" fill={COLOR_BAR} shape={<CustomBar />} />
+                <Bar yAxisId="left" dataKey="add" fill={COLOR_BAR} shape={<HorizontalEndRoundedBar />}>
+                    <ErrorBar dataKey="ci" stroke={COLOR_ERROR} />
+                </Bar>
                 <XAxis type="number" hide domain={[xmin, xmax]} />
                 <YAxis
                     yAxisId="left"
@@ -58,12 +64,6 @@ export const TaskCompare = ({
                     interval={0}
                     tick={{ fill: COLOR_TEXT }}
                 />
-                {/* ToDo: 
-                    1. CustomBar 形状. 靠近 0 一端不设弧度.
-                    2. 置信区间.
-                    3. 参考线.
-                    4. 内置一键 Compare.
-                */}
                 <YAxis
                     yAxisId="right"
                     type="category"
@@ -81,7 +81,7 @@ export const TaskCompare = ({
                         "%"
                     }
                 />
-                {/* <ReferenceLine x={0} stroke="#000" /> */}
+                <ReferenceLine yAxisId="right" x={0} stroke={COLOR_BAR} />
             </BarChart>
         </ResponsiveContainer>
     );

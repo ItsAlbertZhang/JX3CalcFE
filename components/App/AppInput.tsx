@@ -7,7 +7,7 @@ import { Global } from "./AppInput/Global";
 // my libraries
 import { DataInput, TypeStatus } from "@/components/definitions";
 // third party libraries
-import { Button, Tab, Tabs, Pagination } from "@nextui-org/react";
+import { Button, Input, Tab, Tabs, Tooltip, Pagination } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaRegCopy, FaRegTrashCan } from "react-icons/fa6";
@@ -17,11 +17,13 @@ const InputOnly = ({
     updateInputs,
     status,
     page,
+    setPage,
 }: {
     dataInputs: DataInput[];
     updateInputs: (fn: (draft: DataInput[]) => void) => void;
     status: TypeStatus;
     page: number;
+    setPage: (page: number) => void;
 }) => {
     const index = page - 1;
     // temporary function to update the input
@@ -32,23 +34,21 @@ const InputOnly = ({
     }
     const classname = "flex flex-col justify-center items-center gap-8";
     return (
-        <div className="row-span-10">
-            <Tabs className={classname} disabledKeys={["Benefits"]} color="warning" radius="full">
-                <Tab key="Global" title="通用" className={classname + " h-full"}>
-                    <Global dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
-                </Tab>
-                <Tab key="Attribute" title="属性" className={classname + " h-full"}>
-                    <Attribute dataInput={dataInputs[index]} updateInput={updateInput} />
-                    <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
-                </Tab>
-                <Tab key="Custom" title="战斗" className={classname + " h-full"}>
-                    <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
-                </Tab>
-                <Tab key="Benefits" title="增益" className={classname + " h-full"}>
-                    <p>Coding...</p>
-                </Tab>
-            </Tabs>
-        </div>
+        <Tabs className={classname} disabledKeys={["Benefits"]} color="warning" radius="full">
+            <Tab key="Global" title="通用" className={classname + " grow"}>
+                <Global dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
+            </Tab>
+            <Tab key="Attribute" title="属性" className={classname + " grow"}>
+                <Attribute dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
+                <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
+            </Tab>
+            <Tab key="Custom" title="战斗" className={classname + " grow"}>
+                <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
+            </Tab>
+            <Tab key="Benefits" title="增益" className={classname + " grow"}>
+                <p>Coding...</p>
+            </Tab>
+        </Tabs>
     );
 };
 
@@ -66,7 +66,8 @@ const Page = ({
     const index = page - 1;
     function copyCurrentPage() {
         updateInputs((draft) => {
-            const deepCopy = JSON.parse(JSON.stringify(draft[index]));
+            const deepCopy: DataInput = JSON.parse(JSON.stringify(draft[index]));
+            deepCopy.name = "P" + (index + 2);
             draft.splice(index + 1, 0, deepCopy);
         });
         setPage(page + 1);
@@ -75,20 +76,25 @@ const Page = ({
         if (dataInputs.length === 1) return;
         updateInputs((draft) => {
             draft.splice(index, 1);
+            draft[0].name = "基准页";
         });
         if (page > 1) {
             setPage(page - 1);
         }
     }
     return (
-        <div className="flex justify-center items-center gap-2">
-            <Button isIconOnly variant="ghost" color="success" onClick={copyCurrentPage}>
-                <FaRegCopy size={16} />
-            </Button>
+        <div className="flex justify-between items-center gap-2">
+            <Tooltip content="复制当前页">
+                <Button isIconOnly variant="ghost" color="success" onClick={copyCurrentPage}>
+                    <FaRegCopy size={16} />
+                </Button>
+            </Tooltip>
             <Pagination total={dataInputs.length} showControls loop showShadow page={page} onChange={setPage} />
-            <Button isIconOnly variant="ghost" color="danger" onClick={delCurrentPage}>
-                <FaRegTrashCan size={16} />
-            </Button>
+            <Tooltip content="删除当前页">
+                <Button isIconOnly variant="ghost" color="danger" onClick={delCurrentPage}>
+                    <FaRegTrashCan size={16} />
+                </Button>
+            </Tooltip>
         </div>
     );
 };
@@ -111,11 +117,33 @@ export const AppInput = ({
     const [page, setPage] = useState(1);
     return (
         <motion.div
-            className={(classNameAdd ? classNameAdd + " " : "") + "grid grid-rows-12 gap-4 w-full min-h-[80vh]"}
+            style={{ height: "calc(100vh - 1.5rem * 2)" }}
+            // 1.5rem: p-6
+            // see https://tailwindcss.com/docs/padding
+            className={(classNameAdd ? classNameAdd + " " : "") + "w-full flex flex-col gap-4"}
             layout // Animate layout changes
             transition={{ type: "spring", duration: 1, bounce: 0.33 }}
         >
-            <InputOnly dataInputs={dataInputs} updateInputs={updateInputs} status={status} page={page} />
+            <div className="flex justify-center items-center">
+                <Input
+                    value={dataInputs[page - 1].name}
+                    onChange={(e) => {
+                        updateInputs((draft) => {
+                            draft[page - 1].name = e.target.value;
+                        });
+                    }}
+                    isDisabled={page === 1}
+                    classNames={{ input: "text-center text-xl font-bold" }}
+                    className="w-1/3"
+                />
+            </div>
+            <InputOnly
+                dataInputs={dataInputs}
+                updateInputs={updateInputs}
+                status={status}
+                page={page}
+                setPage={setPage}
+            />
             <Page dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
             <Button isDisabled={calculating} onPress={calc} color="primary">
                 计算

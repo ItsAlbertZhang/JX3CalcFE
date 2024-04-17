@@ -98,6 +98,7 @@ export interface DataAttribute {
 }
 
 export interface DataInput {
+    name: string;
     player: string;
     delayNetwork: number;
     delayKeyboard: number;

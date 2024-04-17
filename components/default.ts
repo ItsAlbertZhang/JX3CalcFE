@@ -1,6 +1,7 @@
 import { DataInput } from "@/components/definitions";
 
 export const defaultDataInput: DataInput = {
+    name: "基准页",
     player: "焚影圣诀",
     delayNetwork: 45,
     delayKeyboard: 20,

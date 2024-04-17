@@ -1,6 +1,7 @@
 "use client";
+// child components simple
+import { HorizontalRoundedBar } from "./Common";
 // my libraries
-import { CustomBar } from "@/components/Common";
 import { TypeQueryDamageAnalysis } from "@/components/definitions";
 // third party libraries
 import { Chip, ScrollShadow, Switch } from "@nextui-org/react";
@@ -17,7 +18,7 @@ const DAChart = ({ damageAnalysis }: { damageAnalysis: TypeQueryDamageAnalysis["
         <ScrollShadow hideScrollBar className="h-full">
             <ResponsiveContainer width="100%" height={damageAnalysis.length * BAR_SIZE}>
                 <BarChart layout="vertical" data={damageAnalysis}>
-                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_BAR} shape={<CustomBar />} />
+                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_BAR} shape={<HorizontalRoundedBar />} />
                     <XAxis type="number" hide domain={[0, damageAnalysis[0].proportion * 1.25]} />
                     <YAxis
                         yAxisId="left"
@@ -73,6 +74,9 @@ export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"]
 
     return (
         <motion.div
+            style={{ maxHeight: "calc((100vh - 1.5rem * 2 - 1rem * 2 - 1rem) * 4 / 9)" }}
+            // 1.5rem: p-6, 1rem: gap-4
+            // see https://tailwindcss.com/docs
             className="flex flex-col gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -85,9 +89,7 @@ export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"]
                 </Switch>
                 <Chip>占比</Chip>
             </div>
-            <div className="max-h-[35vh]">
-                <DAChart damageAnalysis={combine ? dataCombined : dataSorted} />
-            </div>
+            <DAChart damageAnalysis={combine ? dataCombined : dataSorted} />
         </motion.div>
     );
 };

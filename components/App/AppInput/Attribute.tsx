@@ -1,4 +1,3 @@
-// Page Component: Userinput: Attribute
 "use client";
 // child components simple
 import { validateInteger, IntegerInput } from "./Common";
@@ -14,6 +13,7 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
+    Tooltip,
     useDisclosure,
 } from "@nextui-org/react";
 import { useState } from "react";
@@ -49,7 +49,13 @@ async function importFromJX3BOX(input: string) {
     }
 }
 
-const AttrModalContent = ({ updateInput }: { updateInput: (fn: (draft: DataInput) => void) => void }) => {
+const AttrModalContent = ({
+    updateInputs,
+    index,
+}: {
+    updateInputs: (fn: (draft: DataInput[]) => void) => void;
+    index: number;
+}) => {
     const [url, setUrl] = useState("");
     return (
         <ModalContent>
@@ -61,8 +67,8 @@ const AttrModalContent = ({ updateInput }: { updateInput: (fn: (draft: DataInput
                 async function importFromJX3BOXAction() {
                     const res = await importFromJX3BOX(url);
                     if (res !== undefined) {
-                        updateInput((draft) => {
-                            draft.attribute.data = res;
+                        updateInputs((draft) => {
+                            draft[index].attribute.data = res;
                         });
                         onClose();
                     }
@@ -104,13 +110,18 @@ const AttrModalContent = ({ updateInput }: { updateInput: (fn: (draft: DataInput
 };
 
 export const Attribute = ({
-    dataInput,
-    updateInput,
+    dataInputs,
+    updateInputs,
+    page,
+    setPage,
 }: {
-    dataInput: DataInput;
-    updateInput: (fn: (draft: DataInput) => void) => void;
+    dataInputs: DataInput[];
+    updateInputs: (fn: (draft: DataInput[]) => void) => void;
+    page: number;
+    setPage: (page: number) => void;
 }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const index = page - 1;
 
     function importFromJX3BOXDirect(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
@@ -118,34 +129,94 @@ export const Attribute = ({
             const str = await readClipboard();
             const data = await importFromJX3BOX(str);
             if (data !== undefined) {
-                updateInput((draft) => {
-                    draft.attribute.data = data;
+                updateInputs((draft) => {
+                    draft[index].attribute.data = data;
                 });
             }
         }
         f();
     }
 
+    function createAttributeBenefitPage() {
+        updateInputs((draft) => {
+            const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
+            const ADD_BASE = 198;
+            const ADD_MAGIC_ATTACK = 475;
+            const ADD_CRITICAL = 883;
+            const ADD_CRITICAL_DAMAGE = 883;
+            const ADD_OVERCOME = 883;
+            const ADD_STRAIN = 883;
+            const ADD_SURPLUS = 883;
+            const ATTRS = ["基础", "攻击", "会心", "会效", "破防", "无双", "破招"];
+            for (let i = 0; i < ATTRS.length; i++) {
+                newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
+                newDraft[i + 1].name = ATTRS[i];
+            }
+            newDraft[1].attribute.data.Strength += ADD_BASE;
+            newDraft[1].attribute.data.Agility += ADD_BASE;
+            newDraft[1].attribute.data.Spirit += ADD_BASE;
+            newDraft[1].attribute.data.Spunk += ADD_BASE;
+            newDraft[2].attribute.data.SolarAttackPowerBase += ADD_MAGIC_ATTACK;
+            newDraft[2].attribute.data.LunarAttackPowerBase += ADD_MAGIC_ATTACK;
+            newDraft[2].attribute.data.NeutralAttackPowerBase += ADD_MAGIC_ATTACK;
+            newDraft[2].attribute.data.PoisonAttackPowerBase += ADD_MAGIC_ATTACK;
+            newDraft[3].attribute.data.PhysicsCriticalStrike += ADD_CRITICAL;
+            newDraft[3].attribute.data.SolarCriticalStrike += ADD_CRITICAL;
+            newDraft[3].attribute.data.LunarCriticalStrike += ADD_CRITICAL;
+            newDraft[3].attribute.data.NeutralCriticalStrike += ADD_CRITICAL;
+            newDraft[3].attribute.data.PoisonCriticalStrike += ADD_CRITICAL;
+            newDraft[4].attribute.data.PhysicsCriticalDamagePower += ADD_CRITICAL_DAMAGE;
+            newDraft[4].attribute.data.SolarCriticalDamagePower += ADD_CRITICAL_DAMAGE;
+            newDraft[4].attribute.data.LunarCriticalDamagePower += ADD_CRITICAL_DAMAGE;
+            newDraft[4].attribute.data.NeutralCriticalDamagePower += ADD_CRITICAL_DAMAGE;
+            newDraft[4].attribute.data.PoisonCriticalDamagePower += ADD_CRITICAL_DAMAGE;
+            newDraft[5].attribute.data.PhysicsOvercomeBase += ADD_OVERCOME;
+            newDraft[5].attribute.data.SolarOvercomeBase += ADD_OVERCOME;
+            newDraft[5].attribute.data.LunarOvercomeBase += ADD_OVERCOME;
+            newDraft[5].attribute.data.NeutralOvercomeBase += ADD_OVERCOME;
+            newDraft[5].attribute.data.PoisonOvercomeBase += ADD_OVERCOME;
+            newDraft[6].attribute.data.Strain += ADD_STRAIN;
+            newDraft[7].attribute.data.SurplusValue += ADD_SURPLUS;
+            return newDraft;
+        });
+        setPage(1);
+    }
+
     function updateAttribute(fn: (draft: DataAttribute) => void) {
-        updateInput((draft) => {
-            fn(draft.attribute.data);
+        updateInputs((draft) => {
+            fn(draft[index].attribute.data);
         });
     }
 
     return (
         <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="w-full grid grid-cols-2 gap-4 items-center sm:grid-cols-3">
-                <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect} className="col-span-2">
-                    从 JX3BOX 导入数据
-                </Button>
+                <Tooltip showArrow delay={250} closeDelay={250} content="从 JX3BOX 导入数据">
+                    <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect}>
+                        导入
+                    </Button>
+                </Tooltip>
+                <Tooltip
+                    showArrow
+                    delay={250}
+                    closeDelay={250}
+                    content={
+                        <>
+                            <p>以当前页为基准创建属性加成页.</p>
+                            <p className="text-red-500">注意: 所有的其他页面会被删除!</p>
+                        </>
+                    }
+                >
+                    <Button onPress={createAttributeBenefitPage}>属性收益</Button>
+                </Tooltip>
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["Strength", "Agility", "Spirit", "Spunk"]}
                     label="心法属性"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={[
                         "PhysicsAttackPowerBase",
@@ -157,7 +228,7 @@ export const Attribute = ({
                     label="基础攻击"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={[
                         "PhysicsCriticalStrike",
@@ -169,7 +240,7 @@ export const Attribute = ({
                     label="会心等级"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={[
                         "PhysicsCriticalDamagePower",
@@ -181,7 +252,7 @@ export const Attribute = ({
                     label="会心效果等级"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={[
                         "PhysicsOvercomeBase",
@@ -193,38 +264,38 @@ export const Attribute = ({
                     label="基础破防等级"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["Haste"]}
                     label="急速等级"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["Strain"]}
                     label="无双等级"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["SurplusValue"]}
                     label="破招"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["MeleeWeaponDamage"]}
                     label="武器伤害(最低)"
                 />
                 <IntegerInput
-                    data={dataInput.attribute.data}
+                    data={dataInputs[index].attribute.data}
                     update={updateAttribute}
                     keys={["MeleeWeaponDamageMax"]}
                     label="武器伤害(最高)"
                 />
             </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm" placement="center" backdrop="blur">
-                <AttrModalContent updateInput={updateInput} />
+                <AttrModalContent updateInputs={updateInputs} index={index} />
             </Modal>
         </div>
     );

@@ -31,7 +31,7 @@ interface Point {
 
 const DLChart = ({ points }: { points: Point[] }) => {
     return (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer>
             <LineChart data={points}>
                 <XAxis dataKey="x" />
                 <YAxis domain={["auto", "auto"]} />

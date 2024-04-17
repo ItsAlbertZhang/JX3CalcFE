@@ -146,6 +146,7 @@ export const App = () => {
                     dataDamageAnalysis={dataDamageAnalysis}
                     dataTaskMainDPS={dataTaskMainDPS}
                     dataCompareTasksDPS={dataCompareTasksDPS}
+                    dataInputs={dataInputs}
                 />
             </div>
         );
