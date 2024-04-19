@@ -1,7 +1,9 @@
 "use client";
 // my libraries
 import { openUrl, readLua } from "@/components/actions";
-import { DataInput, TypeStatus } from "@/components/definitions";
+import { DataInput } from "@/components/definitions";
+import { defaultTalent } from "@/components/default";
+
 // third party libraries
 import {
     Button,
@@ -15,14 +17,15 @@ import {
     Textarea,
     useDisclosure,
 } from "@nextui-org/react";
+import { motion } from "framer-motion";
 import { IoAddCircle } from "react-icons/io5";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 
 const methods = ["使用内置循环", "使用lua编程语言", "使用游戏内宏"];
 const help = "http://jx3calc.com/help/custom";
 
-const ModalContentWarning = ({
+const ModalLua = ({
     setMethod,
     setWarned,
     selectLuaFile,
@@ -74,7 +77,7 @@ const ModalContentWarning = ({
     );
 };
 
-const ModalContentInput = ({ submitCustom }: { submitCustom: (macros: string[]) => void }) => {
+const ModalMacro = ({ submitCustom }: { submitCustom: (macros: string[]) => void }) => {
     const [count, setCount] = useState(1);
     const [input, setInput] = useState([""]);
     return (
@@ -146,47 +149,45 @@ const ModalContentInput = ({ submitCustom }: { submitCustom: (macros: string[]) 
     );
 };
 
-export const Custom = ({
+const Head = ({
+    method,
+    setMethod,
     dataInput,
     updateInput,
-    status,
 }: {
+    method: string;
+    setMethod: (value: string) => void;
     dataInput: DataInput;
     updateInput: (fn: (draft: DataInput) => void) => void;
-    status: TypeStatus["data"];
 }) => {
-    const [hide, setHide] = useState(true); // 整体部件是否隐藏
-    const [method, setMethod] = useState(methods[0]); // 选用的方法
-    const [warned, setWarned] = useState(false); // 是否已经警告过
-    const [valid, setValid] = useState(false); // 是否已经选择了lua文件或输入了宏
+    const [valid, setValid] = useState(dataInput.custom && dataInput.custom.fight.data.length > 0); // 是否已经选择了lua文件或输入了宏
+    const [warned, setWarned] = useState(false); // lua 的警告 modal 是否已经弹出过
 
     const modal = useDisclosure();
 
-    useEffect(() => {
-        if (status.custom) {
-            setHide(false);
-        }
-    }, [status.custom]);
-
-    if (hide) {
-        return <></>;
-    }
-
     async function selectLuaFile() {
         const file = await readLua();
-        if (file) {
+        if (file.length > 0) {
             updateInput((draft) => {
                 draft.custom = {
                     fight: {
                         method: "使用lua编程语言",
                         data: file,
                     },
+                    talent: defaultTalent,
                 };
             });
             setValid(true);
+        } else {
+            // 重置 value
+            updateInput((draft) => {
+                delete draft.custom;
+            });
+            // 重置 valid
+            setValid(false);
         }
     }
-    async function submitCustom(macros: string[]) {
+    function submitCustom(macros: string[]) {
         const data = macros.filter((item) => item !== ""); // 过滤空宏
         if (data.length > 0) {
             updateInput((draft) => {
@@ -195,6 +196,7 @@ export const Custom = ({
                         method: "使用游戏内宏",
                         data: data,
                     },
+                    talent: defaultTalent,
                 };
             });
             setValid(true);
@@ -208,8 +210,8 @@ export const Custom = ({
         }
     }
 
-    let title = <></>;
-    let content = (
+    let selectHelper = <></>;
+    let modalContent = (
         <ModalContent>
             <></>
         </ModalContent>
@@ -218,7 +220,7 @@ export const Custom = ({
     // 渲染
     switch (method) {
         case methods[1]:
-            title = (
+            selectHelper = (
                 <Button
                     onPress={selectLuaFile}
                     color={valid ? "success" : "danger"}
@@ -228,10 +230,10 @@ export const Custom = ({
                     选择lua文件
                 </Button>
             );
-            content = <ModalContentWarning setWarned={setWarned} setMethod={setMethod} selectLuaFile={selectLuaFile} />;
+            modalContent = <ModalLua setWarned={setWarned} setMethod={setMethod} selectLuaFile={selectLuaFile} />;
             break;
         case methods[2]:
-            title = (
+            selectHelper = (
                 <Button
                     onPress={modal.onOpen}
                     color={valid ? "success" : "danger"}
@@ -241,11 +243,11 @@ export const Custom = ({
                     重新输入
                 </Button>
             );
-            content = <ModalContentInput submitCustom={submitCustom} />;
+            modalContent = <ModalMacro submitCustom={submitCustom} />;
             break;
         default:
-            title = <></>;
-            content = <></>;
+            selectHelper = <></>;
+            modalContent = <></>;
             break;
     }
 
@@ -273,15 +275,19 @@ export const Custom = ({
     }
 
     return (
-        <div className="w-full flex justify-center items-center gap-8">
-            <Select label="技能循环" defaultSelectedKeys={[methods[0]]} selectedKeys={[method]} onChange={handleChange}>
+        <motion.div
+            layout // Animate layout changes
+            transition={{ type: "spring", duration: 1, bounce: 0.33 }}
+            className="w-full flex justify-center items-center gap-8"
+        >
+            <Select label="总开关" selectedKeys={[method]} onChange={handleChange}>
                 {methods.map((item) => (
                     <SelectItem key={item} value={item}>
                         {item}
                     </SelectItem>
                 ))}
             </Select>
-            {title}
+            {selectHelper}
             <Modal
                 isOpen={modal.isOpen}
                 onOpenChange={modal.onOpenChange}
@@ -292,8 +298,33 @@ export const Custom = ({
                 isKeyboardDismissDisabled={true}
                 hideCloseButton={true}
             >
-                {content}
+                {modalContent}
             </Modal>
+        </motion.div>
+    );
+};
+
+const Content = () => {
+    return (
+        <div className="grow w-full flex flex-col justify-center items-center gap-8">
+            <p>...</p>
+        </div>
+    );
+};
+
+export const Custom = ({
+    dataInput,
+    updateInput,
+}: {
+    dataInput: DataInput;
+    updateInput: (fn: (draft: DataInput) => void) => void;
+}) => {
+    const [method, setMethod] = useState(dataInput.custom ? dataInput.custom.fight.method : methods[0]); // 选用的方法
+
+    return (
+        <div className="w-full h-full flex flex-col justify-center items-center gap-8">
+            <Head method={method} setMethod={setMethod} dataInput={dataInput} updateInput={updateInput} />
+            {method !== methods[0] ? <Content /> : <></>}
         </div>
     );
 };

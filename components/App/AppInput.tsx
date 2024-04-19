@@ -33,21 +33,35 @@ const InputOnly = ({
         });
     }
     const classname = "flex flex-col justify-center items-center gap-8";
+    const global = (
+        <Tab key="Global" title="通用" className={classname + " grow"}>
+            <Global dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
+        </Tab>
+    );
+    const attribute = (
+        <Tab key="Attribute" title="属性" className={classname + " grow"}>
+            <Attribute dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
+            <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
+        </Tab>
+    );
+    const custom = status.data.custom ? (
+        <Tab key="Custom" title="战斗" className={classname + " grow"}>
+            <Custom dataInput={dataInputs[index]} updateInput={updateInput} />
+        </Tab>
+    ) : (
+        <></>
+    );
+    const benefits = (
+        <Tab key="Benefits" title="增益" className={classname + " grow"}>
+            <p>Coding...</p>
+        </Tab>
+    );
     return (
         <Tabs className={classname} disabledKeys={["Benefits"]} color="warning" radius="full">
-            <Tab key="Global" title="通用" className={classname + " grow"}>
-                <Global dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
-            </Tab>
-            <Tab key="Attribute" title="属性" className={classname + " grow"}>
-                <Attribute dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
-                <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
-            </Tab>
-            <Tab key="Custom" title="战斗" className={classname + " grow"}>
-                <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
-            </Tab>
-            <Tab key="Benefits" title="增益" className={classname + " grow"}>
-                <p>Coding...</p>
-            </Tab>
+            {global}
+            {attribute}
+            {custom}
+            {benefits}
         </Tabs>
     );
 };

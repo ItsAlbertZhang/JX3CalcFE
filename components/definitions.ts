@@ -110,6 +110,8 @@ export interface DataInput {
     };
     effects: string[];
     custom?: {
+        talent?: number[];
+        recipe?: number[];
         fight: {
             method: string;
             data: string | string[];
