@@ -46,7 +46,7 @@ const InputOnly = ({
     );
     const custom = status.data.custom ? (
         <Tab key="Custom" title="战斗" className={classname + " grow"}>
-            <Custom dataInput={dataInputs[index]} updateInput={updateInput} />
+            <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
         </Tab>
     ) : (
         <></>

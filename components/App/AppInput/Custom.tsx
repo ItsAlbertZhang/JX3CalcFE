@@ -1,12 +1,13 @@
 "use client";
 // my libraries
 import { openUrl, readLua } from "@/components/actions";
-import { DataInput } from "@/components/definitions";
-import { defaultTalent } from "@/components/default";
+import { DataInput, TypeStatus } from "@/components/definitions";
+import { Talent, talentHd, talentExp } from "@/components/default";
 
 // third party libraries
 import {
     Button,
+    Image,
     Modal,
     ModalContent,
     ModalHeader,
@@ -154,11 +155,13 @@ const Head = ({
     setMethod,
     dataInput,
     updateInput,
+    talent,
 }: {
     method: string;
     setMethod: (value: string) => void;
     dataInput: DataInput;
     updateInput: (fn: (draft: DataInput) => void) => void;
+    talent: Talent[][];
 }) => {
     const [valid, setValid] = useState(dataInput.custom && dataInput.custom.fight.data.length > 0); // 是否已经选择了lua文件或输入了宏
     const [warned, setWarned] = useState(false); // lua 的警告 modal 是否已经弹出过
@@ -174,7 +177,7 @@ const Head = ({
                         method: "使用lua编程语言",
                         data: file,
                     },
-                    talent: defaultTalent,
+                    talent: talent.map((item) => item[0].skillID),
                 };
             });
             setValid(true);
@@ -196,7 +199,7 @@ const Head = ({
                         method: "使用游戏内宏",
                         data: data,
                     },
-                    talent: defaultTalent,
+                    talent: talent.map((item) => item[0].skillID),
                 };
             });
             setValid(true);
@@ -280,7 +283,7 @@ const Head = ({
             transition={{ type: "spring", duration: 1, bounce: 0.33 }}
             className="w-full flex justify-center items-center gap-8"
         >
-            <Select label="总开关" selectedKeys={[method]} onChange={handleChange}>
+            <Select label="总开关" selectedKeys={[method]} onChange={handleChange} disallowEmptySelection>
                 {methods.map((item) => (
                     <SelectItem key={item} value={item}>
                         {item}
@@ -304,10 +307,57 @@ const Head = ({
     );
 };
 
-const Content = () => {
+const SelectItemRender = ({ item }: { item: Talent }) => {
+    return (
+        <div key={item.skillID.toString()} className="flex gap-2">
+            <Image width={32} alt={item.name} src={`https://icon.jx3box.com/icon/${item.iconID}.png`} />
+            <div className="flex flex-col justify-center items-center">
+                <p>{item.name}</p>
+            </div>
+        </div>
+    );
+};
+
+// TODO: 重构渲染逻辑, 重选 method 时不重置 content
+const Content = ({
+    dataInput,
+    updateInput,
+    talent,
+}: {
+    dataInput: DataInput;
+    updateInput: (fn: (draft: DataInput) => void) => void;
+    talent: Talent[][];
+}) => {
+    const qixue = talent.map((items, idx) => (
+        <Select
+            key={idx}
+            aria-label={`第${idx + 1}重`}
+            size="lg"
+            disallowEmptySelection
+            selectedKeys={dataInput.custom ? [dataInput.custom.talent[idx].toString()] : []}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                updateInput((draft) => {
+                    draft.custom!.talent[idx] = parseInt(e.target.value);
+                });
+            }}
+            items={items}
+            renderValue={(items) => {
+                return items.map((item, index) =>
+                    item.data ? <SelectItemRender key={index} item={item.data} /> : <></>
+                );
+            }}
+        >
+            {(item) => (
+                <SelectItem key={item.skillID.toString()} aria-label={`qx${item.skillID}`}>
+                    <SelectItemRender item={item} />
+                </SelectItem>
+            )}
+        </Select>
+    ));
+
     return (
         <div className="grow w-full flex flex-col justify-center items-center gap-8">
-            <p>...</p>
+            <div className="w-full grid grid-cols-3 justify-items-center items-center gap-2">{qixue}</div>
         </div>
     );
 };
@@ -315,16 +365,29 @@ const Content = () => {
 export const Custom = ({
     dataInput,
     updateInput,
+    status,
 }: {
     dataInput: DataInput;
     updateInput: (fn: (draft: DataInput) => void) => void;
+    status: TypeStatus["data"];
 }) => {
     const [method, setMethod] = useState(dataInput.custom ? dataInput.custom.fight.method : methods[0]); // 选用的方法
+    const talent = status.isExp ? talentExp : talentHd;
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center gap-8">
-            <Head method={method} setMethod={setMethod} dataInput={dataInput} updateInput={updateInput} />
-            {method !== methods[0] ? <Content /> : <></>}
+            <Head
+                method={method}
+                setMethod={setMethod}
+                dataInput={dataInput}
+                updateInput={updateInput}
+                talent={talent}
+            />
+            {method !== methods[0] ? (
+                <Content dataInput={dataInput} updateInput={updateInput} talent={talent} />
+            ) : (
+                <></>
+            )}
         </div>
     );
 };

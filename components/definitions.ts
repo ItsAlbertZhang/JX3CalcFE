@@ -13,6 +13,7 @@ export interface TypeStatus extends TypeBackendRes {
             maxFightCount: number;
         };
         custom: boolean;
+        isExp: boolean;
     };
 }
 
@@ -110,8 +111,8 @@ export interface DataInput {
     };
     effects: string[];
     custom?: {
-        talent?: number[];
-        recipe?: number[];
+        talent: number[];
+        // recipe: number[];
         fight: {
             method: string;
             data: string | string[];

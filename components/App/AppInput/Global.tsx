@@ -18,6 +18,7 @@ const Player = ({
         <Select
             size="sm"
             label="心法"
+            disallowEmptySelection
             defaultSelectedKeys={[dataInput.player]}
             onSelectionChange={
                 ((value: string) => {
