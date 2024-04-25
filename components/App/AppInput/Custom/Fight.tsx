@@ -123,18 +123,23 @@ export const Fight = ({
         modal.onOpen();
     }
 
+    let selectItems = [];
+    let length = methods.length;
+    if (!status.data.custom) {
+        length -= 1;
+    }
+    for (let i = 0; i < length; i++) {
+        selectItems.push(
+            <SelectItem key={methods[i]} value={methods[i]}>
+                {methods[i]}
+            </SelectItem>
+        );
+    }
+
     return (
         <div className="w-full flex justify-center items-center gap-8">
             <Select label="总开关" selectedKeys={[method]} onChange={handleChange} disallowEmptySelection>
-                {methods.map((item, idx) =>
-                    idx === methods.length - 1 && !status.data.custom ? (
-                        <></>
-                    ) : (
-                        <SelectItem key={item} value={item}>
-                            {item}
-                        </SelectItem>
-                    )
-                )}
+                {selectItems}
             </Select>
             {selectHelper}
             <Modal
