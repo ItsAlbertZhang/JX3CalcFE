@@ -1,7 +1,7 @@
 "use client";
 
-import { Page as MainPage } from "@/components/page/root-page";
+import { App } from "@/components/App";
 
 export default function Page() {
-    return <MainPage />;
+    return <App />;
 }

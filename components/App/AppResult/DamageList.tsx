@@ -1,12 +1,11 @@
 "use client";
 // my libraries
-import { fetchGetJson } from "@/components/actions";
-import { ibrBase, ibrQueryDamageList } from "@/components/definitions";
+import { TypeQueryDamageList } from "@/components/definitions";
 // third party libraries
 import { Chip, Slider, SliderValue } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SLIDEBAR_STEP = 1;
 const POINT_COUNT = 100;
@@ -32,7 +31,7 @@ interface Point {
 
 const DLChart = ({ points }: { points: Point[] }) => {
     return (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer>
             <LineChart data={points}>
                 <XAxis dataKey="x" />
                 <YAxis domain={["auto", "auto"]} />
@@ -54,15 +53,11 @@ const DLChart = ({ points }: { points: Point[] }) => {
     );
 };
 
-async function queryDL(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-list` })) as ibrBase;
-}
-
 function addValue(point: Point, valueIndex: number, value: number) {
     point["y" + valueIndex] = value;
 }
 
-function pointsCalc(dl: ibrQueryDamageList["data"]) {
+function pointsCalc(dl: TypeQueryDamageList["data"]) {
     const result: Point[] = [];
     for (let i = 0; i < dl.length && i < LINE_COUNT; i++) {
         let idx = 0;
@@ -94,61 +89,27 @@ function pointsFilter(points: Point[], range: number[]) {
     return result;
 }
 
-export const DamageList = ({ id }: { id: string }) => {
-    // status 为 "init" 的逻辑处理位于 App 组件中, 若 status 为 "init", 则 DPS 组件不会被渲染
-    const [dl, setDL] = useState<ibrQueryDamageList["data"]>();
-    const [points, setPoints] = useState<Point[]>([]);
-    const [sliderMax, setSliderMax] = useState<number>(0);
+export const DamageList = ({ data }: { data: TypeQueryDamageList["data"] }) => {
     const [sliderValue, setSliderValue] = useState<SliderValue>([0, 0]);
-
-    useEffect(() => {
-        function getMaxValue(data: ibrQueryDamageList["data"]) {
-            let max = 0;
-            for (const fight of data) {
-                for (const damage of fight) {
-                    if (damage.time > max) {
-                        max = damage.time;
-                    }
+    const sliderMax = useMemo(() => {
+        let max = 0;
+        for (const fight of data) {
+            for (const damage of fight) {
+                if (damage.time > max) {
+                    max = damage.time;
                 }
             }
-            return max;
         }
-        async function fetchData() {
-            // id 为 undefined 的逻辑处理位于 App 组件中, 若 id 为 undefined, 则 DPS 组件不会被渲染
-            const response = await queryDL(id);
-            if (response.status === 0) {
-                const data = response.data as ibrQueryDamageList["data"];
-                const max = getMaxValue(data);
-                setSliderMax(max);
-                setSliderValue([0, max]);
-                setDL(data);
-                setPoints(pointsCalc(data));
-            } else {
-                setTimeout(() => {
-                    fetchData();
-                }, 500);
-            }
-        }
-        let idTimeout: NodeJS.Timeout | undefined;
-        if (id.length > 0) {
-            idTimeout = setTimeout(() => {
-                fetchData();
-            }, 500); // 定时函数. 500ms 后执行一次 fetchData. 如果失败, fetchData 函数内部会每隔 500ms 再次重试.
-        }
-        return () => {
-            if (idTimeout) {
-                clearTimeout(idTimeout);
-            }
-        };
-    }, [id]);
-
-    if (!dl) {
-        return <div className="basis-full"></div>;
-    }
+        return max;
+    }, [data]);
+    useEffect(() => {
+        setSliderValue([0, sliderMax]);
+    }, [sliderMax]);
+    const points = useMemo(() => pointsCalc(data), [data]);
 
     return (
         <motion.div
-            className="basis-full flex flex-col gap-2"
+            className="flex flex-col gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -172,7 +133,7 @@ export const DamageList = ({ id }: { id: string }) => {
                     }}
                 />
             </div>
-            <div className="basis-full min-h-[30vh]">
+            <div className="grow">
                 <DLChart points={pointsFilter(points, sliderValue as number[])} />
             </div>
         </motion.div>

@@ -1,24 +1,24 @@
 "use client";
+// child components simple
+import { HorizontalRoundedBar } from "./Common";
 // my libraries
-import { fetchGetJson } from "@/components/actions";
-import { CustomBar } from "@/components/common";
-import { ibrBase, ibrQueryDamageAnalysis } from "@/components/definitions";
+import { TypeQueryDamageAnalysis } from "@/components/definitions";
 // third party libraries
 import { Chip, ScrollShadow, Switch } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 const BAR_SIZE = 30;
 const COLOR_BAR = "#964824";
 const COLOR_TEXT = "#DDDDDD";
 
-const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["data"] }) => {
+const DAChart = ({ damageAnalysis }: { damageAnalysis: TypeQueryDamageAnalysis["data"] }) => {
     return (
         <ScrollShadow hideScrollBar className="h-full">
             <ResponsiveContainer width="100%" height={damageAnalysis.length * BAR_SIZE}>
                 <BarChart layout="vertical" data={damageAnalysis}>
-                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_BAR} shape={<CustomBar />} />
+                    <Bar yAxisId="left" dataKey="proportion" fill={COLOR_BAR} shape={<HorizontalRoundedBar />} />
                     <XAxis type="number" hide domain={[0, damageAnalysis[0].proportion * 1.25]} />
                     <YAxis
                         yAxisId="left"
@@ -48,16 +48,12 @@ const DAChart = ({ damageAnalysis }: { damageAnalysis: ibrQueryDamageAnalysis["d
     );
 };
 
-async function queryDA(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-analysis` })) as ibrBase;
-}
-
-function sortDA(a: ibrQueryDamageAnalysis["data"][0], b: ibrQueryDamageAnalysis["data"][0]) {
+function sortDA(a: TypeQueryDamageAnalysis["data"][0], b: TypeQueryDamageAnalysis["data"][0]) {
     return b.proportion - a.proportion; // 升序排序
 }
 
-function combineDA(data: ibrQueryDamageAnalysis["data"]) {
-    const result: ibrQueryDamageAnalysis["data"] = [];
+function combineDA(data: TypeQueryDamageAnalysis["data"]) {
+    const result: TypeQueryDamageAnalysis["data"] = [];
     data.forEach((item) => {
         const index = result.findIndex((element) => element.name === item.name);
         if (index === -1) {
@@ -71,44 +67,17 @@ function combineDA(data: ibrQueryDamageAnalysis["data"]) {
     return result.sort(sortDA);
 }
 
-export const DamageAnalysis = ({ id }: { id: string }) => {
-    // id 为 undefined 的逻辑处理位于 App 组件中, 若 id 为 undefined, 则 DPS 组件不会被渲染
-    const [da, setDA] = useState<ibrQueryDamageAnalysis["data"]>();
+export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"] }) => {
     const [combine, setCombine] = useState(false);
-    useEffect(() => {
-        async function fetchData() {
-            // id 为空的逻辑处理位于上层 useEffect 中, 若 id 为空, 则此函数不会被执行
-            const response = await queryDA(id);
-            if (response.status === 0) {
-                const data = response.data as ibrQueryDamageAnalysis["data"];
-                data.sort(sortDA);
-                setDA(data);
-            } else {
-                setTimeout(() => {
-                    fetchData();
-                }, 500);
-            }
-        }
-        let idTimeout: NodeJS.Timeout | undefined;
-        if (id.length > 0) {
-            idTimeout = setTimeout(() => {
-                fetchData();
-            }, 500); // 定时函数. 500ms 后执行一次 fetchData. 如果失败, fetchData 函数内部会每隔 500ms 再次重试.
-        }
-        return () => {
-            if (idTimeout) {
-                clearTimeout(idTimeout);
-            }
-        };
-    }, [id]);
-
-    if (!da) {
-        return <div className="basis-full"></div>;
-    }
+    const dataSorted = useMemo(() => [...data].sort(sortDA), [data]);
+    const dataCombined = useMemo(() => combineDA(data), [data]);
 
     return (
         <motion.div
-            className="basis-full flex flex-col gap-2"
+            style={{ maxHeight: "calc((100vh - 1.5rem * 2 - 1rem * 2 - 1rem) * 4 / 9)" }}
+            // 1.5rem: p-6, 1rem: gap-4
+            // see https://tailwindcss.com/docs
+            className="flex flex-col gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -120,9 +89,7 @@ export const DamageAnalysis = ({ id }: { id: string }) => {
                 </Switch>
                 <Chip>占比</Chip>
             </div>
-            <div className="basis-full max-h-[40vh] min-h-[30vh]">
-                <DAChart damageAnalysis={combine ? combineDA(da) : da} />
-            </div>
+            <DAChart damageAnalysis={combine ? dataCombined : dataSorted} />
         </motion.div>
     );
 };
