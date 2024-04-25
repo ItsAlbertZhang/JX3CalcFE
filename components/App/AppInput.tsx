@@ -44,12 +44,10 @@ const InputOnly = ({
             <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
         </Tab>
     );
-    const custom = status.data.custom ? (
+    const custom = (
         <Tab key="Custom" title="战斗" className={classname + " grow"}>
-            <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
+            <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status} />
         </Tab>
-    ) : (
-        <></>
     );
     const benefits = (
         <Tab key="Benefits" title="增益" className={classname + " grow"}>

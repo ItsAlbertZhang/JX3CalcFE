@@ -63,6 +63,12 @@ export interface TypeQueryDamageList extends TypeBackendRes {
     }[][];
 }
 
+export interface Talent {
+    skillID: number;
+    name: string;
+    iconID: number;
+}
+
 export interface DataAttribute {
     Vitality: number;
     Strength: number;
@@ -110,12 +116,10 @@ export interface DataInput {
         data: DataAttribute;
     };
     effects: string[];
-    custom?: {
-        talent: number[];
-        // recipe: number[];
-        fight: {
-            method: string;
-            data: string | string[];
-        };
+    fight: {
+        method: string;
+        data: string | string[] | number;
     };
+    talents: number[];
+    // recipe: number[];
 }
