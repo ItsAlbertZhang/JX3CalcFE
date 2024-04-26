@@ -79,6 +79,7 @@ const AttrModalContent = ({
                         <ModalBody>
                             <p>Tips:</p>
                             <p>复制配装 ID 或 URL 后, 在主界面右键点击按钮即可无需打开此对话框直接导入.</p>
+                            <p>注意: 配装需要公开, 否则计算器无法访问.</p>
                             <Input
                                 autoFocus
                                 size="sm"

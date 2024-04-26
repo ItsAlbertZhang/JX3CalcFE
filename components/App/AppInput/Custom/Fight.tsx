@@ -60,20 +60,23 @@ export const Fight = ({
     switch (method) {
         case methods[0]:
             selectHelper = (
-                <Checkbox
-                    className="w-full"
-                    isSelected={dataInput.fight.data === 1}
-                    onValueChange={(isSelected: boolean) => {
-                        updateInput((draft) => {
-                            draft.fight = {
-                                method: methods[0],
-                                data: isSelected ? 1 : 0,
-                            };
-                        });
-                    }}
-                >
-                    优先一键宏
-                </Checkbox>
+                <div className="flex flex-col gap-2">
+                    <Checkbox
+                        className="w-full"
+                        isSelected={dataInput.fight.data === 1}
+                        onValueChange={(isSelected: boolean) => {
+                            updateInput((draft) => {
+                                draft.fight = {
+                                    method: methods[0],
+                                    data: isSelected ? 1 : 0,
+                                };
+                            });
+                        }}
+                    >
+                        优先一键宏
+                    </Checkbox>
+                    <p className="text-gray-500 text-xs -indent-2">* 非一键宏的内置循环不兼容橙武特效.</p>
+                </div>
             );
             modalContent = <></>;
             break;
@@ -138,7 +141,13 @@ export const Fight = ({
 
     return (
         <div className="w-full flex justify-center items-center gap-8">
-            <Select label="总开关" selectedKeys={[method]} onChange={handleChange} disallowEmptySelection>
+            <Select
+                label="战斗规则"
+                selectedKeys={[method]}
+                onChange={handleChange}
+                disallowEmptySelection
+                className="py-2"
+            >
                 {selectItems}
             </Select>
             {selectHelper}
