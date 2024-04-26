@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaRegCopy, FaRegTrashCan } from "react-icons/fa6";
 
-const InputOnly = ({
+const InputContent = ({
     dataInputs,
     updateInputs,
     status,
@@ -64,7 +64,7 @@ const InputOnly = ({
     );
 };
 
-const Page = ({
+const PageBar = ({
     dataInputs,
     updateInputs,
     page,
@@ -127,6 +127,16 @@ export const AppInput = ({
     classNameAdd?: string;
 }) => {
     const [page, setPage] = useState(1);
+
+    const buttonContent = page === 1 ? "计算" : "回到基准页";
+    const buttonOnPress = () => {
+        if (page === 1) {
+            calc();
+        } else {
+            setPage(1);
+        }
+    };
+
     return (
         <motion.div
             style={{ height: "calc(100vh - 1.5rem * 2)" }}
@@ -149,17 +159,29 @@ export const AppInput = ({
                     className="w-1/3"
                 />
             </div>
-            <InputOnly
+            <InputContent
                 dataInputs={dataInputs}
                 updateInputs={updateInputs}
                 status={status}
                 page={page}
                 setPage={setPage}
             />
-            <Page dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
-            <Button isDisabled={calculating} onPress={calc} color="primary">
-                计算
-            </Button>
+            <PageBar dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
+
+            <Tooltip
+                isDisabled={dataInputs.length === 1}
+                content={
+                    <p className="w-full text-neutral-400 text-xs -indent-2 px-2">
+                        * 第1页会被作为基准页详细计算
+                        <br />
+                        后续页面则仅会计算其DPS结果与基准页的差异
+                    </p>
+                }
+            >
+                <Button isDisabled={calculating} onPress={buttonOnPress} color="primary">
+                    {buttonContent}
+                </Button>
+            </Tooltip>
         </motion.div>
     );
 };

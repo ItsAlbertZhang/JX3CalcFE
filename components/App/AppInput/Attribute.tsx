@@ -192,20 +192,20 @@ export const Attribute = ({
     return (
         <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="w-full grid grid-cols-2 gap-4 items-center sm:grid-cols-3">
-                <Tooltip showArrow delay={250} closeDelay={250} content="从 JX3BOX 导入数据">
+                <Tooltip showArrow content="从 JX3BOX 导入数据">
                     <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect}>
                         导入
                     </Button>
                 </Tooltip>
                 <Tooltip
                     showArrow
-                    delay={250}
-                    closeDelay={250}
                     content={
-                        <>
-                            <p>以当前页为基准创建属性加成页.</p>
-                            <p className="text-red-500">注意: 所有的其他页面会被删除!</p>
-                        </>
+                        <p>
+                            <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
+                            <span className="text-green-500">基准页</span>,
+                            <br />
+                            并以其为基准, 创建<span className="text-green-500">计算属性收益所需的页面</span>.
+                        </p>
                     }
                 >
                     <Button onPress={createAttributeBenefitPage}>属性收益</Button>
