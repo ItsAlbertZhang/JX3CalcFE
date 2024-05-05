@@ -139,7 +139,7 @@ export const AppInput = ({
 
     return (
         <motion.div
-            style={{ height: "calc(100vh - 1.5rem * 2)" }}
+            style={{ minHeight: "calc(100vh - 1.5rem * 2)" }}
             // 1.5rem: p-6
             // see https://tailwindcss.com/docs/padding
             className={(classNameAdd ? classNameAdd + " " : "") + "w-full flex flex-col gap-4"}

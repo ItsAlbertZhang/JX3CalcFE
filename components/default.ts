@@ -64,7 +64,14 @@ export const defaultDataInput: DataInput = {
             MeleeWeaponDamageMax: 0,
         },
     },
-    effects: ["大附魔·腰", "大附魔·腕", "大附魔·鞋", "家园酒·加速", "套装·技能", "套装·特效"],
+    effects: {
+        "套装·技能": true,
+        "套装·特效": true,
+        "家园·酿造": "女儿红",
+        "大附魔·腰": true,
+        "大附魔·腕": "雾海寻龙",
+        "大附魔·鞋": "雾海寻龙",
+    },
     fight: {
         method: "使用内置循环",
         data: 0,

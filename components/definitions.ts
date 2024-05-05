@@ -115,7 +115,9 @@ export interface DataInput {
         method: string;
         data: DataAttribute;
     };
-    effects: string[];
+    effects: {
+        [key: string]: boolean | string;
+    };
     fight: {
         method: string;
         data: string | string[] | number;

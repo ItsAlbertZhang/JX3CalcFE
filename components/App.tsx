@@ -22,7 +22,7 @@ import { defaultDataInput } from "@/components/default";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 
-const VERSION = "v1.1.0";
+const VERSION = "v1.1.1";
 const QUERY_INTERVAL = 500;
 async function wait(ms: number = QUERY_INTERVAL) {
     return new Promise((resolve) => setTimeout(resolve, ms));
