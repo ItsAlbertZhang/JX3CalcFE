@@ -39,6 +39,7 @@ export const App = () => {
     const [dataDamageLists, setDataDamageLists] = useState<TypeQueryDamageList["data"]>();
     const [dataTaskMainDPS, setDataMainTaskDPS] = useState<TypeQueryDPS["data"]>();
     const [dataCompareTasksDPS, updateDataCompareTasksDPS] = useImmer<TypeQueryDPS["data"][]>([]);
+    const [dataCompareTasksName, setDataCompareTasksName] = useState<string[]>([]);
     const [calcedOnce, setCalcedOnce] = useState<boolean>(false);
 
     async function calc() {
@@ -46,7 +47,24 @@ export const App = () => {
         setCalculating(true);
         updateDataCompareTasksDPS(() => []);
 
-        const response = (await createTask(dataInputs[0])) as TypeString;
+        const data = dataInputs.map((item) => {
+            const obj = {
+                ...item,
+                attribute: {
+                    ...item.attribute,
+                    data: {
+                        ...item.attribute.data,
+                        MeleeWeaponDamageRand:
+                            item.attribute.data.MeleeWeaponDamageMax - item.attribute.data.MeleeWeaponDamage,
+                    },
+                },
+            };
+            return JSON.stringify(obj);
+        });
+        const names = dataInputs.slice(1).map((item) => item.name);
+        setDataCompareTasksName(names);
+
+        const response = (await createTask(data[0])) as TypeString;
         if (response.status === 0) {
             const id = response.data;
             await wait();
@@ -83,7 +101,7 @@ export const App = () => {
         }
 
         for (let i = 1; i < dataInputs.length; i++) {
-            const response = (await createTask(dataInputs[i])) as TypeString;
+            const response = (await createTask(data[i])) as TypeString;
             if (response.status === 0) {
                 const id = response.data;
                 await wait();
@@ -146,7 +164,7 @@ export const App = () => {
                     dataDamageAnalysis={dataDamageAnalysis}
                     dataTaskMainDPS={dataTaskMainDPS}
                     dataCompareTasksDPS={dataCompareTasksDPS}
-                    dataInputs={dataInputs}
+                    dataCompareTasksName={dataCompareTasksName}
                 />
             </div>
         );

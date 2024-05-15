@@ -17,25 +17,25 @@ export const AppResult = ({
     dataDamageAnalysis,
     dataTaskMainDPS,
     dataCompareTasksDPS,
-    dataInputs,
+    dataCompareTasksName,
 }: {
     calcedOnce: boolean;
     dataDamageLists: TypeQueryDamageList["data"] | undefined;
     dataDamageAnalysis: TypeQueryDamageAnalysis["data"] | undefined;
     dataTaskMainDPS: TypeQueryDPS["data"] | undefined;
     dataCompareTasksDPS: TypeQueryDPS["data"][];
-    dataInputs: DataInput[];
+    dataCompareTasksName: string[];
 }) => {
     if (!calcedOnce) {
         return <></>;
     }
     return (
-        <div className="xl:col-span-2 grid grid-rows-9 gap-4 w-full h-full">
-            <div className="row-span-4 grid gap-4 xl:grid-cols-2">
+        <div className="xl:col-span-2 grid grid-rows-7 gap-4 w-full h-full">
+            <div className="row-span-3 grid gap-4 xl:grid-cols-2">
                 {dataDamageLists ? <DamageList data={dataDamageLists} /> : <></>}
                 {dataDamageAnalysis ? <DamageAnalysis data={dataDamageAnalysis} /> : <></>}
             </div>
-            <div className="row-span-4 grid gap-4 xl:grid-cols-4">
+            <div className="row-span-3 grid gap-4 xl:grid-cols-4">
                 <motion.div
                     className={"xl:col-span-2" + (dataCompareTasksDPS.length > 0 ? "" : " xl:col-start-2")}
                     layout // Animate layout changes
@@ -48,7 +48,7 @@ export const AppResult = ({
                         <TaskCompare
                             dataTaskMainDPS={dataTaskMainDPS as TypeQueryDPS["data"]}
                             dataCompareTasksDPS={dataCompareTasksDPS}
-                            dataInputs={dataInputs}
+                            dataCompareTasksName={dataCompareTasksName}
                         />
                     </motion.div>
                 ) : (
@@ -76,6 +76,8 @@ export const AppResult = ({
                             sd={dataTaskMainDPS.sd}
                             ci={dataTaskMainDPS.ci99}
                             n={dataTaskMainDPS.current}
+                            max={dataTaskMainDPS.max}
+                            min={dataTaskMainDPS.min}
                         />
                     </>
                 ) : (

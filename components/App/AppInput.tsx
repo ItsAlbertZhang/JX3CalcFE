@@ -1,7 +1,7 @@
 "use client";
 // child components
 import { Attribute } from "./AppInput/Attribute";
-import { Custom } from "./AppInput/Custom";
+import { Fight } from "./AppInput/Fight";
 import { Effects } from "./AppInput/Effects";
 import { Global } from "./AppInput/Global";
 // my libraries
@@ -44,9 +44,16 @@ const InputContent = ({
             <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
         </Tab>
     );
-    const custom = (
+    const fight = (
         <Tab key="Custom" title="战斗" className={classname + " grow"}>
-            <Custom dataInput={dataInputs[index]} updateInput={updateInput} status={status} />
+            <Fight
+                dataInputs={dataInputs}
+                page={page}
+                updateInputs={updateInputs}
+                updateInput={updateInput}
+                setPage={setPage}
+                allowLua={status.data.custom}
+            />
         </Tab>
     );
     const benefits = (
@@ -58,7 +65,7 @@ const InputContent = ({
         <Tabs className={classname} disabledKeys={["Benefits"]} color="warning" radius="full">
             {global}
             {attribute}
-            {custom}
+            {fight}
             {benefits}
         </Tabs>
     );
@@ -155,8 +162,8 @@ export const AppInput = ({
                         });
                     }}
                     isDisabled={page === 1}
-                    classNames={{ input: "text-center text-xl font-bold" }}
-                    className="w-1/3"
+                    classNames={{ input: "text-center text-xl" }}
+                    className="w-full xl:w-1/2"
                 />
             </div>
             <InputContent

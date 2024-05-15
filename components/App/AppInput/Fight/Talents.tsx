@@ -5,6 +5,7 @@ import { talentOptions } from "@/components/default";
 
 // third party libraries
 import { Image, Select, SelectItem } from "@nextui-org/react";
+import { motion } from "framer-motion";
 
 const SelectItemRender = ({ item }: { item: Talent }) => {
     return (
@@ -30,6 +31,7 @@ export const Talents = ({
             aria-label={`第${idx}重奇穴`}
             size="lg"
             disallowEmptySelection
+            isDisabled={typeof dataInput.fight.data === "number" && dataInput.fight.data < 1024}
             selectedKeys={[dataInput.talents[idx].toString()]}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 updateInput((draft) => {
@@ -51,5 +53,9 @@ export const Talents = ({
         </Select>
     ));
 
-    return <div className="w-full grid grid-cols-3 justify-items-center items-center gap-2">{qixue}</div>;
+    return (
+        <motion.div layout className="w-full grid grid-cols-2 xl:grid-cols-3 justify-items-center items-center gap-2">
+            {qixue}
+        </motion.div>
+    );
 };

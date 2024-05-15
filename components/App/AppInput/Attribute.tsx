@@ -2,7 +2,7 @@
 // child components simple
 import { validateInteger, IntegerInput } from "./Common";
 // my libraries
-import { fetchGetJson, readClipboard } from "@/components/actions";
+import { fetchGet, readClipboard } from "@/components/actions";
 import { DataAttribute, DataInput } from "@/components/definitions";
 
 import {
@@ -40,7 +40,7 @@ async function importFromJX3BOX(input: string) {
         return;
     }
     // 请求数据
-    let body = await fetchGetJson({ host: "cms.jx3box.com", path });
+    let body = await fetchGet({ host: "cms.jx3box.com", path });
     if (body !== undefined && body.code === 0) {
         // 额外处理武器伤害
         const data = body.data.data as DataAttribute;
@@ -204,11 +204,11 @@ export const Attribute = ({
                             <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
                             <span className="text-green-500">基准页</span>,
                             <br />
-                            并以其为基准, 创建<span className="text-green-500">计算属性收益所需的页面</span>.
+                            并以其为基准, 创建<span className="text-green-500">对比属性收益</span>所需的页面.
                         </p>
                     }
                 >
-                    <Button onPress={createAttributeBenefitPage}>属性收益</Button>
+                    <Button onPress={createAttributeBenefitPage}>创建 属性收益 对比</Button>
                 </Tooltip>
                 <IntegerInput
                     data={dataInputs[index].attribute.data}

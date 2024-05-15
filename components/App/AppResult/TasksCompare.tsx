@@ -19,16 +19,16 @@ function countCharacters(str: string) {
 export const TaskCompare = ({
     dataTaskMainDPS,
     dataCompareTasksDPS,
-    dataInputs,
+    dataCompareTasksName,
 }: {
     dataTaskMainDPS: TypeQueryDPS["data"];
     dataCompareTasksDPS: TypeQueryDPS["data"][];
-    dataInputs: DataInput[];
+    dataCompareTasksName: string[];
 }) => {
     const data = dataCompareTasksDPS.map((data, i) => ({
         add: (data.avg - dataTaskMainDPS.avg) / dataTaskMainDPS.avg,
         ci: data.ci99 / data.avg,
-        name: i + 1 >= dataInputs.length ? "未知" : dataInputs[i + 1].name,
+        name: dataCompareTasksName[i],
         // name: `第 ${i} 页`,
     }));
     let xmin = 0;

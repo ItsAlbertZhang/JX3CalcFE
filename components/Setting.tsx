@@ -1,6 +1,6 @@
 "use client";
 // my libraries
-import { config, fetchGetJson, isApp } from "@/components/actions";
+import { config, fetchGet, isApp } from "@/components/actions";
 import { TypeStatus } from "@/components/definitions";
 // third party libraries
 import { Button } from "@nextui-org/react";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export async function fetchServerStatus() {
     console.log("fetching server status...");
     try {
-        return (await fetchGetJson({ port: 12897, path: "/status" })) as TypeStatus;
+        return (await fetchGet({ port: 12897, path: "/status" })) as TypeStatus;
     } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return fetchServerStatus();

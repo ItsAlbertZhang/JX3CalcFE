@@ -47,7 +47,7 @@ export async function isApp() {
 
 // 跨环境函数
 
-export async function fetchGetJson({
+export async function fetchGet({
     host = window.location.hostname,
     port = undefined,
     path,
@@ -75,7 +75,7 @@ export async function fetchGetJson({
     return ret;
 }
 
-export async function fetchPostJson({
+export async function fetchPost({
     host = window.location.hostname,
     port = undefined,
     path,
@@ -84,7 +84,7 @@ export async function fetchPostJson({
     host?: string;
     port?: number;
     path: string;
-    body: object;
+    body: object | string;
 }) {
     let ret = undefined;
     const protocal = host.endsWith("localhost") ? "http:" : window.location.protocol;
@@ -92,7 +92,7 @@ export async function fetchPostJson({
     try {
         const response = await fetch(url, {
             method: "POST",
-            body: JSON.stringify(body),
+            body: typeof body === "string" ? body : JSON.stringify(body),
         });
         ret = await response.json();
     } catch {
@@ -168,32 +168,36 @@ export async function config() {
 
 // 其他函数
 
-export async function createTask(input: DataInput) {
-    const obj = {
-        ...input,
-        attribute: {
-            ...input.attribute,
-            data: {
-                ...input.attribute.data,
-                MeleeWeaponDamageRand:
-                    input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage,
-            },
-        },
-    };
-    console.log(JSON.stringify(obj));
-    const data = await fetchPostJson({ port: 12897, path: "/create", body: obj });
+export async function createTask(input: string) {
+    // const obj = {
+    //     ...input,
+    //     attribute: {
+    //         ...input.attribute,
+    //         data: {
+    //             ...input.attribute.data,
+    //             MeleeWeaponDamageRand:
+    //                 input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage,
+    //         },
+    //     },
+    // };
+    // console.log(JSON.stringify(obj));
+    // const data = await fetchPost({ port: 12897, path: "/create", body: obj });
+    // console.log(data);
+    // return data;
+    console.log(input);
+    const data = await fetchPost({ port: 12897, path: "/create", body: input });
     console.log(data);
-    return data;
+    return data as TypeBackendRes;
 }
 
 export async function queryDps(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/dps` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/dps` })) as TypeBackendRes;
 }
 
 export async function queryDamageList(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-list` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/damage-list` })) as TypeBackendRes;
 }
 
 export async function queryDamageAnalysis(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-analysis` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/damage-analysis` })) as TypeBackendRes;
 }
