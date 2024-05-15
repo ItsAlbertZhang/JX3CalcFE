@@ -3,14 +3,26 @@
 import { ModalLua, ModalMacro } from "./FightModals";
 
 // my libraries
-import { readLua } from "@/components/actions";
+import { fetchGet, openUrl, readLua } from "@/components/actions";
 import { DataInput } from "@/components/definitions";
 
 // third party libraries
-import { Button, Modal, Select, SelectItem, SelectSection, Tooltip, useDisclosure } from "@nextui-org/react";
+import {
+    Button,
+    Card,
+    CardBody,
+    Modal,
+    Select,
+    SelectItem,
+    SelectSection,
+    Skeleton,
+    Tooltip,
+    User,
+    useDisclosure,
+} from "@nextui-org/react";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const methods = ["使用内置循环", "使用游戏内宏", "使用lua编程语言"];
 const embed = {
@@ -45,7 +57,7 @@ const embed = {
         name: "简单 - 齐光一键循环",
         talent: [5972, 18279, 22888, 6717, 34383, 34395, 34372, 17567, 25166, 34378, 34347, 34370],
         helper: "简单循环基于简单条件语句，逻辑与游戏内宏保持完全一致。\n简单循环可以自由更改奇穴，计算器会保持逻辑(宏)并计算结果。",
-        jx3box: 77934,
+        jx3box: 77719,
     },
     "1025": {
         name: "简单 - 崇光两键循环",
@@ -155,6 +167,64 @@ const TypeCustom = ({ onPress, valid, text }: { onPress: () => void; valid: bool
     );
 };
 
+const TypeLink = ({ dataInput }: { dataInput: DataInput }) => {
+    type typeData = {
+        author: string;
+        title: string;
+        avatar: string;
+    };
+    const [data, setData] = useState<typeData>();
+    const fightData = dataInput.fight.data;
+    const embedItem = embed[fightData as keyof typeof embed];
+    const id = "jx3box" in embedItem ? embedItem.jx3box : undefined;
+    const url = `https://www.jx3box.com/bps/${id}`;
+    useEffect(() => {
+        if (id === undefined) {
+            setData(undefined);
+        } else {
+            fetchGet({ host: "cms.jx3box.com", path: `/api/cms/post/${id}` }).then((res) => {
+                if (res.code === 0) {
+                    setData({
+                        author: res.data.author,
+                        title: res.data.post_title,
+                        avatar: res.data.author_info.user_avatar,
+                    });
+                }
+            });
+        }
+    }, [dataInput.fight.data, id]);
+    if (id)
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="w-full flex flex-col justify-center items-center"
+            >
+                <Card
+                    isHoverable
+                    isPressable
+                    onPress={() => {
+                        openUrl(url);
+                    }}
+                >
+                    <Skeleton isLoaded={data !== undefined}>
+                        <CardBody>
+                            <User
+                                name={data ? data.title : "loading"}
+                                description={<p className="indent-2">作者: {data ? data.author : "loading..."}</p>}
+                                avatarProps={{
+                                    src: data ? data.avatar : "",
+                                }}
+                            />
+                        </CardBody>
+                    </Skeleton>
+                </Card>
+            </motion.div>
+        );
+    else return <></>;
+};
+
 export const FightType = ({
     dataInputs,
     updateInputs,
@@ -238,25 +308,28 @@ export const FightType = ({
     }
 
     return (
-        <div className={"w-full flex flex-col xl:flex-row justify-center items-center gap-4"}>
-            <motion.div layout className="w-full basis-1/2">
-                <Select label="战斗规则" selectedKeys={[method]} onChange={handleChange} disallowEmptySelection>
-                    {selectItems}
-                </Select>
+        <div className="w-full flex flex-col justify-center items-center gap-4">
+            <motion.div layout className="w-full flex flex-col xl:flex-row justify-center items-center gap-4">
+                <motion.div layout className="w-full basis-1/2">
+                    <Select label="战斗规则" selectedKeys={[method]} onChange={handleChange} disallowEmptySelection>
+                        {selectItems}
+                    </Select>
+                </motion.div>
+                {selectHelper}
+                <Modal
+                    isOpen={modal.isOpen}
+                    onOpenChange={modal.onOpenChange}
+                    placement="center"
+                    backdrop="blur"
+                    scrollBehavior="inside"
+                    isDismissable={false}
+                    isKeyboardDismissDisabled={true}
+                    hideCloseButton={true}
+                >
+                    {modalContent}
+                </Modal>
             </motion.div>
-            {selectHelper}
-            <Modal
-                isOpen={modal.isOpen}
-                onOpenChange={modal.onOpenChange}
-                placement="center"
-                backdrop="blur"
-                scrollBehavior="inside"
-                isDismissable={false}
-                isKeyboardDismissDisabled={true}
-                hideCloseButton={true}
-            >
-                {modalContent}
-            </Modal>
+            <TypeLink dataInput={dataInputs[index]} />
         </div>
     );
 };
