@@ -141,14 +141,14 @@ export const Attribute = ({
     function createAttributeBenefitPage() {
         updateInputs((draft) => {
             const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
-            const ADD_BASE = 198;
-            const ADD_MAGIC_ATTACK = 475;
-            const ADD_CRITICAL = 883;
-            const ADD_CRITICAL_DAMAGE = 883;
-            const ADD_OVERCOME = 883;
-            const ADD_STRAIN = 883;
-            const ADD_SURPLUS = 883;
-            const ATTRS = ["基础", "攻击", "会心", "会效", "破防", "无双", "破招"];
+            const ADD_BASE = 218;
+            const ADD_MAGIC_ATTACK = 524;
+            const ADD_CRITICAL = 974;
+            const ADD_CRITICAL_DAMAGE = 974;
+            const ADD_OVERCOME = 974;
+            const ADD_STRAIN = 974;
+            const ADD_SURPLUS = 974;
+            const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
             for (let i = 0; i < ATTRS.length; i++) {
                 newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
                 newDraft[i + 1].name = ATTRS[i];

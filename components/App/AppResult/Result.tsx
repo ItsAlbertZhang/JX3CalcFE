@@ -55,7 +55,7 @@ export const Result = ({
                 <span className="text-orange-500">渐趋稳定</span>.
             </p>
             <p>
-                例如, 投一枚质地均匀的硬币, 随实验次数增多,
+                例如, 投一枚质地均匀的硬币, 随实验次数增多:
                 <br />
                 置信区间渐趋于 0 , 而标准差渐趋于 0.5 .
             </p>
