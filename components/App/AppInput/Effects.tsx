@@ -12,20 +12,17 @@ export const Effects = ({
     updateInput: (fn: (draft: DataInput) => void) => void;
 }) => {
     const effects = {
-        "套装·技能": null,
-        "套装·特效": null,
-        "家园·酿造": ["女儿红"],
-        "大附魔·腰": null,
-        "大附魔·腕": ["雾海寻龙", "万灵当歌"],
-        "大附魔·鞋": ["雾海寻龙", "万灵当歌"],
-        "腰坠·特效": ["梧桐影", "吹香雪"],
-        "武器·特效": ["血月", "封霜曲刃·忆", "无尽沙海", "冰焰玉"],
+        "大附魔·腰": { span: 2, options: null },
+        "大附魔·腕": { span: 2, options: ["雾海寻龙", "万灵当歌"] },
+        "大附魔·鞋": { span: 2, options: ["雾海寻龙", "万灵当歌"] },
+        "套装·技能": { span: 2, options: null },
+        "套装·特效": { span: 2, options: null },
+        "腰坠·特效": { span: 2, options: ["梧桐影", "吹香雪"] },
+        "家园·酿造": { span: 3, options: ["女儿红·旬又三", "女儿红"] },
+        "武器·特效": { span: 3, options: ["血月", "封霜曲刃·忆", "无尽沙海", "冰焰玉"] },
     };
-    const ret = Object.entries(effects).map(([name, options], idx) => (
-        <div
-            key={"div" + name}
-            className={"w-full" + (idx === Object.keys(effects).length - 1 ? " xl:col-span-2" : "")}
-        >
+    const ret = Object.entries(effects).map(([name, attrib], idx) => (
+        <div key={"div" + name} className={`w-full col-span-${attrib.span - 1} xl:col-span-${attrib.span}`}>
             <Checkbox
                 key={"checkbox" + name}
                 classNames={{
@@ -36,14 +33,14 @@ export const Effects = ({
                 onChange={(e) => {
                     updateInput((draft) => {
                         if (e.target.checked) {
-                            draft.effects[name] = options ? options[0] : true;
+                            draft.effects[name] = attrib.options ? attrib.options[0] : true;
                         } else {
                             delete draft.effects[name];
                         }
                     });
                 }}
             >
-                {options ? (
+                {attrib.options ? (
                     <Select
                         key={"select" + name}
                         label={name}
@@ -61,18 +58,20 @@ export const Effects = ({
                             });
                         }}
                     >
-                        {options.map((item) => (
+                        {attrib.options.map((item) => (
                             <SelectItem key={item}>{item}</SelectItem>
                         ))}
                     </Select>
                 ) : (
-                    <p className="py-3 border-2 border-neutral-700 rounded-2xl text-center text-neutral-400">{name}</p>
+                    <p className="py-3 border-2 border-neutral-700 rounded-2xl text-center text-neutral-400 text-sm">
+                        {name}
+                    </p>
                 )}
             </Checkbox>
         </div>
     ));
     return (
-        <div className={`w-full grid grid-flow-row grid-cols-2 xl:grid-cols-3 justify-items-center items-center gap-3`}>
+        <div className={`w-full grid grid-flow-row grid-cols-2 xl:grid-cols-6 justify-items-center items-center gap-3`}>
             {ret}
         </div>
     );

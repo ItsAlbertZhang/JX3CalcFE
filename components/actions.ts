@@ -4,7 +4,10 @@ import { getVersion as tauri_app_getVersion } from "@tauri-apps/api/app";
 import { getClient as tauri_http_getClient, ResponseType as tauri_http_ResponseType } from "@tauri-apps/api/http";
 import { open as tauri_dialog_open } from "@tauri-apps/api/dialog";
 import { open as tauri_shell_open } from "@tauri-apps/api/shell";
-import { readText as tauri_clipboard_readText } from "@tauri-apps/api/clipboard";
+import {
+    writeText as tauri_clipboard_writeText,
+    readText as tauri_clipboard_readText,
+} from "@tauri-apps/api/clipboard";
 import { readTextFile as tauri_fs_readTextFile } from "@tauri-apps/api/fs";
 import { invoke as tauri_invoke } from "@tauri-apps/api/tauri";
 import { DataInput, TypeBackendRes } from "./definitions";
@@ -15,6 +18,7 @@ const tauri = {
     },
     clipboard: {
         readText: tauri_clipboard_readText,
+        writeText: tauri_clipboard_writeText,
     },
     dialog: {
         open: tauri_dialog_open,
@@ -124,6 +128,18 @@ export async function readClipboard() {
         }
     }
     return ret;
+}
+
+export async function writeClipboard(text: string) {
+    try {
+        await tauri.clipboard.writeText(text);
+    } catch {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch {
+            console.error("setClipboard failed");
+        }
+    }
 }
 
 export async function readLua() {

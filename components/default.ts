@@ -70,7 +70,7 @@ export const defaultDataInput: DataInput = {
     effects: {
         "套装·技能": true,
         "套装·特效": true,
-        "家园·酿造": "女儿红",
+        "家园·酿造": "女儿红·旬又三",
         "大附魔·腰": true,
         "大附魔·腕": "雾海寻龙",
         "大附魔·鞋": "雾海寻龙",

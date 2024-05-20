@@ -79,7 +79,7 @@ export const Global = ({
                     max={status.userinput.maxFightCount}
                 />
             </div>
-            <p className="w-full text-gray-500 text-xs">* 战斗时间在使用非一键宏的内置循环时不生效.</p>
+            <p className="w-full text-gray-500 text-xs">* 战斗时间在使用严格循环时不生效.</p>
         </div>
     );
 };

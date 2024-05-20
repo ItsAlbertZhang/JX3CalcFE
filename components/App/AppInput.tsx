@@ -5,12 +5,24 @@ import { Fight } from "./AppInput/Fight";
 import { Effects } from "./AppInput/Effects";
 import { Global } from "./AppInput/Global";
 // my libraries
+import { readClipboard, writeClipboard } from "@/components/actions";
 import { DataInput, TypeStatus } from "@/components/definitions";
 // third party libraries
-import { Button, Input, Tab, Tabs, Tooltip, Pagination } from "@nextui-org/react";
+import {
+    Button,
+    Input,
+    Tab,
+    Tabs,
+    Tooltip,
+    Pagination,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+} from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { FaRegCopy, FaRegTrashCan } from "react-icons/fa6";
+import { FaArrowRightToBracket, FaArrowUpFromBracket, FaRegCopy, FaRegTrashCan } from "react-icons/fa6";
 
 const InputContent = ({
     dataInputs,
@@ -76,14 +88,47 @@ const PageBar = ({
     updateInputs,
     page,
     setPage,
+    calculating,
+    calc,
 }: {
     dataInputs: DataInput[];
     updateInputs: (fn: (draft: DataInput[]) => void) => void;
     page: number;
     setPage: (page: number) => void;
+    calculating: boolean;
+    calc: () => void;
 }) => {
     const index = page - 1;
-    function copyCurrentPage() {
+    const buttonContent = index === 0 ? "计算" : "回到基准页";
+    function buttonOnPress() {
+        if (index === 0) {
+            calc();
+        } else {
+            setPage(1);
+        }
+    }
+    async function pageExportCurr() {
+        writeClipboard(JSON.stringify(dataInputs[index]));
+    }
+    async function pageImportCurr() {
+        const text = await readClipboard();
+        if (text === "") return;
+        const obj = JSON.parse(text) as DataInput;
+        // check if the object is valid
+        if (
+            typeof obj.player !== "string" ||
+            typeof obj.delayNetwork !== "number" ||
+            typeof obj.delayKeyboard !== "number" ||
+            typeof obj.fightTime !== "number" ||
+            typeof obj.fightCount !== "number" ||
+            typeof obj.attribute !== "object"
+        )
+            return;
+        updateInputs((draft) => {
+            draft[index] = obj;
+        });
+    }
+    async function pageCopyCurr() {
         updateInputs((draft) => {
             const deepCopy: DataInput = JSON.parse(JSON.stringify(draft[index]));
             deepCopy.name = "P" + (index + 2);
@@ -91,7 +136,15 @@ const PageBar = ({
         });
         setPage(page + 1);
     }
-    function delCurrentPage() {
+    async function pageDeleteNotFirst() {
+        if (dataInputs.length === 1) return;
+        updateInputs((draft) => {
+            draft.splice(1, draft.length - 1);
+            draft[0].name = "基准页";
+        });
+        setPage(1);
+    }
+    async function pageDeleteCurr() {
         if (dataInputs.length === 1) return;
         updateInputs((draft) => {
             draft.splice(index, 1);
@@ -101,19 +154,77 @@ const PageBar = ({
             setPage(page - 1);
         }
     }
+    async function pageDeleteOther() {
+        if (dataInputs.length === 1) return;
+        updateInputs((draft) => {
+            draft.splice(0, index);
+            draft.splice(1, draft.length - 1);
+            draft[0].name = "基准页";
+        });
+        setPage(1);
+    }
     return (
-        <div className="flex justify-between items-center gap-2">
-            <Tooltip content="复制当前页">
-                <Button isIconOnly variant="ghost" color="success" onClick={copyCurrentPage}>
-                    <FaRegCopy size={16} />
-                </Button>
-            </Tooltip>
+        <div className="w-full flex flex-col justify-center items-center gap-4">
             <Pagination total={dataInputs.length} showControls loop showShadow page={page} onChange={setPage} />
-            <Tooltip content="删除当前页">
-                <Button isIconOnly variant="ghost" color="danger" onClick={delCurrentPage}>
-                    <FaRegTrashCan size={16} />
-                </Button>
-            </Tooltip>
+            <div className="w-full flex justify-between items-center gap-2">
+                <Tooltip content="导出页面至剪切板">
+                    <Button isIconOnly variant="ghost" onPress={pageExportCurr}>
+                        <FaArrowUpFromBracket size={16} />
+                    </Button>
+                </Tooltip>
+                <Tooltip content="从剪切板导入页面">
+                    <Button isIconOnly variant="ghost" onPress={pageImportCurr}>
+                        <FaArrowRightToBracket size={16} />
+                    </Button>
+                </Tooltip>
+                <Tooltip
+                    isDisabled={dataInputs.length === 1}
+                    content={
+                        <p className="w-full text-neutral-400 text-xs -indent-2 px-2">
+                            * 第1页会被作为基准页详细计算
+                            <br />
+                            后续页面则仅会计算其DPS结果与基准页的差异
+                        </p>
+                    }
+                >
+                    <Button isDisabled={calculating} onPress={buttonOnPress} color="primary" className="w-full mx-4">
+                        {buttonContent}
+                    </Button>
+                </Tooltip>
+                <Tooltip content="复制当前页面">
+                    <Button isIconOnly variant="ghost" color="success" onPress={pageCopyCurr}>
+                        <FaRegCopy size={16} />
+                    </Button>
+                </Tooltip>
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button isIconOnly variant="ghost" color="danger">
+                            <FaRegTrashCan size={16} />
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu>
+                        <DropdownItem
+                            key="delete-not-first"
+                            className="text-danger"
+                            color="danger"
+                            onPress={pageDeleteNotFirst}
+                        >
+                            删除非基准页
+                        </DropdownItem>
+                        <DropdownItem key="delete-curr" className="text-danger" color="danger" onPress={pageDeleteCurr}>
+                            删除当前页
+                        </DropdownItem>
+                        <DropdownItem
+                            key="delete-other"
+                            className="text-danger"
+                            color="danger"
+                            onPress={pageDeleteOther}
+                        >
+                            删除非当前页
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
         </div>
     );
 };
@@ -134,15 +245,6 @@ export const AppInput = ({
     classNameAdd?: string;
 }) => {
     const [page, setPage] = useState(1);
-
-    const buttonContent = page === 1 ? "计算" : "回到基准页";
-    const buttonOnPress = () => {
-        if (page === 1) {
-            calc();
-        } else {
-            setPage(1);
-        }
-    };
 
     return (
         <motion.div
@@ -173,22 +275,14 @@ export const AppInput = ({
                 page={page}
                 setPage={setPage}
             />
-            <PageBar dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
-
-            <Tooltip
-                isDisabled={dataInputs.length === 1}
-                content={
-                    <p className="w-full text-neutral-400 text-xs -indent-2 px-2">
-                        * 第1页会被作为基准页详细计算
-                        <br />
-                        后续页面则仅会计算其DPS结果与基准页的差异
-                    </p>
-                }
-            >
-                <Button isDisabled={calculating} onPress={buttonOnPress} color="primary">
-                    {buttonContent}
-                </Button>
-            </Tooltip>
+            <PageBar
+                dataInputs={dataInputs}
+                updateInputs={updateInputs}
+                page={page}
+                setPage={setPage}
+                calculating={calculating}
+                calc={calc}
+            />
         </motion.div>
     );
 };
