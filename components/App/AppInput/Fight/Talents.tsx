@@ -9,11 +9,9 @@ import { motion } from "framer-motion";
 
 const SelectItemRender = ({ item }: { item: Talent }) => {
     return (
-        <div key={item.skillID.toString()} className="flex gap-2">
+        <div key={item.skillID.toString()} className="flex justify-center items-center gap-2">
             <Image width={32} alt={item.name} src={`https://icon.jx3box.com/icon/${item.iconID}.png`} />
-            <div className="flex flex-col justify-center items-center">
-                <p>{item.name}</p>
-            </div>
+            <p className="grow">{item.name}</p>
         </div>
     );
 };

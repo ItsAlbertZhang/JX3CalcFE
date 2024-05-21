@@ -104,6 +104,12 @@ export interface DataAttribute {
     // MeleeWeaponDamageMax 需要额外的处理计算 ( : MeleeWeaponDamage + MeleeWeaponDamageRand)
 }
 
+export interface DataEffect {
+    name?: string;
+    stacknum?: number;
+    covrate?: number;
+}
+
 export interface DataInput {
     name: string;
     player: string;
@@ -116,7 +122,7 @@ export interface DataInput {
         data: DataAttribute;
     };
     effects: {
-        [key: string]: boolean | string;
+        [key: string]: boolean | string | DataEffect;
     };
     fight: {
         method: string;

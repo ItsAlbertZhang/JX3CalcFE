@@ -34,7 +34,7 @@ const DLChart = ({ points }: { points: Point[] }) => {
         <ResponsiveContainer>
             <LineChart data={points}>
                 <XAxis dataKey="x" />
-                <YAxis domain={["auto", "auto"]} />
+                <YAxis domain={["auto", "auto"]} width={70} />
                 {points.map((point, index) => {
                     return (
                         <Line

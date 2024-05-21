@@ -4,6 +4,7 @@ import { Attribute } from "./AppInput/Attribute";
 import { Fight } from "./AppInput/Fight";
 import { Effects } from "./AppInput/Effects";
 import { Global } from "./AppInput/Global";
+import { Benefits } from "./AppInput/Benefits";
 // my libraries
 import { readClipboard, writeClipboard } from "@/components/actions";
 import { DataInput, TypeStatus } from "@/components/definitions";
@@ -44,20 +45,20 @@ const InputContent = ({
             fn(draft[index]);
         });
     }
-    const classname = "flex flex-col justify-center items-center gap-8";
+    const classname = "flex flex-col items-center gap-8";
     const global = (
-        <Tab key="Global" title="通用" className={classname + " grow"}>
+        <Tab key="Global" title="通用" className={classname + " justify-center"}>
             <Global dataInput={dataInputs[index]} updateInput={updateInput} status={status.data} />
         </Tab>
     );
     const attribute = (
-        <Tab key="Attribute" title="属性" className={classname + " grow"}>
+        <Tab key="Attribute" title="属性" className={classname + " justify-center"}>
             <Attribute dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
             <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
         </Tab>
     );
     const fight = (
-        <Tab key="Custom" title="战斗" className={classname + " grow"}>
+        <Tab key="Custom" title="战斗" className={classname + " justify-center"}>
             <Fight
                 dataInputs={dataInputs}
                 page={page}
@@ -69,12 +70,18 @@ const InputContent = ({
         </Tab>
     );
     const benefits = (
-        <Tab key="Benefits" title="增益" className={classname + " grow"}>
-            <p>Coding...</p>
+        <Tab key="Benefits" title="增益" className={classname}>
+            <Benefits
+                dataInputs={dataInputs}
+                page={page}
+                updateInputs={updateInputs}
+                updateInput={updateInput}
+                setPage={setPage}
+            />
         </Tab>
     );
     return (
-        <Tabs className={classname} disabledKeys={["Benefits"]} color="warning" radius="full">
+        <Tabs className={classname} color="warning" radius="full" classNames={{ panel: "grow overflow-auto" }}>
             {global}
             {attribute}
             {fight}
@@ -246,12 +253,20 @@ export const AppInput = ({
 }) => {
     const [page, setPage] = useState(1);
 
+    let style: object = { minHeight: "calc(100vh - 1.5rem * 2)" };
+    if (window.matchMedia("(min-width: 1280px)").matches) {
+        style = {
+            ...style,
+            maxHeight: "calc(100vh - 1.5rem * 2)",
+        };
+    }
+
     return (
         <motion.div
-            style={{ minHeight: "calc(100vh - 1.5rem * 2)" }}
+            style={style}
             // 1.5rem: p-6
             // see https://tailwindcss.com/docs/padding
-            className={(classNameAdd ? classNameAdd + " " : "") + "w-full flex flex-col gap-4"}
+            className={(classNameAdd ? classNameAdd + " " : "") + "xl:col-span-4 w-full flex flex-col gap-4"}
             layout // Animate layout changes
             transition={{ type: "spring", duration: 1, bounce: 0.33 }}
         >

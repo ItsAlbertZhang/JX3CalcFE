@@ -29,8 +29,15 @@ export const AppResult = ({
     if (!calcedOnce) {
         return <></>;
     }
+    let style: object = { minHeight: "calc(100vh - 1.5rem * 2)" };
+    if (window.matchMedia("(min-width: 1280px)").matches) {
+        style = {
+            ...style,
+            maxHeight: "calc(100vh - 1.5rem * 2)",
+        };
+    }
     return (
-        <div className="xl:col-span-2 grid grid-rows-7 gap-4 w-full h-full">
+        <div style={style} className="xl:col-span-6 2xl:col-span-8 grid grid-rows-7 gap-4 w-full h-full">
             <div className="row-span-3 grid gap-4 xl:grid-cols-2">
                 {dataDamageLists ? <DamageList data={dataDamageLists} /> : <></>}
                 {dataDamageAnalysis ? <DamageAnalysis data={dataDamageAnalysis} /> : <></>}

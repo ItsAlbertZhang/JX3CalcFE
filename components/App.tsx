@@ -146,7 +146,7 @@ export const App = () => {
                 className="
                         w-full h-full
                         flex flex-col gap-8
-                        xl:grid xl:grid-cols-3
+                        xl:grid xl:grid-cols-10 2xl:grid-cols-12
                         justify-center justify-items-center items-center"
             >
                 <WebTips />
@@ -156,7 +156,7 @@ export const App = () => {
                     status={status}
                     calculating={calculating}
                     calc={calc}
-                    classNameAdd={calcedOnce ? "" : "xl:col-start-2"}
+                    classNameAdd={calcedOnce ? "" : "xl:col-start-4 2xl:col-start-5"}
                 />
                 <AppResult
                     calcedOnce={calcedOnce}
