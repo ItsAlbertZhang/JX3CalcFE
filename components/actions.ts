@@ -4,7 +4,10 @@ import { getVersion as tauri_app_getVersion } from "@tauri-apps/api/app";
 import { getClient as tauri_http_getClient, ResponseType as tauri_http_ResponseType } from "@tauri-apps/api/http";
 import { open as tauri_dialog_open } from "@tauri-apps/api/dialog";
 import { open as tauri_shell_open } from "@tauri-apps/api/shell";
-import { readText as tauri_clipboard_readText } from "@tauri-apps/api/clipboard";
+import {
+    writeText as tauri_clipboard_writeText,
+    readText as tauri_clipboard_readText,
+} from "@tauri-apps/api/clipboard";
 import { readTextFile as tauri_fs_readTextFile } from "@tauri-apps/api/fs";
 import { invoke as tauri_invoke } from "@tauri-apps/api/tauri";
 import { DataInput, TypeBackendRes } from "./definitions";
@@ -15,6 +18,7 @@ const tauri = {
     },
     clipboard: {
         readText: tauri_clipboard_readText,
+        writeText: tauri_clipboard_writeText,
     },
     dialog: {
         open: tauri_dialog_open,
@@ -47,7 +51,7 @@ export async function isApp() {
 
 // 跨环境函数
 
-export async function fetchGetJson({
+export async function fetchGet({
     host = window.location.hostname,
     port = undefined,
     path,
@@ -75,7 +79,7 @@ export async function fetchGetJson({
     return ret;
 }
 
-export async function fetchPostJson({
+export async function fetchPost({
     host = window.location.hostname,
     port = undefined,
     path,
@@ -84,7 +88,7 @@ export async function fetchPostJson({
     host?: string;
     port?: number;
     path: string;
-    body: object;
+    body: object | string;
 }) {
     let ret = undefined;
     const protocal = host.endsWith("localhost") ? "http:" : window.location.protocol;
@@ -92,7 +96,7 @@ export async function fetchPostJson({
     try {
         const response = await fetch(url, {
             method: "POST",
-            body: JSON.stringify(body),
+            body: typeof body === "string" ? body : JSON.stringify(body),
         });
         ret = await response.json();
     } catch {
@@ -124,6 +128,18 @@ export async function readClipboard() {
         }
     }
     return ret;
+}
+
+export async function writeClipboard(text: string) {
+    try {
+        await tauri.clipboard.writeText(text);
+    } catch {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch {
+            console.error("setClipboard failed");
+        }
+    }
 }
 
 export async function readLua() {
@@ -168,32 +184,36 @@ export async function config() {
 
 // 其他函数
 
-export async function createTask(input: DataInput) {
-    const obj = {
-        ...input,
-        attribute: {
-            ...input.attribute,
-            data: {
-                ...input.attribute.data,
-                MeleeWeaponDamageRand:
-                    input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage,
-            },
-        },
-    };
-    console.log(JSON.stringify(obj));
-    const data = await fetchPostJson({ port: 12897, path: "/create", body: obj });
+export async function createTask(input: string) {
+    // const obj = {
+    //     ...input,
+    //     attribute: {
+    //         ...input.attribute,
+    //         data: {
+    //             ...input.attribute.data,
+    //             MeleeWeaponDamageRand:
+    //                 input.attribute.data.MeleeWeaponDamageMax - input.attribute.data.MeleeWeaponDamage,
+    //         },
+    //     },
+    // };
+    // console.log(JSON.stringify(obj));
+    // const data = await fetchPost({ port: 12897, path: "/create", body: obj });
+    // console.log(data);
+    // return data;
+    console.log(input);
+    const data = await fetchPost({ port: 12897, path: "/create", body: input });
     console.log(data);
-    return data;
+    return data as TypeBackendRes;
 }
 
 export async function queryDps(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/dps` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/dps` })) as TypeBackendRes;
 }
 
 export async function queryDamageList(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-list` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/damage-list` })) as TypeBackendRes;
 }
 
 export async function queryDamageAnalysis(id: string) {
-    return (await fetchGetJson({ port: 12897, path: `/query/${id}/damage-analysis` })) as TypeBackendRes;
+    return (await fetchGet({ port: 12897, path: `/query/${id}/damage-analysis` })) as TypeBackendRes;
 }

@@ -22,7 +22,7 @@ import { defaultDataInput } from "@/components/default";
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 
-const VERSION = "v1.1.0";
+const VERSION = "v1.2.0";
 const QUERY_INTERVAL = 500;
 async function wait(ms: number = QUERY_INTERVAL) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,6 +39,7 @@ export const App = () => {
     const [dataDamageLists, setDataDamageLists] = useState<TypeQueryDamageList["data"]>();
     const [dataTaskMainDPS, setDataMainTaskDPS] = useState<TypeQueryDPS["data"]>();
     const [dataCompareTasksDPS, updateDataCompareTasksDPS] = useImmer<TypeQueryDPS["data"][]>([]);
+    const [dataCompareTasksName, setDataCompareTasksName] = useState<string[]>([]);
     const [calcedOnce, setCalcedOnce] = useState<boolean>(false);
 
     async function calc() {
@@ -46,7 +47,24 @@ export const App = () => {
         setCalculating(true);
         updateDataCompareTasksDPS(() => []);
 
-        const response = (await createTask(dataInputs[0])) as TypeString;
+        const data = dataInputs.map((item) => {
+            const obj = {
+                ...item,
+                attribute: {
+                    ...item.attribute,
+                    data: {
+                        ...item.attribute.data,
+                        MeleeWeaponDamageRand:
+                            item.attribute.data.MeleeWeaponDamageMax - item.attribute.data.MeleeWeaponDamage,
+                    },
+                },
+            };
+            return JSON.stringify(obj);
+        });
+        const names = dataInputs.slice(1).map((item) => item.name);
+        setDataCompareTasksName(names);
+
+        const response = (await createTask(data[0])) as TypeString;
         if (response.status === 0) {
             const id = response.data;
             await wait();
@@ -83,7 +101,7 @@ export const App = () => {
         }
 
         for (let i = 1; i < dataInputs.length; i++) {
-            const response = (await createTask(dataInputs[i])) as TypeString;
+            const response = (await createTask(data[i])) as TypeString;
             if (response.status === 0) {
                 const id = response.data;
                 await wait();
@@ -128,7 +146,7 @@ export const App = () => {
                 className="
                         w-full h-full
                         flex flex-col gap-8
-                        xl:grid xl:grid-cols-3
+                        xl:grid xl:grid-cols-10 2xl:grid-cols-12
                         justify-center justify-items-center items-center"
             >
                 <WebTips />
@@ -138,7 +156,7 @@ export const App = () => {
                     status={status}
                     calculating={calculating}
                     calc={calc}
-                    classNameAdd={calcedOnce ? "" : "xl:col-start-2"}
+                    classNameAdd={calcedOnce ? "" : "xl:col-start-4 2xl:col-start-5"}
                 />
                 <AppResult
                     calcedOnce={calcedOnce}
@@ -146,7 +164,7 @@ export const App = () => {
                     dataDamageAnalysis={dataDamageAnalysis}
                     dataTaskMainDPS={dataTaskMainDPS}
                     dataCompareTasksDPS={dataCompareTasksDPS}
-                    dataInputs={dataInputs}
+                    dataCompareTasksName={dataCompareTasksName}
                 />
             </div>
         );

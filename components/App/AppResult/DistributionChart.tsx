@@ -50,7 +50,7 @@ export const DistributeChart = ({ data }: { data: TypeQueryDPS["data"] }) => {
         <ResponsiveContainer>
             <ComposedChart data={chart}>
                 <XAxis dataKey="x" tickFormatter={(value) => Math.round(value).toString()} />
-                <YAxis domain={[0, ymax]} ticks={yticks} width={ymax.toString().length * 10} />
+                <YAxis domain={[0, ymax]} ticks={yticks} width={ymax.toString().length * 10 + 2} />
                 <Area type="step" dataKey="y" name="实际分布" fill={COLOR_BAR} stroke={COLOR_BAR} dot={false} />
                 {data.sd > 0 && <Line type="monotone" dataKey="e" name="标准正态" stroke={COLOR_LINE} dot={false} />}
                 <Legend />

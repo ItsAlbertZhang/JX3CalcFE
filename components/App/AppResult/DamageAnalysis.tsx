@@ -74,7 +74,7 @@ export const DamageAnalysis = ({ data }: { data: TypeQueryDamageAnalysis["data"]
 
     return (
         <motion.div
-            style={{ maxHeight: "calc((100vh - 1.5rem * 2 - 1rem * 2 - 1rem) * 4 / 9)" }}
+            style={{ maxHeight: "calc((100vh - 1.5rem * 2 - 1rem * 2 - 1rem) * 3 / 7)" }}
             // 1.5rem: p-6, 1rem: gap-4
             // see https://tailwindcss.com/docs
             className="flex flex-col gap-2"

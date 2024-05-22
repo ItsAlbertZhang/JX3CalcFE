@@ -2,7 +2,8 @@
 // child components simple
 import { validateInteger, IntegerInput } from "./Common";
 // my libraries
-import { fetchGetJson, readClipboard } from "@/components/actions";
+import { fetchGet, readClipboard } from "@/components/actions";
+import { kungfuAttribute } from "@/components/common";
 import { DataAttribute, DataInput } from "@/components/definitions";
 
 import {
@@ -40,7 +41,7 @@ async function importFromJX3BOX(input: string) {
         return;
     }
     // 请求数据
-    let body = await fetchGetJson({ host: "cms.jx3box.com", path });
+    let body = await fetchGet({ host: "cms.jx3box.com", path });
     if (body !== undefined && body.code === 0) {
         // 额外处理武器伤害
         const data = body.data.data as DataAttribute;
@@ -79,6 +80,7 @@ const AttrModalContent = ({
                         <ModalBody>
                             <p>Tips:</p>
                             <p>复制配装 ID 或 URL 后, 在主界面右键点击按钮即可无需打开此对话框直接导入.</p>
+                            <p>注意: 配装需要公开, 否则计算器无法访问.</p>
                             <Input
                                 autoFocus
                                 size="sm"
@@ -140,14 +142,14 @@ export const Attribute = ({
     function createAttributeBenefitPage() {
         updateInputs((draft) => {
             const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
-            const ADD_BASE = 198;
-            const ADD_MAGIC_ATTACK = 475;
-            const ADD_CRITICAL = 883;
-            const ADD_CRITICAL_DAMAGE = 883;
-            const ADD_OVERCOME = 883;
-            const ADD_STRAIN = 883;
-            const ADD_SURPLUS = 883;
-            const ATTRS = ["基础", "攻击", "会心", "会效", "破防", "无双", "破招"];
+            const ADD_BASE = 218;
+            const ADD_MAGIC_ATTACK = 524;
+            const ADD_CRITICAL = 974;
+            const ADD_CRITICAL_DAMAGE = 974;
+            const ADD_OVERCOME = 974;
+            const ADD_STRAIN = 974;
+            const ADD_SURPLUS = 974;
+            const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
             for (let i = 0; i < ATTRS.length; i++) {
                 newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
                 newDraft[i + 1].name = ATTRS[i];
@@ -191,76 +193,52 @@ export const Attribute = ({
     return (
         <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="w-full grid grid-cols-2 gap-4 items-center sm:grid-cols-3">
-                <Tooltip showArrow delay={250} closeDelay={250} content="从 JX3BOX 导入数据">
+                <Tooltip showArrow content="从 JX3BOX 导入数据">
                     <Button onPress={onOpen} onContextMenu={importFromJX3BOXDirect}>
                         导入
                     </Button>
                 </Tooltip>
                 <Tooltip
                     showArrow
-                    delay={250}
-                    closeDelay={250}
                     content={
-                        <>
-                            <p>以当前页为基准创建属性加成页.</p>
-                            <p className="text-red-500">注意: 所有的其他页面会被删除!</p>
-                        </>
+                        <p>
+                            <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
+                            <span className="text-green-500">基准页</span>,
+                            <br />
+                            并以其为基准, 创建<span className="text-green-500">对比属性收益</span>所需的页面.
+                        </p>
                     }
                 >
-                    <Button onPress={createAttributeBenefitPage}>属性收益</Button>
+                    <Button onPress={createAttributeBenefitPage}>创建 属性收益 对比</Button>
                 </Tooltip>
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={["Strength", "Agility", "Spirit", "Spunk"]}
+                    keys={kungfuAttribute[dataInputs[index].player].atKungfuAttr}
                     label="心法属性"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsAttackPowerBase",
-                        "SolarAttackPowerBase",
-                        "LunarAttackPowerBase",
-                        "NeutralAttackPowerBase",
-                        "PoisonAttackPowerBase",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atAttackPowerBase}
                     label="基础攻击"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsCriticalStrike",
-                        "SolarCriticalStrike",
-                        "LunarCriticalStrike",
-                        "NeutralCriticalStrike",
-                        "PoisonCriticalStrike",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atCriticalStrike}
                     label="会心等级"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsCriticalDamagePower",
-                        "SolarCriticalDamagePower",
-                        "LunarCriticalDamagePower",
-                        "NeutralCriticalDamagePower",
-                        "PoisonCriticalDamagePower",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atCriticalDamagePower}
                     label="会心效果等级"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsOvercomeBase",
-                        "SolarOvercomeBase",
-                        "LunarOvercomeBase",
-                        "NeutralOvercomeBase",
-                        "PoisonOvercomeBase",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atOvercomeBase}
                     label="基础破防等级"
                 />
                 <IntegerInput
