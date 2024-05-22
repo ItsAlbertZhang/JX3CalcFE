@@ -329,7 +329,7 @@ export const FightType = ({
                     {modalContent}
                 </Modal>
             </motion.div>
-            <TypeLink dataInput={dataInputs[index]} />
+            {method === methods[0] ? <TypeLink dataInput={dataInputs[index]} /> : <></>}{" "}
         </div>
     );
 };
