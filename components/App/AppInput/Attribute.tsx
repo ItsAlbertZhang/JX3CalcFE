@@ -3,6 +3,7 @@
 import { validateInteger, IntegerInput } from "./Common";
 // my libraries
 import { fetchGet, readClipboard } from "@/components/actions";
+import { kungfuAttribute } from "@/components/common";
 import { DataAttribute, DataInput } from "@/components/definitions";
 
 import {
@@ -213,55 +214,31 @@ export const Attribute = ({
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={["Strength", "Agility", "Spirit", "Spunk"]}
+                    keys={kungfuAttribute[dataInputs[index].player].atKungfuAttr}
                     label="心法属性"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsAttackPowerBase",
-                        "SolarAttackPowerBase",
-                        "LunarAttackPowerBase",
-                        "NeutralAttackPowerBase",
-                        "PoisonAttackPowerBase",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atAttackPowerBase}
                     label="基础攻击"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsCriticalStrike",
-                        "SolarCriticalStrike",
-                        "LunarCriticalStrike",
-                        "NeutralCriticalStrike",
-                        "PoisonCriticalStrike",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atCriticalStrike}
                     label="会心等级"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsCriticalDamagePower",
-                        "SolarCriticalDamagePower",
-                        "LunarCriticalDamagePower",
-                        "NeutralCriticalDamagePower",
-                        "PoisonCriticalDamagePower",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atCriticalDamagePower}
                     label="会心效果等级"
                 />
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
                     update={updateAttribute}
-                    keys={[
-                        "PhysicsOvercomeBase",
-                        "SolarOvercomeBase",
-                        "LunarOvercomeBase",
-                        "NeutralOvercomeBase",
-                        "PoisonOvercomeBase",
-                    ]}
+                    keys={kungfuAttribute[dataInputs[index].player].atOvercomeBase}
                     label="基础破防等级"
                 />
                 <IntegerInput
