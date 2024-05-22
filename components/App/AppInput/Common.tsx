@@ -2,7 +2,7 @@
 // my libraries
 import { DataEffect, DataInput } from "@/components/definitions";
 // third party libraries
-import { Checkbox, Input, Select, SelectItem, SelectedItems } from "@nextui-org/react";
+import { Checkbox, Input, Select, SelectItem, SelectedItems, Tooltip } from "@nextui-org/react";
 
 export function validateInteger(value: string) {
     if (value == "") {
@@ -61,6 +61,113 @@ export const IntegerInput = ({
     );
 };
 
+export const EffectStacknum = ({
+    name,
+    maxStacknum,
+    dataInput,
+    updateInput,
+    className,
+}: {
+    name: string;
+    maxStacknum: number;
+    dataInput: DataInput;
+    updateInput: (fn: (draft: DataInput) => void) => void;
+    className?: string;
+}) => {
+    let stacknum: number | undefined = undefined;
+    if (dataInput.effects.hasOwnProperty(name)) {
+        const effect = dataInput.effects[name] as DataEffect;
+        if (effect.stacknum) {
+            stacknum = effect.stacknum;
+        }
+    }
+    const display = typeof stacknum === "number" ? stacknum.toString() : "0";
+    const onValueChange = (value: string) => {
+        if (value === "") {
+            updateInput((draft) => {
+                (draft.effects[name] as DataEffect).stacknum = 0;
+            });
+        } else if (validateInteger(value)) {
+            let newValue = parseInt(value);
+            newValue = newValue > maxStacknum ? maxStacknum : newValue;
+            updateInput((draft) => {
+                // const it = draft.effects[name] as DataEffect;
+                // it.stacknum = newValue;
+                // draft.effects[name] = it;
+                (draft.effects[name] as DataEffect).stacknum = newValue;
+            });
+        }
+    };
+    return (
+        <Input
+            label="层数"
+            size="sm"
+            radius="lg"
+            className={className}
+            isDisabled={!dataInput.effects.hasOwnProperty(name)}
+            onClick={(event) => {
+                event.stopPropagation();
+                event.currentTarget.focus();
+            }}
+            value={display}
+            onValueChange={onValueChange}
+        />
+    );
+};
+
+export const EffectCovrate = ({
+    name,
+    dataInput,
+    updateInput,
+    className,
+}: {
+    name: string;
+    dataInput: DataInput;
+    updateInput: (fn: (draft: DataInput) => void) => void;
+    className?: string;
+}) => {
+    let covrate: number | undefined = undefined;
+    if (dataInput.effects.hasOwnProperty(name)) {
+        const effect = dataInput.effects[name] as DataEffect;
+        if (effect.covrate) {
+            covrate = effect.covrate;
+        }
+    }
+    const display = typeof covrate === "number" ? (covrate * 100).toFixed(0) : "0";
+    const onValueChange = (value: string) => {
+        if (value === "") {
+            updateInput((draft) => {
+                (draft.effects[name] as DataEffect).covrate = 0;
+            });
+        } else if (validateInteger(value)) {
+            let newValue = parseInt(value);
+            newValue = newValue > 100 ? 100 : newValue;
+            updateInput((draft) => {
+                // const it = draft.effects[name] as DataEffect;
+                // it.stacknum = newValue;
+                // draft.effects[name] = it;
+                (draft.effects[name] as DataEffect).covrate = newValue / 100;
+            });
+        }
+    };
+    return (
+        <Input
+            endContent={<p className="text-sm">%</p>}
+            label="覆盖率"
+            size="sm"
+            radius="lg"
+            className={className}
+            isDisabled={!dataInput.effects.hasOwnProperty(name)}
+            onClick={(event) => {
+                event.stopPropagation();
+                event.currentTarget.focus();
+            }}
+            value={display}
+            onValueChange={onValueChange}
+        />
+    );
+};
+
 export interface TypeOption {
     name: string;
     color: "default" | "blue" | "purple" | "orange";
@@ -88,7 +195,7 @@ const EffectItemRender = ({ option, isItem = false }: { option: TypeOption; isIt
                 {option.tip ? <p className="text-sm">{option.tip}</p> : <></>}
             </div>
             {isItem && option.detail ? (
-                <p className="w-full text-xs text-left whitespace-pre-line">{option.detail}</p>
+                <p className="w-full text-xs text-left whitespace-pre-line text-neutral-300">{option.detail}</p>
             ) : (
                 <></>
             )}
@@ -103,6 +210,7 @@ export const Effect = ({
     updateInput,
     stacknum,
     covrate,
+    detail,
     className = "",
 }: {
     name: string;
@@ -111,6 +219,7 @@ export const Effect = ({
     updateInput: (fn: (draft: DataInput) => void) => void;
     stacknum?: number;
     covrate?: number;
+    detail?: string;
     className?: string;
 }) => {
     const isString = options && typeof options[0] === "string";
@@ -171,77 +280,14 @@ export const Effect = ({
         </p>
     );
 
-    let snv: string | undefined;
-    if (dataInput.effects.hasOwnProperty(name) && typeof dataInput.effects[name] === "object") {
-        const n = (dataInput.effects[name] as DataEffect).stacknum;
-        if (n) {
-            snv = n.toString();
-        }
-    }
-    const sn = stacknum ? (
-        <Input
-            label="层数"
-            size="sm"
-            radius="lg"
-            isDisabled={!dataInput.effects.hasOwnProperty(name)}
-            onClick={(event) => {
-                event.stopPropagation();
-                event.currentTarget.focus();
-            }}
-            value={snv ? snv : ""}
-            onValueChange={(value) => {
-                if (validateInteger(value)) {
-                    let newValue = parseInt(value);
-                    newValue = newValue > stacknum ? stacknum : newValue;
-                    updateInput((draft) => {
-                        const it = draft.effects[name] as DataEffect;
-                        it.stacknum = newValue;
-                        draft.effects[name] = it;
-                    });
-                }
-            }}
-        />
-    ) : (
-        <></>
-    );
-    let cvv: string | undefined;
-    if (dataInput.effects.hasOwnProperty(name) && typeof dataInput.effects[name] === "object") {
-        const n = (dataInput.effects[name] as DataEffect).covrate;
-        if (n) {
-            cvv = (n * 100).toFixed(0);
-        }
-    }
-    const cv = covrate ? (
-        <Input
-            label="覆盖率"
-            size="sm"
-            radius="lg"
-            endContent={<p className="text-sm">%</p>}
-            isDisabled={!dataInput.effects.hasOwnProperty(name)}
-            onClick={(event) => {
-                event.stopPropagation();
-                event.currentTarget.focus();
-            }}
-            value={cvv ? cvv : ""}
-            onValueChange={(value) => {
-                if (validateInteger(value)) {
-                    let newValue = parseInt(value);
-                    newValue = newValue > 100 ? 100 : newValue;
-                    updateInput((draft) => {
-                        const it = draft.effects[name] as DataEffect;
-                        it.covrate = newValue / 100;
-                        draft.effects[name] = it;
-                    });
-                }
-            }}
-        />
-    ) : (
-        <></>
-    );
     const add = (
         <div className={"w-full flex justify-center items-center gap-2"}>
-            {sn}
-            {cv}
+            {stacknum ? (
+                <EffectStacknum name={name} maxStacknum={stacknum} dataInput={dataInput} updateInput={updateInput} />
+            ) : (
+                <></>
+            )}
+            {covrate ? <EffectCovrate name={name} dataInput={dataInput} updateInput={updateInput} /> : <></>}
         </div>
     );
 
@@ -252,7 +298,19 @@ export const Effect = ({
                 (twoLines ? " flex-col border-2 border-neutral-700 rounded-2xl p-2" : "")
             }
         >
-            {title}
+            {detail ? (
+                <Tooltip
+                    content={detail}
+                    delay={250}
+                    closeDelay={0}
+                    className="max-w-xs whitespace-pre-line text-neutral-300 text-xs"
+                >
+                    {title}
+                </Tooltip>
+            ) : (
+                title
+            )}
+            {/* {title} */}
             {stacknum || covrate ? add : <></>}
         </div>
     );
