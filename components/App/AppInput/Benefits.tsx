@@ -90,6 +90,13 @@ const formationTab: { [key: string]: Form } = {
         iconFormation: 20426,
         detail: "全会心提高3%\n无双提高2%\n造成伤害提高6%\n会心效果提高15%，持续6秒",
     },
+    "无界端·无界行侠阵": {
+        kungfu: "无界端",
+        name: "无界行侠阵",
+        iconKungfu: 13,
+        iconFormation: 22210,
+        detail: "伤害提高5%\n无双提高10%",
+    },
 };
 
 const 物品增益: Effects = {
@@ -241,12 +248,12 @@ const 团队增益: Effects = {
     },
     仙王蛊鼎: {
         options: null,
-        covrate: 0.21,
+        covrate: 0.25,
         detail: "来源：补天诀\n造成的伤害提高12%",
     },
     飘黄: {
         options: null,
-        covrate: 0.125,
+        covrate: 0.17,
         detail: "来源：灵素\n施展伤害招式附带一段额外伤害，最多每1.5秒触发一次，每次持续10秒",
     },
     庄周梦: {
