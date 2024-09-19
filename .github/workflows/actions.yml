@@ -73,9 +73,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const artifactPaths = JSON.parse('${{ steps.build.outputs.artifactPaths }}');
-            const artifactPathsString = artifactPaths.join('\n');
-            return artifactPathsString;
+            const artifactPathsInput = '${{ steps.build.outputs.artifactPaths }}';
+            const artifactPathsStr = artifactPathsInput.replace(/\\/g, '/');
+            const artifactPaths = JSON.parse(artifactPathsStr);
+            const artifactPathsOutput = artifactPaths.join('\n');
+            return artifactPathsOutput;
           result-encoding: string
 
       - name: 8. upload artifact (only if tag exists)
