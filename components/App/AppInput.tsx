@@ -206,7 +206,7 @@ const PageBar = ({
                 <Dropdown>
                     <DropdownTrigger>
                         <Button isIconOnly variant="ghost" color="danger">
-                            <FaRegTrashCan size={16} />
+                            <FaRegTrashCan size={16} color="red" />
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu>
