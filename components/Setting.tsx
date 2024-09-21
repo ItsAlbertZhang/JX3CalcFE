@@ -16,12 +16,10 @@ export async function fetchServerStatus() {
     }
 }
 
-export const Setting = ({ setStatus }: { setStatus: (value: TypeStatus) => void }) => {
+export const Setting = () => {
     const [app, setApp] = useState(false);
     async function handleOpen() {
-        if (await config()) {
-            setStatus(await fetchServerStatus());
-        }
+        await config();
     }
 
     useEffect(() => {
@@ -36,11 +34,7 @@ export const Setting = ({ setStatus }: { setStatus: (value: TypeStatus) => void 
         ret = (
             <>
                 <Button onPress={handleOpen}>选择游戏路径</Button>
-                <p>请选择名称为 bin64 的文件夹</p>
-                <div className="flex flex-col justify-center items-center gap-1 text-base">
-                    <p className="">其通常位于 .../SeasunGame/Game/JX3/bin/zhcn_hd/ 目录下</p>
-                    <p>(测试服或国际服目录可能略有不同)</p>
-                </div>
+                <p>请选择名称为 SeasunGame 的文件夹</p>
             </>
         );
     } else {

@@ -6,7 +6,7 @@ import { Effects } from "./AppInput/Effects";
 import { Global } from "./AppInput/Global";
 import { Benefits } from "./AppInput/Benefits";
 // my libraries
-import { readClipboard, writeClipboard } from "@/components/actions";
+import { isApp, readClipboard, switchTo, writeClipboard } from "@/components/actions";
 import { DataInput, TypeStatus } from "@/components/definitions";
 // third party libraries
 import {
@@ -20,10 +20,12 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
+    Divider,
+    Spacer,
 } from "@nextui-org/react";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { FaArrowRightToBracket, FaArrowUpFromBracket, FaRegCopy, FaRegTrashCan } from "react-icons/fa6";
+import { useEffect, useState } from "react";
+import { FaArrowRightToBracket, FaArrowUpFromBracket, FaRegCopy, FaRegTrashCan, FaRepeat } from "react-icons/fa6";
 
 const InputContent = ({
     dataInputs,
@@ -252,6 +254,7 @@ export const AppInput = ({
     classNameAdd?: string;
 }) => {
     const [page, setPage] = useState(1);
+    const [app, setApp] = useState(false);
 
     let style: object = { minHeight: "calc(100vh - 1.5rem * 2)" };
     if (window.matchMedia("(min-width: 1280px)").matches) {
@@ -260,6 +263,40 @@ export const AppInput = ({
             maxHeight: "calc(100vh - 1.5rem * 2)",
         };
     }
+
+    useEffect(() => {
+        async function f() {
+            if (await isApp()) {
+                setApp(true);
+            }
+        }
+        f();
+    }, [setApp]);
+
+    async function switchClient() {
+        switch (status.data.client) {
+            case "jx3_hd":
+                await switchTo("jx3_exp");
+                break;
+            case "jx3_exp":
+                await switchTo("jx3_hd");
+                break;
+            default:
+                break;
+        }
+    }
+    const spanHD = <span className="text-blue-500">{"正式服"}</span>;
+    const spanEXP = <span className="text-purple-500">{"测试服"}</span>;
+    const tooltipContent = (
+        <>
+            <p>切换客户端</p>
+            <Spacer y={1} />
+            <Divider />
+            <Spacer y={1} />
+            <p>当前客户端为: {status.data.client === "jx3_hd" ? spanHD : spanEXP}</p>
+            <p>点击可切换至: {status.data.client === "jx3_hd" ? spanEXP : spanHD}</p>
+        </>
+    );
 
     return (
         <motion.div
@@ -270,7 +307,22 @@ export const AppInput = ({
             layout // Animate layout changes
             transition={{ type: "spring", duration: 1, bounce: 0.33 }}
         >
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center gap-2">
+                {app ? (
+                    <Tooltip content={tooltipContent}>
+                        <Button
+                            isIconOnly
+                            variant="solid"
+                            color={status.data.client === "jx3_hd" ? "primary" : "secondary"}
+                            onPress={switchClient}
+                        >
+                            <FaRepeat size={16} />
+                        </Button>
+                    </Tooltip>
+                ) : (
+                    <></>
+                )}
+
                 <Input
                     value={dataInputs[page - 1].name}
                     onChange={(e) => {
