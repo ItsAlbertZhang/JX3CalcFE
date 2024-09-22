@@ -137,7 +137,7 @@ export const App = () => {
     if (!status) {
         content = <Loading />;
     } else if (status.status !== 0) {
-        content = <Setting setStatus={setStatus} />;
+        content = <Setting />;
     } else if (!status.data.version.startsWith(VERSION)) {
         content = <Updating />;
     } else {

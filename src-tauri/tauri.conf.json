@@ -31,6 +31,9 @@
             },
             "shell": {
                 "open": true
+            },
+            "process": {
+                "relaunch": true
             }
         },
         "bundle": {

@@ -13,7 +13,7 @@ export interface TypeStatus extends TypeBackendRes {
             maxFightCount: number;
         };
         custom: boolean;
-        isExp: boolean;
+        client: string;
     };
 }
 
