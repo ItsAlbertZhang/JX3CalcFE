@@ -10,7 +10,8 @@ import {
 } from "@tauri-apps/api/clipboard";
 import { readTextFile as tauri_fs_readTextFile } from "@tauri-apps/api/fs";
 import { invoke as tauri_invoke } from "@tauri-apps/api/tauri";
-import { DataInput, TypeBackendRes } from "./definitions";
+import { relaunch } from "@tauri-apps/api/process";
+import { TypeBackendRes } from "./definitions";
 
 const tauri = {
     app: {
@@ -170,16 +171,34 @@ export async function config() {
     try {
         const result = await tauri.dialog.open({ directory: true, multiple: false });
         const path = result as string;
-        if (path.endsWith("bin64")) {
+        if (path.endsWith("SeasunGame")) {
             const obj = {
-                JX3Dir: path,
+                dirSeasunGame: path,
+                clientType: "jx3_hd",
             };
-            return await tauri.tauri.invoke<boolean>("config", { body: JSON.stringify(obj) });
+            const ret = await tauri.tauri.invoke<boolean>("config", { body: JSON.stringify(obj) });
+            if (ret) {
+                await relaunch();
+            }
         }
     } catch (error) {
         console.error(error);
     }
-    return false;
+}
+
+export async function switchTo(clientType: string) {
+    try {
+        const obj = {
+            update: true,
+            clientType: clientType,
+        };
+        const ret = await tauri.tauri.invoke<boolean>("config", { body: JSON.stringify(obj) });
+        if (ret) {
+            await relaunch();
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 // 其他函数

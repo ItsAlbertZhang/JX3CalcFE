@@ -58,6 +58,7 @@ const embed = {
         helper: "简单循环基于简单条件语句，逻辑与游戏内宏保持完全一致。\n简单循环可以自由更改(部分)奇穴，计算器会保持逻辑(宏)并计算结果。",
     },
 };
+const prefix = "FightTypeEmbed";
 
 const TypeEmbed = ({
     dataInputs,
@@ -72,7 +73,7 @@ const TypeEmbed = ({
 }) => {
     const index = page - 1;
     const selectItems = Object.entries(embed).map(([key, value]) => (
-        <SelectItem key={key} textValue={value.name}>
+        <SelectItem key={`${prefix}${key}`} textValue={value.name}>
             <Tooltip content={<p className="whitespace-pre-line">{value.helper}</p>} placement="right" closeDelay={0}>
                 {value.name}
             </Tooltip>
@@ -94,18 +95,18 @@ const TypeEmbed = ({
                     newDraft.push(obj);
                 }
             }
-            console.log(newDraft);
             return newDraft;
         });
         setPage(1);
     }
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        if (e.target.value === "-1") {
+        if (e.target.value === `${prefix}-1`) {
             createFightTypePage();
         } else {
+            const value = e.target.value.substring(prefix.length);
             updateInputs((draft) => {
-                draft[index].fight.data = Number(e.target.value);
-                draft[index].talents = embed[e.target.value as keyof typeof embed].talent;
+                draft[index].fight.data = Number(value);
+                draft[index].talents = embed[value as keyof typeof embed].talent;
             });
         }
     }
@@ -113,12 +114,12 @@ const TypeEmbed = ({
         <motion.div layout className="w-full basis-1/2">
             <Select
                 label="循环选择"
-                selectedKeys={[dataInputs[index].fight.data as string]}
+                selectedKeys={[`${prefix}${dataInputs[index].fight.data as string}`]}
                 onChange={handleChange}
                 disallowEmptySelection
             >
                 <SelectSection showDivider>
-                    <SelectItem key="-1" textValue="创建 循环选择 对比">
+                    <SelectItem key={`${prefix}-1`} textValue="创建 循环选择 对比">
                         <Tooltip
                             content={
                                 <p>
