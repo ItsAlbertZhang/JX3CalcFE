@@ -55,7 +55,13 @@ const InputContent = ({
     );
     const attribute = (
         <Tab key="Attribute" title="属性" className={classname + " justify-center"}>
-            <Attribute dataInputs={dataInputs} updateInputs={updateInputs} page={page} setPage={setPage} />
+            <Attribute
+                dataInputs={dataInputs}
+                status={status}
+                updateInputs={updateInputs}
+                page={page}
+                setPage={setPage}
+            />
             <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
         </Tab>
     );

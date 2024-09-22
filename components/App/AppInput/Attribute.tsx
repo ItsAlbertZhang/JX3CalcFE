@@ -4,7 +4,7 @@ import { validateInteger, IntegerInput } from "./Common";
 // my libraries
 import { fetchGet, readClipboard } from "@/components/actions";
 import { kungfuAttribute } from "@/components/common";
-import { DataAttribute, DataInput } from "@/components/definitions";
+import { DataAttribute, DataInput, TypeStatus } from "@/components/definitions";
 
 import {
     Button,
@@ -114,11 +114,13 @@ const AttrModalContent = ({
 export const Attribute = ({
     dataInputs,
     updateInputs,
+    status,
     page,
     setPage,
 }: {
     dataInputs: DataInput[];
     updateInputs: (fn: (draft: DataInput[]) => void) => void;
+    status: TypeStatus;
     page: number;
     setPage: (page: number) => void;
 }) => {
@@ -142,13 +144,13 @@ export const Attribute = ({
     function createAttributeBenefitPage() {
         updateInputs((draft) => {
             const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
-            const ADD_BASE = 218;
-            const ADD_MAGIC_ATTACK = 524;
-            const ADD_CRITICAL = 974;
-            const ADD_CRITICAL_DAMAGE = 974;
-            const ADD_OVERCOME = 974;
-            const ADD_STRAIN = 974;
-            const ADD_SURPLUS = 974;
+            const ADD_BASE = status.data.client === "jx3_hd" ? 218 : 268;
+            const ADD_MAGIC_ATTACK = status.data.client === "jx3_hd" ? 524 : 633;
+            const ADD_CRITICAL = status.data.client === "jx3_hd" ? 974 : 2089;
+            const ADD_CRITICAL_DAMAGE = status.data.client === "jx3_hd" ? 974 : 2089;
+            const ADD_OVERCOME = status.data.client === "jx3_hd" ? 974 : 2089;
+            const ADD_STRAIN = status.data.client === "jx3_hd" ? 974 : 2089;
+            const ADD_SURPLUS = status.data.client === "jx3_hd" ? 974 : 2089;
             const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
             for (let i = 0; i < ATTRS.length; i++) {
                 newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
