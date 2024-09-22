@@ -76,7 +76,8 @@ jobs:
             const artifactPathsInput = '${{ steps.build.outputs.artifactPaths }}';
             const artifactPathsStr = artifactPathsInput.replace(/\\/g, '/');
             const artifactPaths = JSON.parse(artifactPathsStr);
-            const artifactPathsOutput = artifactPaths.join('\n');
+            const filteredPaths = artifactPaths.filter(path => path.endsWith('.tar.gz') || path.endsWith('.msi'));
+            const artifactPathsOutput = filteredPaths.join('\n');
             return artifactPathsOutput;
           result-encoding: string
 
