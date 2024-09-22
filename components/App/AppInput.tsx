@@ -87,7 +87,7 @@ const InputContent = ({
             {global}
             {attribute}
             {fight}
-            {benefits}
+            {status.data.version === "jx3_hd" ? benefits : <></>}
         </Tabs>
     );
 };
