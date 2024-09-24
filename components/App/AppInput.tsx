@@ -123,7 +123,19 @@ const PageBar = ({
         }
     }
     async function pageExportCurr() {
-        writeClipboard(JSON.stringify(dataInputs[index]));
+        const obj = {
+            ...dataInputs[index],
+            attribute: {
+                ...dataInputs[index].attribute,
+                data: {
+                    ...dataInputs[index].attribute.data,
+                    MeleeWeaponDamageRand:
+                        dataInputs[index].attribute.data.MeleeWeaponDamageMax -
+                        dataInputs[index].attribute.data.MeleeWeaponDamage,
+                },
+            },
+        };
+        writeClipboard(JSON.stringify(obj));
     }
     async function pageImportCurr() {
         const text = await readClipboard();
@@ -139,6 +151,12 @@ const PageBar = ({
             typeof obj.attribute !== "object"
         )
             return;
+        if (
+            typeof obj.attribute.data.MeleeWeaponDamage === "number" &&
+            typeof obj.attribute.data.MeleeWeaponDamageRand === "number"
+        )
+            obj.attribute.data.MeleeWeaponDamageMax =
+                obj.attribute.data.MeleeWeaponDamage + obj.attribute.data.MeleeWeaponDamageRand;
         updateInputs((draft) => {
             draft[index] = obj;
         });
