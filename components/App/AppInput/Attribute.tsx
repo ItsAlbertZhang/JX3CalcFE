@@ -151,6 +151,12 @@ export const Attribute = ({
             const ADD_OVERCOME = status.data.client === "jx3_hd" ? 974 : 2089;
             const ADD_STRAIN = status.data.client === "jx3_hd" ? 974 : 2089;
             const ADD_SURPLUS = status.data.client === "jx3_hd" ? 974 : 2089;
+            const COEF_AGILITY_TO_CRITICAL_STRIKE = status.data.client === "jx3_hd" ? 0.64 : 0.9;
+            const COEF_STRENGTH_TO_ATTACK_POWER = status.data.client === "jx3_hd" ? 0.15 : 0.163;
+            const COEF_STRENGTH_TO_OVERCOME = status.data.client === "jx3_hd" ? 0.3 : 0.3;
+            const COEF_SPIRIT_TO_CRITICAL_STRIKE = status.data.client === "jx3_hd" ? 0.64 : 0.9;
+            const COEF_SPUNK_TO_ATTACK_POWER = status.data.client === "jx3_hd" ? 0.18 : 0.181;
+            const COEF_SPUNK_TO_OVERCOME = status.data.client === "jx3_hd" ? 0.3 : 0.3;
             const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
             for (let i = 0; i < ATTRS.length; i++) {
                 newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
@@ -160,6 +166,21 @@ export const Attribute = ({
             newDraft[1].attribute.data.Agility += ADD_BASE;
             newDraft[1].attribute.data.Spirit += ADD_BASE;
             newDraft[1].attribute.data.Spunk += ADD_BASE;
+            newDraft[1].attribute.data.PhysicsCriticalStrike += ADD_BASE * COEF_AGILITY_TO_CRITICAL_STRIKE;
+            newDraft[1].attribute.data.PhysicsAttackPowerBase += ADD_BASE * COEF_STRENGTH_TO_ATTACK_POWER;
+            newDraft[1].attribute.data.PhysicsOvercomeBase += ADD_BASE * COEF_STRENGTH_TO_OVERCOME;
+            newDraft[1].attribute.data.SolarCriticalStrike += ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE;
+            newDraft[1].attribute.data.LunarCriticalStrike += ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE;
+            newDraft[1].attribute.data.NeutralCriticalStrike += ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE;
+            newDraft[1].attribute.data.PoisonCriticalStrike += ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE;
+            newDraft[1].attribute.data.SolarAttackPowerBase += ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER;
+            newDraft[1].attribute.data.LunarAttackPowerBase += ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER;
+            newDraft[1].attribute.data.NeutralAttackPowerBase += ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER;
+            newDraft[1].attribute.data.PoisonAttackPowerBase += ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER;
+            newDraft[1].attribute.data.SolarOvercomeBase += ADD_BASE * COEF_SPUNK_TO_OVERCOME;
+            newDraft[1].attribute.data.LunarOvercomeBase += ADD_BASE * COEF_SPUNK_TO_OVERCOME;
+            newDraft[1].attribute.data.NeutralOvercomeBase += ADD_BASE * COEF_SPUNK_TO_OVERCOME;
+            newDraft[1].attribute.data.PoisonOvercomeBase += ADD_BASE * COEF_SPUNK_TO_OVERCOME;
             newDraft[2].attribute.data.SolarAttackPowerBase += ADD_MAGIC_ATTACK;
             newDraft[2].attribute.data.LunarAttackPowerBase += ADD_MAGIC_ATTACK;
             newDraft[2].attribute.data.NeutralAttackPowerBase += ADD_MAGIC_ATTACK;
