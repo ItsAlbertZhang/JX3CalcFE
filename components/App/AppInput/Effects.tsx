@@ -2,12 +2,14 @@
 // child components simple
 import { Effect, TypeOption } from "./Common";
 // my libraries
-import { DataInput } from "@/components/definitions";
+import { DataInput, TypeStatus } from "@/components/definitions";
 
 export const Effects = ({
+    status,
     dataInput,
     updateInput,
 }: {
+    status: TypeStatus;
     dataInput: DataInput;
     updateInput: (fn: (draft: DataInput) => void) => void;
 }) => {
@@ -17,7 +19,7 @@ export const Effects = ({
             options: TypeOption[] | string[] | null;
         };
     }
-    const effects: Effects = {
+    const effects_hd: Effects = {
         "大附魔·腰": { span: 2, options: null },
         "大附魔·腕": { span: 2, options: ["雾海寻龙", "万灵当歌"] },
         "大附魔·鞋": { span: 2, options: ["雾海寻龙", "万灵当歌"] },
@@ -35,6 +37,25 @@ export const Effects = ({
             ],
         },
     };
+    const effects_exp: Effects = {
+        "大附魔·腰": { span: 2, options: null },
+        "大附魔·腕": { span: 2, options: ["风语-高品", "风语-低品", "雾海寻龙", "万灵当歌"] },
+        "大附魔·鞋": { span: 2, options: ["风语-高品", "风语-低品", "雾海寻龙", "万灵当歌"] },
+        "套装·技能": { span: 2, options: null },
+        "套装·特效": { span: 2, options: null },
+        "腰坠·特效": { span: 2, options: ["梧桐影", "吹香雪"] },
+        "家园·酿造": { span: 3, options: ["女儿红·旬又三", "女儿红"] },
+        "武器·特效": {
+            span: 3,
+            options: [
+                { name: "大橙武", color: "orange" },
+                { name: "小橙武", color: "orange" },
+                { name: "无尽沙海", color: "default" },
+                { name: "冰焰玉", color: "default" },
+            ],
+        },
+    };
+    const effects = status.data.client === "hd" ? effects_hd : effects_exp;
     const ret = Object.entries(effects).map(([name, attrib], idx) => (
         <Effect
             key={"effect" + name}
