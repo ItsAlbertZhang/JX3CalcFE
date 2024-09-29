@@ -143,7 +143,6 @@ export const Attribute = ({
 
     function createAttributeBenefitPage() {
         updateInputs((draft) => {
-            const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
             const ADD_BASE = status.data.client === "jx3_hd" ? 218 : 268;
             const ADD_MAGIC_ATTACK = status.data.client === "jx3_hd" ? 524 : 633;
             const ADD_CRITICAL = status.data.client === "jx3_hd" ? 974 : 2089;
@@ -158,29 +157,51 @@ export const Attribute = ({
             const COEF_SPUNK_TO_ATTACK_POWER = status.data.client === "jx3_hd" ? 0.18 : 0.181;
             const COEF_SPUNK_TO_OVERCOME = status.data.client === "jx3_hd" ? 0.3 : 0.3;
             const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
+            const MAP = {
+                焚影圣诀: "元气",
+            };
+            const newDraft: DataInput[] = [{ ...draft[index], name: "基准页" }];
             for (let i = 0; i < ATTRS.length; i++) {
                 newDraft.push(JSON.parse(JSON.stringify(newDraft[0])));
                 newDraft[i + 1].name = ATTRS[i];
             }
-            newDraft[1].attribute.data.Strength += ADD_BASE;
-            newDraft[1].attribute.data.Agility += ADD_BASE;
-            newDraft[1].attribute.data.Spirit += ADD_BASE;
-            newDraft[1].attribute.data.Spunk += ADD_BASE;
-            newDraft[1].attribute.data.PhysicsCriticalStrike += Math.round(ADD_BASE * COEF_AGILITY_TO_CRITICAL_STRIKE);
-            newDraft[1].attribute.data.PhysicsAttackPowerBase += Math.round(ADD_BASE * COEF_STRENGTH_TO_ATTACK_POWER);
-            newDraft[1].attribute.data.PhysicsOvercomeBase += Math.round(ADD_BASE * COEF_STRENGTH_TO_OVERCOME);
-            newDraft[1].attribute.data.SolarCriticalStrike += Math.round(ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE);
-            newDraft[1].attribute.data.LunarCriticalStrike += Math.round(ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE);
-            newDraft[1].attribute.data.NeutralCriticalStrike += Math.round(ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE);
-            newDraft[1].attribute.data.PoisonCriticalStrike += Math.round(ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE);
-            newDraft[1].attribute.data.SolarAttackPowerBase += Math.round(ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER);
-            newDraft[1].attribute.data.LunarAttackPowerBase += Math.round(ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER);
-            newDraft[1].attribute.data.NeutralAttackPowerBase += Math.round(ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER);
-            newDraft[1].attribute.data.PoisonAttackPowerBase += Math.round(ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER);
-            newDraft[1].attribute.data.SolarOvercomeBase += Math.round(ADD_BASE * COEF_SPUNK_TO_OVERCOME);
-            newDraft[1].attribute.data.LunarOvercomeBase += Math.round(ADD_BASE * COEF_SPUNK_TO_OVERCOME);
-            newDraft[1].attribute.data.NeutralOvercomeBase += Math.round(ADD_BASE * COEF_SPUNK_TO_OVERCOME);
-            newDraft[1].attribute.data.PoisonOvercomeBase += Math.round(ADD_BASE * COEF_SPUNK_TO_OVERCOME);
+            switch (MAP[newDraft[0].player as keyof typeof MAP]) {
+                case "元气":
+                    newDraft[1].attribute.data.Spunk += ADD_BASE;
+                    const addAttackPowerBase = Math.round(ADD_BASE * COEF_SPUNK_TO_ATTACK_POWER);
+                    newDraft[1].attribute.data.SolarAttackPowerBase += addAttackPowerBase;
+                    newDraft[1].attribute.data.LunarAttackPowerBase += addAttackPowerBase;
+                    newDraft[1].attribute.data.NeutralAttackPowerBase += addAttackPowerBase;
+                    newDraft[1].attribute.data.PoisonAttackPowerBase += addAttackPowerBase;
+                    const addOvercomeBase = Math.round(ADD_BASE * COEF_SPUNK_TO_OVERCOME);
+                    newDraft[1].attribute.data.SolarOvercomeBase += addOvercomeBase;
+                    newDraft[1].attribute.data.LunarOvercomeBase += addOvercomeBase;
+                    newDraft[1].attribute.data.NeutralOvercomeBase += addOvercomeBase;
+                    newDraft[1].attribute.data.PoisonOvercomeBase += addOvercomeBase;
+                    break;
+                case "根骨":
+                    newDraft[1].attribute.data.Spirit += ADD_BASE;
+                    const addCriticalStrike = Math.round(ADD_BASE * COEF_SPIRIT_TO_CRITICAL_STRIKE);
+                    newDraft[1].attribute.data.SolarCriticalStrike += addCriticalStrike;
+                    newDraft[1].attribute.data.LunarCriticalStrike += addCriticalStrike;
+                    newDraft[1].attribute.data.NeutralCriticalStrike += addCriticalStrike;
+                    newDraft[1].attribute.data.PoisonCriticalStrike += addCriticalStrike;
+                    break;
+                case "力道":
+                    newDraft[1].attribute.data.Strength += ADD_BASE;
+                    const addPhysicsAttackPowerBase = Math.round(ADD_BASE * COEF_STRENGTH_TO_ATTACK_POWER);
+                    newDraft[1].attribute.data.PhysicsAttackPowerBase += addPhysicsAttackPowerBase;
+                    const addPhysicsOvercomeBase = Math.round(ADD_BASE * COEF_STRENGTH_TO_OVERCOME);
+                    newDraft[1].attribute.data.PhysicsOvercomeBase += addPhysicsOvercomeBase;
+                    break;
+                case "身法":
+                    newDraft[1].attribute.data.Agility += ADD_BASE;
+                    const addPhysicsCriticalStrike = Math.round(ADD_BASE * COEF_AGILITY_TO_CRITICAL_STRIKE);
+                    newDraft[1].attribute.data.PhysicsCriticalStrike += addPhysicsCriticalStrike;
+                    break;
+                default:
+                    break;
+            }
             newDraft[2].attribute.data.SolarAttackPowerBase += ADD_MAGIC_ATTACK;
             newDraft[2].attribute.data.LunarAttackPowerBase += ADD_MAGIC_ATTACK;
             newDraft[2].attribute.data.NeutralAttackPowerBase += ADD_MAGIC_ATTACK;
