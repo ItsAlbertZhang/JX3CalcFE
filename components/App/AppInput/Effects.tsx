@@ -55,7 +55,7 @@ export const Effects = ({
             ],
         },
     };
-    const effects = status.data.client === "hd" ? effects_hd : effects_exp;
+    const effects = status.data.client === "jx3_hd" ? effects_hd : effects_exp;
     const ret = Object.entries(effects).map(([name, attrib], idx) => (
         <Effect
             key={"effect" + name}
