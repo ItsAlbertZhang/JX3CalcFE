@@ -119,10 +119,11 @@ const TypeEmbed = ({
                 disallowEmptySelection
             >
                 <SelectSection showDivider>
-                    <SelectItem key={`${prefix}-1`} textValue="创建 循环选择 对比">
+                    <SelectItem key={`${prefix}-1`} textValue="创建 循环选择 对比" className="bg-blue-600">
                         <Tooltip
                             content={
                                 <p>
+                                    <p className="text-base text-red-500">注意: 会影响其他页面!</p>
                                     <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
                                     <span className="text-green-500">基准页</span>,
                                     <br />

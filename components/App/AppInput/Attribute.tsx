@@ -225,6 +225,7 @@ export const Attribute = ({
                     showArrow
                     content={
                         <p>
+                            <p className="text-base text-red-500">注意: 会影响其他页面!</p>
                             <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
                             <span className="text-green-500">基准页</span>,
                             <br />
@@ -232,7 +233,9 @@ export const Attribute = ({
                         </p>
                     }
                 >
-                    <Button onPress={createAttributeBenefitPage}>创建 属性收益 对比</Button>
+                    <Button color="primary" onPress={createAttributeBenefitPage}>
+                        创建 属性收益 对比
+                    </Button>
                 </Tooltip>
                 <IntegerInput
                     data={dataInputs[index].attribute.data}
