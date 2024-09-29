@@ -126,9 +126,10 @@ const Formation = ({
                         if (name === "·") {
                             return (
                                 <SelectSection key={"Compare"} showDivider>
-                                    <SelectItem key={name} aria-label={name}>
+                                    <SelectItem key={name} aria-label={name} className="bg-blue-600">
                                         <div className="w-full px-2 flex flex-col gap-0.5 whitespace-normal">
-                                            <p className="text-base">创建 小队阵法 对比</p>
+                                            <p className="text-xl">创建 小队阵法 对比</p>
+                                            <p className="text-base text-red-500">注意: 会影响其他页面!</p>
                                             <p className="text-xs">
                                                 <span className="text-red-500">删除其他所有页面, </span>将当前页面提升为
                                                 <span className="text-green-500">基准页</span>,
