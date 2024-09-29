@@ -34,9 +34,9 @@ const InputContent = ({
     page,
     setPage,
 }: {
+    status: TypeStatus;
     dataInputs: DataInput[];
     updateInputs: (fn: (draft: DataInput[]) => void) => void;
-    status: TypeStatus;
     page: number;
     setPage: (page: number) => void;
 }) => {
@@ -62,7 +62,7 @@ const InputContent = ({
                 page={page}
                 setPage={setPage}
             />
-            <Effects dataInput={dataInputs[index]} updateInput={updateInput} />
+            <Effects status={status} dataInput={dataInputs[index]} updateInput={updateInput} />
         </Tab>
     );
     const fight = (
@@ -80,6 +80,7 @@ const InputContent = ({
     const benefits = (
         <Tab key="Benefits" title="增益" className={classname}>
             <Benefits
+                status={status}
                 dataInputs={dataInputs}
                 page={page}
                 updateInputs={updateInputs}
@@ -93,7 +94,7 @@ const InputContent = ({
             {global}
             {attribute}
             {fight}
-            {status.data.client === "jx3_hd" ? benefits : null}
+            {benefits}
         </Tabs>
     );
 };
