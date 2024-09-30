@@ -57,6 +57,13 @@ export const formationTab: { [key: string]: Form } = {
         iconFormation: 20426,
         detail: "全会心提高3%\n无双提高2%\n造成伤害提高6%\n会心效果提高15%，持续6秒",
     },
+    "周天功·含章挺秀阵": {
+        kungfu: "周天功",
+        name: "含章挺秀阵",
+        iconKungfu: 22823,
+        iconFormation: 22808,
+        detail: "内功基础攻击力提高5%\n破招提高2666点\n全会心几率提高5%\n造成伤害提高6%，持续10秒",
+    },
     "无界端·无界行侠阵": {
         kungfu: "无界端",
         name: "无界行侠阵",
