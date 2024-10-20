@@ -43,13 +43,14 @@ export const Effects = ({
         "大附魔·鞋": { span: 2, options: ["风语-高品", "风语-低品", "雾海寻龙", "万灵当歌"] },
         "套装·技能": { span: 2, options: null },
         "套装·特效": { span: 2, options: null },
-        "腰坠·特效": { span: 2, options: ["梧桐影", "吹香雪"] },
+        "腰坠·特效": { span: 2, options: ["寻幽径", "梧桐影", "吹香雪"] },
         "家园·酿造": { span: 3, options: ["女儿红·旬又三", "女儿红"] },
         "武器·特效": {
             span: 3,
             options: [
                 { name: "大橙武", color: "orange" },
                 { name: "小橙武", color: "orange" },
+                { name: "阅世悲", color: "default" },
                 { name: "无尽沙海", color: "default" },
                 { name: "冰焰玉", color: "default" },
             ],
