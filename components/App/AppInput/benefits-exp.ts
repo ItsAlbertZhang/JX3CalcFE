@@ -241,11 +241,11 @@ export const 团队增益: Effects = {
         covrate: 0.75,
         detail: "来源：相知\n每层使无双等级提高80点",
     },
-    飘黄: {
-        options: null,
-        covrate: 0.17,
-        detail: "来源：灵素\n施展伤害招式附带一段额外伤害，最多每1.5秒触发一次，每次持续10秒",
-    },
+    // 飘黄: {
+    //     options: null,
+    //     covrate: 0.17,
+    //     detail: "来源：灵素\n施展伤害招式附带一段额外伤害，最多每1.5秒触发一次，每次持续10秒",
+    // },
 };
 export const 小队增益: Effects = {
     破苍穹: {
