@@ -333,7 +333,7 @@ export const AppInput = ({
             transition={{ type: "spring", duration: 1, bounce: 0.33 }}
         >
             <div className="flex justify-center items-center gap-2">
-                {app ? (
+                {app && status.data.client !== "jx3_hd" ? ( // 当前为 app 且为正式服时, 暂时关闭切换客户端功能
                     <Tooltip content={tooltipContent}>
                         <Button
                             isIconOnly
