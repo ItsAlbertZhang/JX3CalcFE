@@ -143,19 +143,19 @@ export const Attribute = ({
 
     function createAttributeBenefitPage() {
         updateInputs((draft) => {
-            const ADD_BASE = status.data.client === "jx3_hd" ? 218 : 268;
-            const ADD_MAGIC_ATTACK = status.data.client === "jx3_hd" ? 524 : 633;
-            const ADD_CRITICAL = status.data.client === "jx3_hd" ? 974 : 2089;
-            const ADD_CRITICAL_DAMAGE = status.data.client === "jx3_hd" ? 974 : 2089;
-            const ADD_OVERCOME = status.data.client === "jx3_hd" ? 974 : 2089;
-            const ADD_STRAIN = status.data.client === "jx3_hd" ? 974 : 2089;
-            const ADD_SURPLUS = status.data.client === "jx3_hd" ? 974 : 2089;
-            const COEF_AGILITY_TO_CRITICAL_STRIKE = status.data.client === "jx3_hd" ? 0.64 : 0.9;
-            const COEF_STRENGTH_TO_ATTACK_POWER = status.data.client === "jx3_hd" ? 0.15 : 0.163;
-            const COEF_STRENGTH_TO_OVERCOME = status.data.client === "jx3_hd" ? 0.3 : 0.3;
-            const COEF_SPIRIT_TO_CRITICAL_STRIKE = status.data.client === "jx3_hd" ? 0.64 : 0.9;
-            const COEF_SPUNK_TO_ATTACK_POWER = status.data.client === "jx3_hd" ? 0.18 : 0.181;
-            const COEF_SPUNK_TO_OVERCOME = status.data.client === "jx3_hd" ? 0.3 : 0.3;
+            const ADD_BASE = 268;
+            const ADD_MAGIC_ATTACK = 633;
+            const ADD_CRITICAL = 2089;
+            const ADD_CRITICAL_DAMAGE = 2089;
+            const ADD_OVERCOME = 2089;
+            const ADD_STRAIN = 2089;
+            const ADD_SURPLUS = 2089;
+            const COEF_AGILITY_TO_CRITICAL_STRIKE = 0.9;
+            const COEF_STRENGTH_TO_ATTACK_POWER = 0.163;
+            const COEF_STRENGTH_TO_OVERCOME = 0.3;
+            const COEF_SPIRIT_TO_CRITICAL_STRIKE = 0.9;
+            const COEF_SPUNK_TO_ATTACK_POWER = 0.181;
+            const COEF_SPUNK_TO_OVERCOME = 0.3;
             const ATTRS = ["心法", "攻击", "会心", "会效", "破防", "无双", "破招"];
             const MAP = {
                 焚影圣诀: "元气",

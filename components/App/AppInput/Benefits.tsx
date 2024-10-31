@@ -3,7 +3,6 @@
 import { Effect, EffectCovrate } from "./Common";
 import { Form } from "./benefits-def";
 import * as benefitshd from "./benefits-hd";
-import * as benefitsexp from "./benefits-exp";
 // my libraries
 import { DataEffect, DataInput, TypeStatus } from "@/components/definitions";
 // thrid party libraries
@@ -48,7 +47,7 @@ const Formation = ({
 }) => {
     const index = page - 1;
     const checked = dataInputs[index].effects.hasOwnProperty("小队阵法");
-    const benefit = status.data.client === "jx3_hd" ? benefitshd : benefitsexp;
+    const benefit = benefitshd;
     const formationTab = benefit.formationTab;
     function createComparePage() {
         updateInputs((draft) => {
@@ -176,7 +175,7 @@ export const Benefits = ({
     setPage: (page: number) => void;
 }) => {
     const index = page - 1;
-    const benefit = status.data.client === "jx3_hd" ? benefitshd : benefitsexp;
+    const benefit = benefitshd;
     const 增益 = [benefit.物品增益, benefit.团队增益, benefit.小队增益];
     const 增益标题 = ["物品增益", "团队增益", "小队增益"];
 

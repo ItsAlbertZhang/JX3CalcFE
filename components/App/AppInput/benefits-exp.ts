@@ -167,12 +167,12 @@ export const 物品增益: Effects = {
 export const 团队增益: Effects = {
     袖气: {
         options: null,
-        detail: "来源：七秀\n全属性提高244点，内功防御等级提高340点",
+        detail: "来源：七秀\n全属性提高317点，内功防御等级提高1010点",
     },
     号令三军: {
         options: null,
         stacknum: 100,
-        detail: "来源：铁牢律\n每层提高无双值540点。战斗时间30秒后层数减半，60秒后完全消失。\n使用时需注意: 号令三军会受到战斗时间影响 (严格循环不支持自定义战斗时间).",
+        detail: "来源：铁牢律\n每层提高无双值594点。战斗时间30秒后层数减半，60秒后完全消失。\n使用时需注意: 号令三军会受到战斗时间影响 (严格循环不支持自定义战斗时间).",
     },
     立地成佛: {
         options: null,
@@ -185,12 +185,12 @@ export const 团队增益: Effects = {
         options: null,
         stacknum: 100,
         covrate: 0.5,
-        detail: "来源：洗髓经\n每层使无双等级提高600点、基础疗伤成效提高520点",
+        detail: "来源：洗髓经\n每层使无双等级提高660点、基础疗伤成效提高200点",
     },
     朝圣言: {
         options: [
-            { name: "朝圣", color: "default", detail: "来源：明尊琉璃体 技能\n每层无双等级提高400点" },
-            { name: "圣浴明心", color: "default", detail: "来源：明尊琉璃体 奇穴\n每层无双等级提高600点" },
+            { name: "朝圣", color: "default", detail: "来源：明尊琉璃体 技能\n每层无双等级提高440点" },
+            { name: "圣浴明心", color: "default", detail: "来源：明尊琉璃体 奇穴\n每层无双等级提高660点" },
         ],
         stacknum: 100,
         covrate: 0.05,
@@ -199,7 +199,7 @@ export const 团队增益: Effects = {
         options: null,
         stacknum: 100,
         covrate: 1.0,
-        detail: "来源：铁骨衣\n每层使无双等级提高72点",
+        detail: "来源：铁骨衣\n每层使无双等级提高80点",
     },
     配伍: {
         options: null,
@@ -210,7 +210,7 @@ export const 团队增益: Effects = {
     寒啸千军: {
         options: null,
         covrate: 0.5,
-        detail: "来源：铁骨衣\n无双等级提高10%",
+        detail: "来源：铁骨衣\n无双率提高5%",
     },
     皎素: {
         options: null,
@@ -221,31 +221,31 @@ export const 团队增益: Effects = {
         options: null,
         stacknum: 100,
         covrate: 1.0,
-        detail: "来源：云裳心经\n每层使无双等级提高90点",
+        detail: "来源：云裳心经\n每层使无双等级提高100点",
     },
     秋肃: {
         options: null,
         stacknum: 100,
         covrate: 1.0,
-        detail: "来源：离经易道\n每层使无双等级提高90点",
+        detail: "来源：离经易道\n每层使无双等级提高100点",
     },
     仙王蛊鼎: {
         options: null,
         stacknum: 100,
         covrate: 0.25,
-        detail: "来源：补天诀\n每层使无双等级提高324点",
+        detail: "来源：补天诀\n每层使无双等级提高360点",
     },
     庄周梦: {
         options: null,
         stacknum: 100,
         covrate: 0.75,
-        detail: "来源：相知\n每层使无双等级提高72点",
+        detail: "来源：相知\n每层使无双等级提高80点",
     },
-    飘黄: {
-        options: null,
-        covrate: 0.17,
-        detail: "来源：灵素\n施展伤害招式附带一段额外伤害，最多每1.5秒触发一次，每次持续10秒",
-    },
+    // 飘黄: {
+    //     options: null,
+    //     covrate: 0.17,
+    //     detail: "来源：灵素\n施展伤害招式附带一段额外伤害，最多每1.5秒触发一次，每次持续10秒",
+    // },
 };
 export const 小队增益: Effects = {
     破苍穹: {
